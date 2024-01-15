@@ -19,6 +19,9 @@
 
 #define NUM_SQUARES 10
 
+int TILE_WIDTH = SCREEN_WIDTH / NUM_SQUARES;
+int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
+
 SDL_Window* window;
 
 SDL_Renderer* renderer;
@@ -69,8 +72,6 @@ void draw(int r, int g, int b) {
 }
 
 void init() {
-    int TILE_WIDTH = SCREEN_WIDTH / NUM_SQUARES;
-    int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
     // Declare rect of square
     SDL_Rect squareRect;
 
@@ -142,16 +143,11 @@ tile getClosestTile(int x, int y) {
 void colorTile(int x, int y, int r, int g, int b) {
     tile closestTile = getClosestTile(x,y);
 
-    int TILE_WIDTH = SCREEN_WIDTH / NUM_SQUARES;
-    int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
     // Declare rect of square
     SDL_Rect squareRect;
 
     // Initialize renderer color white for the background
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    // Clear screen
-    // SDL_RenderClear(renderer);
 
     // Actually draw the desired color
     SDL_SetRenderDrawColor(renderer, r, g, b, 255);

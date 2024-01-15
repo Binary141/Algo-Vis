@@ -141,8 +141,25 @@ struct tile {
 
 tile getClosestTile(int x, int y) {
     tile closest;
-    closest.x = TILE_BORDER_WIDTH;
-    closest.y = TILE_BORDER_WIDTH;
+
+    int closest_x = TILE_BORDER_WIDTH;
+    while ( closest_x < x ) {
+        closest_x += TILE_WIDTH;
+    }
+    // subtract the TILE_WIDTH since we over shot it
+    closest_x -= TILE_WIDTH;
+
+    int closest_y = TILE_BORDER_WIDTH;
+    while ( closest_y < y ) {
+        closest_y += TILE_HEIGHT;
+    }
+    // subtract the TILE_WIDTH since we over shot it
+    closest_y -= TILE_HEIGHT;
+
+
+    // std::cout << "Got thing: " << i << std::endl;
+    closest.x = closest_x;
+    closest.y = closest_y;
     return closest;
 }
 

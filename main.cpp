@@ -17,7 +17,7 @@
 
 #define TILE_BORDER_WIDTH 3
 
-#define NUM_SQUARES 7
+#define NUM_SQUARES 3
 
 int SCREEN_WIDTH = 1280;
 int SCREEN_HEIGHT = 720;
@@ -154,6 +154,8 @@ void destroy_window() {
 struct tile {
     int x;
     int y;
+    int xIndex;
+    int yIndex;
 };
 
 tile getClosestTile(int x, int y) {
@@ -174,9 +176,14 @@ tile getClosestTile(int x, int y) {
     closest_y -= TILE_HEIGHT;
 
 
-    // std::cout << "Got thing: " << i << std::endl;
     closest.x = closest_x;
     closest.y = closest_y;
+    closest.xIndex = closest_x / TILE_WIDTH;
+    closest.yIndex = closest_y / TILE_HEIGHT;
+    // printf("Closest x index: %d\n\n", closest.xIndex);
+
+    // printf("Closest y index: %d\n\n", closest.yIndex);
+
     return closest;
 }
 

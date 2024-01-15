@@ -10,14 +10,18 @@
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
 // Define screen dimensions
-#define SCREEN_WIDTH    1280
-#define SCREEN_HEIGHT   720
+// #define SCREEN_WIDTH    1280
+// #define SCREEN_HEIGHT   720
 
 // #define TILE_WIDTH   10
 
 #define TILE_BORDER_WIDTH 3
 
-#define NUM_SQUARES 10
+#define NUM_SQUARES 7
+
+int SCREEN_WIDTH = 1280;
+int SCREEN_HEIGHT = 720;
+
 const int BACKGROUND_R = 255;
 const int BACKGROUND_G = 255;
 const int BACKGROUND_B = 255;
@@ -25,6 +29,7 @@ const int BACKGROUND_B = 255;
 const int BORDER_R = 0;
 const int BORDER_G = 0;
 const int BORDER_B = 0;
+
 int TILE_WIDTH = SCREEN_WIDTH / NUM_SQUARES;
 int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
 
@@ -33,6 +38,18 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 
 void init_display() {
+    int calculated_width = (NUM_SQUARES * TILE_WIDTH) + TILE_BORDER_WIDTH;
+
+    if (calculated_width != SCREEN_WIDTH) {
+        SCREEN_WIDTH = calculated_width;
+    }
+
+    int calculated_height = (NUM_SQUARES * TILE_HEIGHT) + TILE_BORDER_WIDTH;
+
+    if (calculated_height != SCREEN_HEIGHT) {
+        SCREEN_HEIGHT = calculated_height;
+    }
+
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("SDL could not be initialized!: %s\n", SDL_GetError());

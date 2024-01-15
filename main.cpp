@@ -38,6 +38,8 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 
 void init_display() {
+    // change the display dimensions if there is any extra space on the
+    // bottom or right of the window
     int calculated_width = (NUM_SQUARES * TILE_WIDTH) + TILE_BORDER_WIDTH;
 
     if (calculated_width != SCREEN_WIDTH) {
@@ -66,34 +68,6 @@ void init_display() {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 }
 
-void draw(int r, int g, int b) {
-    // Declare rect of square
-    SDL_Rect squareRect;
-
-    // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
-    squareRect.w = SCREEN_WIDTH; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
-    squareRect.h = SCREEN_HEIGHT; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
-
-    // Square position: In the middle of the screen
-    squareRect.x = SCREEN_WIDTH / 2 - squareRect.w / 2;
-    squareRect.y = SCREEN_HEIGHT / 2 - squareRect.h / 2;
-
-    // Initialize renderer color white for the background
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    // Clear screen
-    SDL_RenderClear(renderer);
-
-    // Actually draw the desired color
-    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-
-    // Draw filled square
-    SDL_RenderFillRect(renderer, &squareRect);
-
-    // Update screen
-    SDL_RenderPresent(renderer);
-}
-
 void init() {
     // Declare rect of square
     SDL_Rect squareRect;
@@ -107,12 +81,9 @@ void init() {
     // Actually draw the desired color
     SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
 
-    // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
-    squareRect.w = TILE_BORDER_WIDTH; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
-    squareRect.h = SCREEN_HEIGHT; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
+    squareRect.w = TILE_BORDER_WIDTH;
+    squareRect.h = SCREEN_HEIGHT;
 
-    // Square position: In the middle of the screen
-    // squareRect.x = 0; // SCREEN_WIDTH / 2 - squareRect.w / 2;
     squareRect.y = SCREEN_HEIGHT / 2 - squareRect.h / 2;
 
     // draw vertical lines
@@ -123,10 +94,9 @@ void init() {
         SDL_RenderFillRect(renderer, &squareRect);
     }
 
-    // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
-    squareRect.w = SCREEN_WIDTH; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
-    squareRect.h = TILE_BORDER_WIDTH; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
-                                  //
+    squareRect.w = SCREEN_WIDTH;
+    squareRect.h = TILE_BORDER_WIDTH;
+
     squareRect.x = SCREEN_WIDTH / 2 - squareRect.w / 2;
     // draw horizontal lines
     for (int i = 0; i < SCREEN_HEIGHT; i += TILE_HEIGHT) {
@@ -172,7 +142,7 @@ tile getClosestTile(int x, int y) {
     while ( closest_y < y ) {
         closest_y += TILE_HEIGHT;
     }
-    // subtract the TILE_WIDTH since we over shot it
+    // subtract the TILE_HEIGHT since we over shot it
     closest_y -= TILE_HEIGHT;
 
 
@@ -180,9 +150,6 @@ tile getClosestTile(int x, int y) {
     closest.y = closest_y;
     closest.xIndex = closest_x / TILE_WIDTH;
     closest.yIndex = closest_y / TILE_HEIGHT;
-    // printf("Closest x index: %d\n\n", closest.xIndex);
-
-    // printf("Closest y index: %d\n\n", closest.yIndex);
 
     return closest;
 }
@@ -200,11 +167,11 @@ void colorTile(int x, int y, int r, int g, int b) {
     SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 
     // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
-    squareRect.w = TILE_WIDTH - TILE_BORDER_WIDTH; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
-    squareRect.h = TILE_HEIGHT - TILE_BORDER_WIDTH; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;
+    squareRect.w = TILE_WIDTH - TILE_BORDER_WIDTH;
+    squareRect.h = TILE_HEIGHT - TILE_BORDER_WIDTH;
 
-    squareRect.y = closestTile.y; // SCREEN_HEIGHT / 2 - squareRect.h / 2;
-    squareRect.x = closestTile.x; // SCREEN_WIDTH / 2 - squareRect.w / 2;
+    squareRect.y = closestTile.y;
+    squareRect.x = closestTile.x;
 
     // Draw it
     SDL_RenderFillRect(renderer, &squareRect);
@@ -237,11 +204,9 @@ int main() {
 
         switch (event.type) {
             case SDL_QUIT:
-                std::cout << "quit: " << event.type << std::endl;
                 should_quit = 1;
                 break;
             case SDL_KEYDOWN:
-                std::cout << "keydown: " << event.type << std::endl;
                 if (event.key.keysym.sym == SDLK_q) {
                     // If the 'q' button is pressed, quit the application
                     should_quit = 1;
@@ -257,33 +222,16 @@ int main() {
                 SDL_GetMouseState(&mouse_x, &mouse_y);
 
                 if( event.button.button == SDL_BUTTON_LEFT ) {
-                    // If the 'q' button is pressed, quit the application
-                    // std::cout << "left!" << std::endl;
-                    // continue;
+                    // color the tile if it is the left mouse button
                     colorTile(mouse_x, mouse_y, 0, 0, 255);
                     continue;
                 }
                 if( event.button.button == SDL_BUTTON_RIGHT ) {
+                    // clear the tile if it is the right mouse button
                     colorTile(mouse_x, mouse_y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
                     continue;
-                    // If the 'q' button is pressed, quit the application
-                    // std::cout << "right!" << std::endl;
-                    // continue;
                 }
         }
-
-        // Change the color from blue to red over time
-        // draw(red_iter, 0, blue_iter);
-        // red_iter++;
-        // blue_iter--;
-        // red_iter %= 255;
-        // if (blue_iter == 0) {
-        //     blue_iter = 255;
-        // }
-        // init();
-
-        // Sleep for half a second
-        // usleep(0.5 * 100000);
     }
     destroy_window();
 

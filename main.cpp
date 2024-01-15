@@ -37,6 +37,8 @@ SDL_Window* window;
 
 SDL_Renderer* renderer;
 
+#define MENU_HEIGHT 20
+
 void init_display() {
     // change the display dimensions if there is any extra space on the
     // bottom or right of the window
@@ -46,7 +48,7 @@ void init_display() {
         SCREEN_WIDTH = calculated_width;
     }
 
-    int calculated_height = (NUM_SQUARES * TILE_HEIGHT) + TILE_BORDER_WIDTH;
+    int calculated_height = (NUM_SQUARES * TILE_HEIGHT) + TILE_BORDER_WIDTH + MENU_HEIGHT;
 
     if (calculated_height != SCREEN_HEIGHT) {
         SCREEN_HEIGHT = calculated_height;
@@ -68,7 +70,7 @@ void init_display() {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 }
 
-void init() {
+void draw_grid() {
     // Declare rect of square
     SDL_Rect squareRect;
 
@@ -84,7 +86,7 @@ void init() {
     squareRect.w = TILE_BORDER_WIDTH;
     squareRect.h = SCREEN_HEIGHT;
 
-    squareRect.y = SCREEN_HEIGHT / 2 - squareRect.h / 2;
+    squareRect.y = MENU_HEIGHT; // SCREEN_HEIGHT / 2 - squareRect.h / 2;
 
     // draw vertical lines
     for (int i = 0; i < SCREEN_WIDTH; i += TILE_WIDTH) {
@@ -99,7 +101,7 @@ void init() {
 
     squareRect.x = SCREEN_WIDTH / 2 - squareRect.w / 2;
     // draw horizontal lines
-    for (int i = 0; i < SCREEN_HEIGHT; i += TILE_HEIGHT) {
+    for (int i = MENU_HEIGHT; i < SCREEN_HEIGHT; i += TILE_HEIGHT) {
         squareRect.y = i;
 
         // Draw it
@@ -138,7 +140,7 @@ tile getClosestTile(int x, int y) {
     // subtract the TILE_WIDTH since we over shot it
     closest_x -= TILE_WIDTH;
 
-    int closest_y = TILE_BORDER_WIDTH;
+    int closest_y = TILE_BORDER_WIDTH + MENU_HEIGHT;
     while ( closest_y < y ) {
         closest_y += TILE_HEIGHT;
     }
@@ -197,7 +199,7 @@ int main() {
     int red_iter = 0;
     int blue_iter = 255;
 
-    init();
+    draw_grid();
 
     while(!should_quit) {
         SDL_PollEvent(&event);
@@ -214,15 +216,20 @@ int main() {
                 }
                 if (event.key.keysym.sym == SDLK_c) {
                     // clear the screen
-                    init();
+                    draw_grid();
                     continue;
                 }
             case SDL_MOUSEBUTTONDOWN:
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
 
+                // color the tile if it is the left mouse button
                 if( event.button.button == SDL_BUTTON_LEFT ) {
-                    // color the tile if it is the left mouse button
+                    // don't try to color if it is in the menu bar area
+                    if (mouse_y < MENU_HEIGHT + TILE_BORDER_WIDTH + 1) {
+                        // +1 comes from adding a little padding just in case
+                        continue;
+                    }
                     colorTile(mouse_x, mouse_y, 0, 0, 255);
                     continue;
                 }

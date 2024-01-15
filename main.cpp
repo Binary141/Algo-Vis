@@ -18,7 +18,13 @@
 #define TILE_BORDER_WIDTH 3
 
 #define NUM_SQUARES 10
+const int BACKGROUND_R = 255;
+const int BACKGROUND_G = 255;
+const int BACKGROUND_B = 255;
 
+const int BORDER_R = 0;
+const int BORDER_G = 0;
+const int BORDER_B = 0;
 int TILE_WIDTH = SCREEN_WIDTH / NUM_SQUARES;
 int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
 
@@ -76,13 +82,13 @@ void init() {
     SDL_Rect squareRect;
 
     // Initialize renderer color white for the background
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
 
     // Clear screen
     SDL_RenderClear(renderer);
 
     // Actually draw the desired color
-    SDL_SetRenderDrawColor(renderer, 125, 125, 125, 255);
+    SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
 
     // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
     squareRect.w = TILE_BORDER_WIDTH; // MIN(SCREEN_WIDTH, SCREEN_HEIGHT) / 2;

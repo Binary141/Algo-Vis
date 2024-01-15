@@ -204,12 +204,14 @@ int main() {
                     should_quit = 1;
                     break;
                 }
+                if (event.key.keysym.sym == SDLK_c) {
+                    // clear the screen
+                    init();
+                    continue;
+                }
             case SDL_MOUSEBUTTONDOWN:
-                std::cout << "mouse: " << event.type << std::endl;
-                std::cout << event.type << std::endl;
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                std::cout << "x: " << mouse_x << "y: " << mouse_y << std::endl;
                 colorTile(mouse_x, mouse_y, 0, 0, 255);
         }
 

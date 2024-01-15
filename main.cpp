@@ -255,7 +255,21 @@ int main() {
             case SDL_MOUSEBUTTONDOWN:
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                colorTile(mouse_x, mouse_y, 0, 0, 255);
+
+                if( event.button.button == SDL_BUTTON_LEFT ) {
+                    // If the 'q' button is pressed, quit the application
+                    // std::cout << "left!" << std::endl;
+                    // continue;
+                    colorTile(mouse_x, mouse_y, 0, 0, 255);
+                    continue;
+                }
+                if( event.button.button == SDL_BUTTON_RIGHT ) {
+                    colorTile(mouse_x, mouse_y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                    continue;
+                    // If the 'q' button is pressed, quit the application
+                    // std::cout << "right!" << std::endl;
+                    // continue;
+                }
         }
 
         // Change the color from blue to red over time

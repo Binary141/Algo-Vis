@@ -201,9 +201,7 @@ int main() {
 
     draw_grid();
 
-    while(!should_quit) {
-        SDL_PollEvent(&event);
-
+    while (SDL_WaitEvent(&event) && !should_quit) {
         switch (event.type) {
             case SDL_QUIT:
                 should_quit = 1;
@@ -217,6 +215,26 @@ int main() {
                 if (event.key.keysym.sym == SDLK_c) {
                     // clear the screen
                     draw_grid();
+                    continue;
+                }
+                if (event.key.keysym.sym == SDLK_s) {
+                    int done = 0;
+                    while (SDL_WaitEvent(&event) && done == 0) {
+                        switch (event.type) {
+                            case SDL_MOUSEMOTION:
+                                continue;
+                            case SDL_MOUSEBUTTONDOWN:
+                                int mouse_x, mouse_y;
+                                SDL_GetMouseState(&mouse_x, &mouse_y);
+
+                                colorTile(mouse_x, mouse_y, 0, 255, 0);
+                                done = 1;
+                                break;
+                            case SDL_KEYDOWN:
+                                done = 1;
+                                break;
+                        }
+                    }
                     continue;
                 }
             case SDL_MOUSEBUTTONDOWN:

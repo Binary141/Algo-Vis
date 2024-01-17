@@ -68,10 +68,13 @@ int main() {
                             case SDL_MOUSEBUTTONDOWN:
                                 int mouse_x, mouse_y;
                                 SDL_GetMouseState(&mouse_x, &mouse_y);
+                                if (mouse_y < MENU_HEIGHT) {
+                                    done = 1;
+                                    break;
+                                }
                                 closest = getClosestTile(mouse_x, mouse_y);
 
                                 if (search1.start == -1) {
-                                    std::cout << "Start node was created!" << std::endl;
                                     search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
                                     search1.startx = closest.x;
                                     search1.starty = closest.y;
@@ -108,15 +111,22 @@ int main() {
                             case SDL_MOUSEBUTTONDOWN:
                                 int mouse_x, mouse_y;
                                 SDL_GetMouseState(&mouse_x, &mouse_y);
+
+                                if (mouse_y < MENU_HEIGHT) {
+                                    done = 1;
+                                    break;
+                                }
+
                                 closest = getClosestTile(mouse_x, mouse_y);
 
                                 if (search1.goal == -1) {
-                                    std::cout << "Goal node was created!" << std::endl;
+                                    // set new goal if it hasn't been set already
                                     search1.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
                                     search1.goalx = closest.x;
                                     search1.goaly = closest.y;
                                     colorTile(disp.renderer, search1.goalx, search1.goaly, 255, 0, 0);
                                 } else {
+                                    // a goal has been set before. Clear out the old goal and create the new one
                                     colorTile(disp.renderer, search1.goalx, search1.goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
                                     search1.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));

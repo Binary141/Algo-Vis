@@ -4,6 +4,8 @@
 #define NUM_SQUARES 10
 #define MENU_HEIGHT 50
 
+// These may change in init_display
+// Maybe look into seeing if these could just be left alone
 #define SCREEN_WIDTH 1080
 #define SCREEN_HEIGHT 720
 

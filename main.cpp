@@ -255,8 +255,26 @@ int main() {
                                 SDL_GetMouseState(&mouse_x, &mouse_y);
                                 closest = getClosestTile(mouse_x, mouse_y);
 
-                                usleep(100000000);
-                                colorTile(closest.x, closest.y, 0, 255, 0);
+                                if (search1.start == -1) {
+                                    std::cout << "Start node was created!" << std::endl;
+                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                                    search1.startx = closest.x;
+                                    search1.starty = closest.y;
+                                    colorTile(search1.startx, search1.starty, 0, 255, 0);
+                                } else {
+                                    // int tmp = search1.start;
+                                    // colorTileByIndex(tmp, 125, 125, 125);
+                                    colorTile(search1.startx, search1.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                                    search1.startx = closest.x;
+                                    search1.starty = closest.y;
+
+                                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                                    usleep(5000);
+                                    colorTile(search1.startx, search1.starty, 0, 255, 0);
+                                }
+
                                 done = 1;
                                 break;
                             case SDL_KEYDOWN:
@@ -279,24 +297,22 @@ int main() {
                                 SDL_GetMouseState(&mouse_x, &mouse_y);
                                 closest = getClosestTile(mouse_x, mouse_y);
 
-                                if (search1.start == -1) {
+                                if (search1.goal == -1) {
                                     std::cout << "Goal node was created!" << std::endl;
-                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
-                                    search1.startx = closest.x;
-                                    search1.starty = closest.y;
-                                    colorTile(search1.startx, search1.starty, 255, 0, 0);
+                                    search1.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                                    search1.goalx = closest.x;
+                                    search1.goaly = closest.y;
+                                    colorTile(search1.goalx, search1.goaly, 255, 0, 0);
                                 } else {
-                                    // int tmp = search1.start;
-                                    // colorTileByIndex(tmp, 125, 125, 125);
-                                    colorTile(search1.startx, search1.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                                    colorTile(search1.goalx, search1.goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
-                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
-                                    search1.startx = closest.x;
-                                    search1.starty = closest.y;
+                                    search1.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                                    search1.goalx = closest.x;
+                                    search1.goaly = closest.y;
 
                                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?
                                     usleep(5000);
-                                    colorTile(search1.startx, search1.starty, 255, 0, 0);
+                                    colorTile(search1.goalx, search1.goaly, 255, 0, 0);
                                 }
 
                                 done = 1;

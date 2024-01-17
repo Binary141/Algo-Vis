@@ -17,15 +17,17 @@
 
 #define TILE_BORDER_WIDTH 3
 
-#define NUM_SQUARES 3
+#define NUM_SQUARES 10
 
-int SCREEN_WIDTH = 1280;
+int SCREEN_WIDTH = 1080;
 int SCREEN_HEIGHT = 720;
 
+// (255,255,255) is white
 const int BACKGROUND_R = 255;
 const int BACKGROUND_G = 255;
 const int BACKGROUND_B = 255;
 
+// (0,0,0) is black
 const int BORDER_R = 0;
 const int BORDER_G = 0;
 const int BORDER_B = 0;
@@ -130,6 +132,15 @@ struct tile {
     int yIndex;
 };
 
+struct search {
+    int start;
+    int startx;
+    int starty;
+    int goal;
+    int goalx;
+    int goaly;
+};
+
 tile getClosestTile(int x, int y) {
     tile closest;
 
@@ -157,8 +168,6 @@ tile getClosestTile(int x, int y) {
 }
 
 void colorTile(int x, int y, int r, int g, int b) {
-    tile closestTile = getClosestTile(x,y);
-
     // Declare rect of square
     SDL_Rect squareRect;
 
@@ -172,14 +181,22 @@ void colorTile(int x, int y, int r, int g, int b) {
     squareRect.w = TILE_WIDTH - TILE_BORDER_WIDTH;
     squareRect.h = TILE_HEIGHT - TILE_BORDER_WIDTH;
 
-    squareRect.y = closestTile.y;
-    squareRect.x = closestTile.x;
+    squareRect.y = y; // closestTile.y;
+    squareRect.x = x; // closestTile.x;
 
     // Draw it
     SDL_RenderFillRect(renderer, &squareRect);
 
     // Update screen
     SDL_RenderPresent(renderer);
+}
+
+void colorTileByIndex(int index, int r, int g, int b) {
+    int y = index / NUM_SQUARES;
+    int x = index - y;
+    // printf("x: %d\n", x);
+    // printf("y: %d\n", y);
+    colorTile(((x * TILE_WIDTH) + (x * TILE_BORDER_WIDTH)), ((y * TILE_WIDTH) + (y * TILE_BORDER_WIDTH)), r, g, b);
 }
 
 int main() {
@@ -201,6 +218,15 @@ int main() {
 
     draw_grid();
 
+    search search1;
+    search1.start = -1;
+    search1.startx = -1;
+    search1.starty = -1;
+    search1.goal = -1;
+    search1.goalx = -1;
+    search1.goaly = -1;
+
+    tile closest;
     while (SDL_WaitEvent(&event) && !should_quit) {
         switch (event.type) {
             case SDL_QUIT:
@@ -218,6 +244,7 @@ int main() {
                     continue;
                 }
                 if (event.key.keysym.sym == SDLK_s) {
+                    // select the start state
                     int done = 0;
                     while (SDL_WaitEvent(&event) && done == 0) {
                         switch (event.type) {
@@ -226,8 +253,52 @@ int main() {
                             case SDL_MOUSEBUTTONDOWN:
                                 int mouse_x, mouse_y;
                                 SDL_GetMouseState(&mouse_x, &mouse_y);
+                                closest = getClosestTile(mouse_x, mouse_y);
 
-                                colorTile(mouse_x, mouse_y, 0, 255, 0);
+                                usleep(100000000);
+                                colorTile(closest.x, closest.y, 0, 255, 0);
+                                done = 1;
+                                break;
+                            case SDL_KEYDOWN:
+                                done = 1;
+                                break;
+                        }
+                    }
+                    continue;
+                }
+
+                if (event.key.keysym.sym == SDLK_g) {
+                    // select the goal state
+                    int done = 0;
+                    while (SDL_WaitEvent(&event) && done == 0) {
+                        switch (event.type) {
+                            case SDL_MOUSEMOTION:
+                                continue;
+                            case SDL_MOUSEBUTTONDOWN:
+                                int mouse_x, mouse_y;
+                                SDL_GetMouseState(&mouse_x, &mouse_y);
+                                closest = getClosestTile(mouse_x, mouse_y);
+
+                                if (search1.start == -1) {
+                                    std::cout << "Goal node was created!" << std::endl;
+                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                                    search1.startx = closest.x;
+                                    search1.starty = closest.y;
+                                    colorTile(search1.startx, search1.starty, 255, 0, 0);
+                                } else {
+                                    // int tmp = search1.start;
+                                    // colorTileByIndex(tmp, 125, 125, 125);
+                                    colorTile(search1.startx, search1.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                                    search1.startx = closest.x;
+                                    search1.starty = closest.y;
+
+                                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                                    usleep(5000);
+                                    colorTile(search1.startx, search1.starty, 255, 0, 0);
+                                }
+
                                 done = 1;
                                 break;
                             case SDL_KEYDOWN:
@@ -238,8 +309,10 @@ int main() {
                     continue;
                 }
             case SDL_MOUSEBUTTONDOWN:
+                // generate a wall
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
+                closest = getClosestTile(mouse_x, mouse_y);
 
                 // color the tile if it is the left mouse button
                 if( event.button.button == SDL_BUTTON_LEFT ) {
@@ -248,12 +321,14 @@ int main() {
                         // +1 comes from adding a little padding just in case
                         continue;
                     }
-                    colorTile(mouse_x, mouse_y, 0, 0, 255);
+                    closest = getClosestTile(mouse_x, mouse_y);
+
+                    colorTile(closest.x, closest.y, 0, 0, 255);
                     continue;
                 }
                 if( event.button.button == SDL_BUTTON_RIGHT ) {
                     // clear the tile if it is the right mouse button
-                    colorTile(mouse_x, mouse_y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                    colorTile(closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
                     continue;
                 }
         }

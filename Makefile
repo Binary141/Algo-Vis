@@ -1,10 +1,18 @@
 target: run
 
-build:
-	g++ main.cpp -o out -lSDL2
+build: display.o main.o
+	g++ -o algo-vis main.o display.o -lSDL2
+
+display.o:
+	g++ -c display.cpp
+
+main.o:
+	g++ -c main.cpp
 
 run: build
-	./out
+	./algo-vis
 
 clean:
-	rm out
+	rm -f algo-vis
+	rm -f *.o
+	rm -f out

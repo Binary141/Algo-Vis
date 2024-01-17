@@ -193,10 +193,10 @@ void colorTile(int x, int y, int r, int g, int b) {
 
 void colorTileByIndex(int index, int r, int g, int b) {
     int y = index / NUM_SQUARES;
-    int x = index - y;
+    int x = index % NUM_SQUARES;
     // printf("x: %d\n", x);
     // printf("y: %d\n", y);
-    colorTile(((x * TILE_WIDTH) + (x * TILE_BORDER_WIDTH)), ((y * TILE_WIDTH) + (y * TILE_BORDER_WIDTH)), r, g, b);
+    colorTile(((x * TILE_WIDTH) + TILE_BORDER_WIDTH), (((y * TILE_HEIGHT) + MENU_HEIGHT + TILE_BORDER_WIDTH)), r, g, b);
 }
 
 int main() {
@@ -262,8 +262,6 @@ int main() {
                                     search1.starty = closest.y;
                                     colorTile(search1.startx, search1.starty, 0, 255, 0);
                                 } else {
-                                    // int tmp = search1.start;
-                                    // colorTileByIndex(tmp, 125, 125, 125);
                                     colorTile(search1.startx, search1.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
                                     search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
@@ -272,7 +270,7 @@ int main() {
 
                                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?
                                     usleep(5000);
-                                    colorTile(search1.startx, search1.starty, 0, 255, 0);
+                                    colorTileByIndex(search1.start, 0, 255, 0);
                                 }
 
                                 done = 1;
@@ -312,7 +310,7 @@ int main() {
 
                                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?
                                     usleep(5000);
-                                    colorTile(search1.goalx, search1.goaly, 255, 0, 0);
+                                    colorTileByIndex(search1.goal, 255, 0, 0);
                                 }
 
                                 done = 1;

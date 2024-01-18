@@ -25,12 +25,7 @@ int main() {
     backgroundColor.b = 125;
 
     drawStartButton(disp.renderer, textColor, backgroundColor);
-    // draw_goal_button(disp.renderer);
-
-    // settings dispSettings = getDisplaySettings();
-
-    // char goal[] = "GOAL";
-    // draw_text(disp.renderer, goal, dispSettings.goalButtonX, dispSettings.goalButtonY, TILE_WIDTH, MENU_HEIGHT, 0, 0, 0);
+    drawGoalButton(disp.renderer, textColor, backgroundColor);
 
     search search1;
     search1.start = -1;
@@ -54,12 +49,6 @@ int main() {
                     // If the 'q' button is pressed, quit the application
                     should_quit = 1;
                     break;
-                }
-                if (event.key.keysym.sym == SDLK_t) {
-                    // clear the screen
-                    // char text[] = "Start";
-                    // draw_text(disp.renderer, text, 0, 0, TILE_WIDTH, MENU_HEIGHT, 255, 255, 0);
-                    continue;
                 }
                 if (event.key.keysym.sym == SDLK_c) {
                     // clear the screen
@@ -90,12 +79,23 @@ int main() {
                 }
 
                 if (event.key.keysym.sym == SDLK_g) {
+                    // color the button so the user knows
+                    backgroundColor.r = 200;
+                    backgroundColor.g = 100;
+                    backgroundColor.b = 100;
+                    drawGoalButton(disp.renderer, textColor, backgroundColor);
+
                     search res;
 
                     res = selectGoalState(disp.renderer, search1);
                     search1.goal = res.goal;
                     search1.goalx = res.goalx;
                     search1.goaly = res.goaly;
+
+                    backgroundColor.r = 125;
+                    backgroundColor.g = 125;
+                    backgroundColor.b = 125;
+                    drawGoalButton(disp.renderer, textColor, backgroundColor);
 
                     continue;
                 }

@@ -29,7 +29,7 @@ const int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
 #define START_COLOR color{0, 255, 0}
 #define GOAL_COLOR color{255, 0, 0}
 
-#define FONT_SIZE 20
+#define FONT_SIZE 100
 
 struct tile {
     int x;
@@ -56,9 +56,9 @@ struct settings {
 };
 
 struct color {
-    int r;
-    int g;
-    int b;
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
 };
 
 settings getDisplaySettings();

@@ -316,9 +316,9 @@ search selectStartState(SDL_Renderer* renderer, search s) {
 void drawStartButton(SDL_Renderer* renderer, color textColor, color backgroundColor) {
     char start[] = "START";
     draw_text(renderer, start, setting.startButtonX, setting.startButtonY, TILE_WIDTH, MENU_HEIGHT, textColor, backgroundColor);
-    printf("OK");
 }
 
-void drawGoalButton(color textColor, color backgroundColor) {
-
+void drawGoalButton(SDL_Renderer* renderer, color textColor, color backgroundColor) {
+    char goal[] = "GOAL";
+    draw_text(renderer, goal, setting.goalButtonX, setting.goalButtonY, TILE_WIDTH, MENU_HEIGHT, textColor, backgroundColor);
 }

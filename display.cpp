@@ -1,5 +1,6 @@
 #include "display.h"
 #include <SDL2/SDL.h>
+#include <iostream>
 
 settings setting;
 
@@ -37,10 +38,28 @@ screen init_display() {
                                           SDL_WINDOWPOS_UNDEFINED,
                                           setting.width, setting.height,
                                           SDL_WINDOW_SHOWN);
-    // Create renderer
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     ret.window = window;
-    ret.renderer = renderer;
+    if(!window) {
+        std::cout << "Failed to create window\n";
+        std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+        exit(1);
+    }
+
+    // Create renderer
+    ret.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if(!ret.renderer) {
+        std::cout << "Failed to get the renderer from the window\n";
+        std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+        exit(1);
+    }
+
+    ret.surface = SDL_GetWindowSurface(window);
+    if(!ret.surface) {
+        std::cout << "Failed to get the surface from the window\n";
+        std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+        exit(1);
+    }
+
     return ret;
 }
 

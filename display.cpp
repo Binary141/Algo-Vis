@@ -1,6 +1,7 @@
 #include "display.h"
 #include <SDL2/SDL.h>
 #include <iostream>
+#include <SDL2/SDL_ttf.h>
 
 settings setting;
 
@@ -60,6 +61,8 @@ screen init_display() {
         exit(1);
     }
 
+    TTF_Init();
+
     return ret;
 }
 
@@ -100,6 +103,33 @@ void draw_grid(SDL_Renderer* renderer) {
         // Draw it
         SDL_RenderFillRect(renderer, &squareRect);
     }
+
+    // Update screen
+    SDL_RenderPresent(renderer);
+}
+
+void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int height, unsigned char r, unsigned char g, unsigned char b) {
+    TTF_Font* Sans = TTF_OpenFont("OpenSans-Regular.ttf", 24);
+    if (!Sans) {
+        std::cout << "Error opening font!" << std::endl;
+        exit(1);
+    }
+
+    SDL_Color textColor = {r, g, b};
+
+    SDL_Surface* surfaceMessage =
+        TTF_RenderText_Solid(Sans, text, textColor);
+
+    // now you can convert it into a texture
+    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+
+    SDL_Rect Message_rect; //create a rect
+    Message_rect.x = x;  //controls the rect's x coordinate
+    Message_rect.y = y; // controls the rect's y coordinte
+    Message_rect.w = width; // controls the width of the rect
+    Message_rect.h = height; // controls the height of the rect
+
+    SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 
     // Update screen
     SDL_RenderPresent(renderer);

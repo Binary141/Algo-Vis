@@ -45,6 +45,7 @@ struct settings {
 settings getDisplaySettings();
 screen init_display();
 void draw_grid(SDL_Renderer*);
+void draw_text(SDL_Renderer*, char*, int, int, int, int, unsigned char, unsigned char, unsigned char);
 void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);
 void colorTile(SDL_Renderer* , int, int, int, int, int);

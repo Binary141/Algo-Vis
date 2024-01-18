@@ -1,4 +1,8 @@
+#ifndef DISPLAY_H
+#define DISPLAY_H
+
 #include <SDL2/SDL.h>
+#include "search.h"
 
 #define TILE_BORDER_WIDTH 3
 #define NUM_SQUARES 10
@@ -59,3 +63,7 @@ void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);
 void colorTile(SDL_Renderer* , int, int, int, int, int);
 void colorTileByIndex(SDL_Renderer* , int, int, int, int);
+search selectStartState(SDL_Renderer*, search);
+search selectGoalState(SDL_Renderer*, search);
+
+#endif

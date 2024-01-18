@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
+#include <unistd.h> // usleep()
 
 settings setting;
 
@@ -200,4 +201,98 @@ void colorTileByIndex(SDL_Renderer* renderer, int index, int r, int g, int b) {
     int y = index / NUM_SQUARES;
     int x = index % NUM_SQUARES;
     colorTile(renderer, ((x * TILE_WIDTH) + TILE_BORDER_WIDTH), (((y * TILE_HEIGHT) + MENU_HEIGHT + TILE_BORDER_WIDTH)), r, g, b);
+}
+
+search selectGoalState(SDL_Renderer* renderer, search s) {
+    SDL_Event event;
+    search ret = s;
+    tile closest;
+
+    while (SDL_WaitEvent(&event)) {
+        switch (event.type) {
+            case SDL_MOUSEMOTION:
+                // used for mouse movement
+                continue;
+            case SDL_MOUSEBUTTONDOWN:
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                if (mouse_y < MENU_HEIGHT) {
+                    // don't do anything if it is in the menu bar. That will be handled elsewhere
+                    return ret;
+                }
+
+                closest = getClosestTile(mouse_x, mouse_y);
+                ret.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+
+                if (s.goal == -1) {
+                    ret.goalx = closest.x;
+                    ret.goaly = closest.y;
+                    colorTile(renderer, ret.goalx, ret.goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                } else {
+                    // reset the original goal state tile to be the background color
+                    colorTile(renderer, s.goalx, s.goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                    ret.goalx = closest.x;
+                    ret.goaly = closest.y;
+
+                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                    usleep(5000);
+                    // Color the new goal state
+                    colorTileByIndex(renderer, ret.goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                }
+
+                return ret;
+            case SDL_KEYDOWN:
+                // if the user clicks away or anything, don't do anything
+                return ret;
+        }
+    }
+    return ret;
+}
+
+search selectStartState(SDL_Renderer* renderer, search s) {
+    SDL_Event event;
+    search ret = s;
+    tile closest;
+
+    while (SDL_WaitEvent(&event)) {
+        switch (event.type) {
+            case SDL_MOUSEMOTION:
+                // used for mouse movement
+                continue;
+            case SDL_MOUSEBUTTONDOWN:
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                if (mouse_y < MENU_HEIGHT) {
+                    // don't do anything if it is in the menu bar. That will be handled elsewhere
+                    return ret;
+                }
+
+                closest = getClosestTile(mouse_x, mouse_y);
+                ret.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+
+                if (s.start == -1) {
+                    ret.startx = closest.x;
+                    ret.starty = closest.y;
+                    colorTile(renderer, ret.startx, ret.starty, START_COLOR.r, START_COLOR.g, START_COLOR.b);
+                } else {
+                    // reset the original start state tile to be the background color
+                    colorTile(renderer, s.startx, s.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                    ret.startx = closest.x;
+                    ret.starty = closest.y;
+
+                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                    usleep(5000);
+                    // Color the new start state
+                    colorTileByIndex(renderer, ret.start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
+                }
+
+                return ret;
+            case SDL_KEYDOWN:
+                // if the user clicks away or anything, don't do anything
+                return ret;
+        }
+    }
+    return ret;
 }

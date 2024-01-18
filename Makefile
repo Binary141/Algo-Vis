@@ -1,7 +1,7 @@
 target: run
 
 build: display.o main.o
-	g++ -o algo-vis main.o display.o -lSDL2
+	g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
 
 display.o:
 	g++ -c display.cpp

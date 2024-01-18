@@ -15,6 +15,98 @@ struct search {
 };
 
 
+search selectGoalState(SDL_Renderer* renderer, search s) {
+    SDL_Event event;
+    search ret = s;
+    tile closest;
+
+    while (SDL_WaitEvent(&event)) {
+        switch (event.type) {
+            case SDL_MOUSEMOTION:
+                // used for mouse movement
+                continue;
+            case SDL_MOUSEBUTTONDOWN:
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                if (mouse_y < MENU_HEIGHT) {
+                    // don't do anything if it is in the menu bar. That will be handled elsewhere
+                    return ret;
+                }
+
+                closest = getClosestTile(mouse_x, mouse_y);
+                ret.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+
+                if (s.goal == -1) {
+                    ret.goalx = closest.x;
+                    ret.goaly = closest.y;
+                    colorTile(renderer, ret.goalx, ret.goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                } else {
+                    // reset the original goal state tile to be the background color
+                    colorTile(renderer, s.goalx, s.goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                    ret.goalx = closest.x;
+                    ret.goaly = closest.y;
+
+                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                    usleep(5000);
+                    // Color the new goal state
+                    colorTileByIndex(renderer, ret.goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                }
+
+                return ret;
+            case SDL_KEYDOWN:
+                // if the user clicks away or anything, don't do anything
+                return ret;
+        }
+    }
+    return ret;
+}
+search selectStartState(SDL_Renderer* renderer, search s) {
+    SDL_Event event;
+    search ret = s;
+    tile closest;
+
+    while (SDL_WaitEvent(&event)) {
+        switch (event.type) {
+            case SDL_MOUSEMOTION:
+                // used for mouse movement
+                continue;
+            case SDL_MOUSEBUTTONDOWN:
+                int mouse_x, mouse_y;
+                SDL_GetMouseState(&mouse_x, &mouse_y);
+                if (mouse_y < MENU_HEIGHT) {
+                    // don't do anything if it is in the menu bar. That will be handled elsewhere
+                    return ret;
+                }
+
+                closest = getClosestTile(mouse_x, mouse_y);
+                ret.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+
+                if (s.start == -1) {
+                    ret.startx = closest.x;
+                    ret.starty = closest.y;
+                    colorTile(renderer, ret.startx, ret.starty, START_COLOR.r, START_COLOR.g, START_COLOR.b);
+                } else {
+                    // reset the original start state tile to be the background color
+                    colorTile(renderer, s.startx, s.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                    ret.startx = closest.x;
+                    ret.starty = closest.y;
+
+                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                    usleep(5000);
+                    // Color the new start state
+                    colorTileByIndex(renderer, ret.start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
+                }
+
+                return ret;
+            case SDL_KEYDOWN:
+                // if the user clicks away or anything, don't do anything
+                return ret;
+        }
+    }
+    return ret;
+}
 
 int main() {
     screen disp = init_display();
@@ -63,91 +155,23 @@ int main() {
                 }
                 if (event.key.keysym.sym == SDLK_s) {
                     // select the start state
-                    int done = 0;
-                    while (SDL_WaitEvent(&event) && done == 0) {
-                        switch (event.type) {
-                            case SDL_MOUSEMOTION:
-                                continue;
-                            case SDL_MOUSEBUTTONDOWN:
-                                int mouse_x, mouse_y;
-                                SDL_GetMouseState(&mouse_x, &mouse_y);
-                                if (mouse_y < MENU_HEIGHT) {
-                                    done = 1;
-                                    break;
-                                }
-                                closest = getClosestTile(mouse_x, mouse_y);
+                    search res;
+                    res = selectStartState(disp.renderer, search1);
+                    search1.start = res.start;
+                    search1.startx = res.startx;
+                    search1.starty = res.starty;
 
-                                if (search1.start == -1) {
-                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
-                                    search1.startx = closest.x;
-                                    search1.starty = closest.y;
-                                    colorTile(disp.renderer, search1.startx, search1.starty, 0, 255, 0);
-                                } else {
-                                    colorTile(disp.renderer, search1.startx, search1.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                                    search1.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
-                                    search1.startx = closest.x;
-                                    search1.starty = closest.y;
-
-                                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                                    usleep(5000);
-                                    colorTileByIndex(disp.renderer, search1.start, 0, 255, 0);
-                                }
-
-                                done = 1;
-                                break;
-                            case SDL_KEYDOWN:
-                                done = 1;
-                                break;
-                        }
-                    }
                     continue;
                 }
 
                 if (event.key.keysym.sym == SDLK_g) {
-                    // select the goal state
-                    int done = 0;
-                    while (SDL_WaitEvent(&event) && done == 0) {
-                        switch (event.type) {
-                            case SDL_MOUSEMOTION:
-                                continue;
-                            case SDL_MOUSEBUTTONDOWN:
-                                int mouse_x, mouse_y;
-                                SDL_GetMouseState(&mouse_x, &mouse_y);
+                    search res;
 
-                                if (mouse_y < MENU_HEIGHT) {
-                                    done = 1;
-                                    break;
-                                }
+                    res = selectGoalState(disp.renderer, search1);
+                    search1.goal = res.goal;
+                    search1.goalx = res.goalx;
+                    search1.goaly = res.goaly;
 
-                                closest = getClosestTile(mouse_x, mouse_y);
-
-                                if (search1.goal == -1) {
-                                    // set new goal if it hasn't been set already
-                                    search1.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
-                                    search1.goalx = closest.x;
-                                    search1.goaly = closest.y;
-                                    colorTile(disp.renderer, search1.goalx, search1.goaly, 255, 0, 0);
-                                } else {
-                                    // a goal has been set before. Clear out the old goal and create the new one
-                                    colorTile(disp.renderer, search1.goalx, search1.goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                                    search1.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
-                                    search1.goalx = closest.x;
-                                    search1.goaly = closest.y;
-
-                                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                                    usleep(5000);
-                                    colorTileByIndex(disp.renderer, search1.goal, 255, 0, 0);
-                                }
-
-                                done = 1;
-                                break;
-                            case SDL_KEYDOWN:
-                                done = 1;
-                                break;
-                        }
-                    }
                     continue;
                 }
             case SDL_MOUSEBUTTONDOWN:

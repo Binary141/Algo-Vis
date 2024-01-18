@@ -29,6 +29,8 @@ const int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
 #define START_COLOR color{0, 255, 0}
 #define GOAL_COLOR color{255, 0, 0}
 
+#define FONT_SIZE 20
+
 struct tile {
     int x;
     int y;
@@ -47,6 +49,10 @@ struct settings {
     int height;
     int tileWidth;
     int tileHeight;
+    int startButtonX;
+    int startButtonY;
+    int goalButtonX;
+    int goalButtonY;
 };
 
 struct color {
@@ -58,12 +64,14 @@ struct color {
 settings getDisplaySettings();
 screen init_display();
 void draw_grid(SDL_Renderer*);
-void draw_text(SDL_Renderer*, char*, int, int, int, int, unsigned char, unsigned char, unsigned char);
+void draw_text(SDL_Renderer*, char*, int, int, int, int, color, color);
 void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);
 void colorTile(SDL_Renderer* , int, int, int, int, int);
 void colorTileByIndex(SDL_Renderer* , int, int, int, int);
 search selectStartState(SDL_Renderer*, search);
 search selectGoalState(SDL_Renderer*, search);
+void drawStartButton(SDL_Renderer*, color, color);
+void drawGoalButton(SDL_Renderer*, color, color);
 
 #endif

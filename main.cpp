@@ -14,6 +14,23 @@ int main() {
     int blue_iter = 255;
 
     draw_grid(disp.renderer);
+    color textColor;
+    textColor.r = 0;
+    textColor.g = 0;
+    textColor.b = 0;
+
+    color backgroundColor;
+    backgroundColor.r = 125;
+    backgroundColor.g = 125;
+    backgroundColor.b = 125;
+
+    drawStartButton(disp.renderer, textColor, backgroundColor);
+    // draw_goal_button(disp.renderer);
+
+    // settings dispSettings = getDisplaySettings();
+
+    // char goal[] = "GOAL";
+    // draw_text(disp.renderer, goal, dispSettings.goalButtonX, dispSettings.goalButtonY, TILE_WIDTH, MENU_HEIGHT, 0, 0, 0);
 
     search search1;
     search1.start = -1;
@@ -40,8 +57,8 @@ int main() {
                 }
                 if (event.key.keysym.sym == SDLK_t) {
                     // clear the screen
-                    char text[] = "Start";
-                    draw_text(disp.renderer, text, 0, 0, TILE_WIDTH, MENU_HEIGHT, 255, 255, 0);
+                    // char text[] = "Start";
+                    // draw_text(disp.renderer, text, 0, 0, TILE_WIDTH, MENU_HEIGHT, 255, 255, 0);
                     continue;
                 }
                 if (event.key.keysym.sym == SDLK_c) {
@@ -51,11 +68,23 @@ int main() {
                 }
                 if (event.key.keysym.sym == SDLK_s) {
                     // select the start state
+
+                    // color the button so the user knows
+                    backgroundColor.r = 100;
+                    backgroundColor.g = 200;
+                    backgroundColor.b = 100;
+                    drawStartButton(disp.renderer, textColor, backgroundColor);
+
                     search res;
                     res = selectStartState(disp.renderer, search1);
                     search1.start = res.start;
                     search1.startx = res.startx;
                     search1.starty = res.starty;
+
+                    backgroundColor.r = 125;
+                    backgroundColor.g = 125;
+                    backgroundColor.b = 125;
+                    drawStartButton(disp.renderer, textColor, backgroundColor);
 
                     continue;
                 }

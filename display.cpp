@@ -62,6 +62,12 @@ screen init_display() {
         exit(1);
     }
 
+    setting.startButtonX = TILE_WIDTH * (NUM_SQUARES - 1);
+    setting.startButtonY = 0;
+
+    setting.goalButtonX = TILE_WIDTH * (NUM_SQUARES - 2);
+    setting.goalButtonY = 0;
+
     TTF_Init();
 
     return ret;
@@ -109,17 +115,17 @@ void draw_grid(SDL_Renderer* renderer) {
     SDL_RenderPresent(renderer);
 }
 
-void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int height, unsigned char r, unsigned char g, unsigned char b) {
-    TTF_Font* Sans = TTF_OpenFont("OpenSans-Regular.ttf", 24);
+void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int height, color textColor, color backgroundColor) {
+    TTF_Font* Sans = TTF_OpenFont("OpenSans-Regular.ttf", FONT_SIZE);
     if (!Sans) {
         std::cout << "Error opening font!" << std::endl;
         exit(1);
     }
 
-    SDL_Color textColor = {r, g, b};
+    SDL_Color textColorSDL = {textColor.r, textColor.g, textColor.b};
 
     SDL_Surface* surfaceMessage =
-        TTF_RenderText_Solid(Sans, text, textColor);
+        TTF_RenderText_Solid(Sans, text, textColorSDL);
 
     // now you can convert it into a texture
     SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
@@ -129,6 +135,16 @@ void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int 
     Message_rect.y = y; // controls the rect's y coordinte
     Message_rect.w = width; // controls the width of the rect
     Message_rect.h = height; // controls the height of the rect
+
+
+    // draw the background of the start button
+    SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, 255);
+
+    // Draw it
+    SDL_RenderFillRect(renderer, &Message_rect);
+
+    // Actually draw the desired color
+    SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
 
     SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 
@@ -295,4 +311,14 @@ search selectStartState(SDL_Renderer* renderer, search s) {
         }
     }
     return ret;
+}
+
+void drawStartButton(SDL_Renderer* renderer, color textColor, color backgroundColor) {
+    char start[] = "START";
+    draw_text(renderer, start, setting.startButtonX, setting.startButtonY, TILE_WIDTH, MENU_HEIGHT, textColor, backgroundColor);
+    printf("OK");
+}
+
+void drawGoalButton(color textColor, color backgroundColor) {
+
 }

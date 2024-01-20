@@ -120,6 +120,29 @@ void draw_grid(SDL_Renderer* renderer) {
     SDL_RenderPresent(renderer);
 }
 
+void reset(SDL_Renderer* renderer, int* states) {
+    draw_grid(renderer);
+
+    color textColor;
+    textColor.r = 0;
+    textColor.g = 0;
+    textColor.b = 0;
+
+    color backgroundColor;
+    backgroundColor.r = 125;
+    backgroundColor.g = 125;
+    backgroundColor.b = 125;
+
+    drawStartButton(renderer, textColor, backgroundColor);
+    drawGoalButton(renderer, textColor, backgroundColor);
+
+    int increments = 0;
+
+    for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
+        states[i] = -1;
+    }
+}
+
 void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int height, color textColor, color backgroundColor) {
     TTF_Font* Sans = TTF_OpenFont("OpenSans-Regular.ttf", FONT_SIZE);
     if (!Sans) {
@@ -224,10 +247,10 @@ void colorTileByIndex(SDL_Renderer* renderer, int index, int r, int g, int b) {
     colorTile(renderer, ((x * TILE_WIDTH) + TILE_BORDER_WIDTH), (((y * TILE_HEIGHT) + MENU_HEIGHT + TILE_BORDER_WIDTH)), r, g, b);
 }
 
-search selectGoalState(SDL_Renderer* renderer, search s) {
+void selectGoalState(SDL_Renderer* renderer, search* s) {
     SDL_Event event;
-    search ret = s;
     tile closest;
+    int new_goal;
 
     while (SDL_WaitEvent(&event)) {
         switch (event.type) {
@@ -239,42 +262,52 @@ search selectGoalState(SDL_Renderer* renderer, search s) {
                 SDL_GetMouseState(&mouse_x, &mouse_y);
                 if (mouse_y < MENU_HEIGHT) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
-                    return ret;
+                    return;
                 }
 
                 closest = getClosestTile(mouse_x, mouse_y);
-                ret.goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                new_goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
-                if (s.goal == -1) {
-                    ret.goalx = closest.x;
-                    ret.goaly = closest.y;
-                    colorTile(renderer, ret.goalx, ret.goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                if (s->goal == -1) {
+                    s->goalx = closest.x;
+                    s->goaly = closest.y;
+                    s->goal = new_goal;
+
+                    // marks the new goal in the array
+                    s->states[new_goal] = 100;
+                    colorTile(renderer, s->goalx, s->goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                 } else {
                     // reset the original goal state tile to be the background color
-                    colorTile(renderer, s.goalx, s.goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                    colorTile(renderer, s->goalx, s->goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
-                    ret.goalx = closest.x;
-                    ret.goaly = closest.y;
+                    s->goalx = closest.x;
+                    s->goaly = closest.y;
+                    //
+                    // reset the old goal to be a blank space
+                    s->states[s->goal] = -1;
+                    // make the new index a goal
+                    s->states[new_goal] = 100;
+                    s->goal = new_goal;
 
                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?
                     usleep(5000);
                     // Color the new goal state
-                    colorTileByIndex(renderer, ret.goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                    colorTileByIndex(renderer, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                 }
 
-                return ret;
+                return;
             case SDL_KEYDOWN:
                 // if the user clicks away or anything, don't do anything
-                return ret;
+                return;
         }
     }
-    return ret;
+    return;
 }
 
-search selectStartState(SDL_Renderer* renderer, search s) {
+void selectStartState(SDL_Renderer* renderer, search* s) {
     SDL_Event event;
-    search ret = s;
     tile closest;
+    int new_start;
 
     while (SDL_WaitEvent(&event)) {
         switch (event.type) {
@@ -286,36 +319,47 @@ search selectStartState(SDL_Renderer* renderer, search s) {
                 SDL_GetMouseState(&mouse_x, &mouse_y);
                 if (mouse_y < MENU_HEIGHT) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
-                    return ret;
+                    return;
                 }
 
                 closest = getClosestTile(mouse_x, mouse_y);
-                ret.start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                new_start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
-                if (s.start == -1) {
-                    ret.startx = closest.x;
-                    ret.starty = closest.y;
-                    colorTile(renderer, ret.startx, ret.starty, START_COLOR.r, START_COLOR.g, START_COLOR.b);
+                if (s->start == -1) {
+                    s->startx = closest.x;
+                    s->starty = closest.y;
+                    s->start = new_start;
+
+                    // marks the new start in the array
+                    s->states[new_start] = 500;
+                    colorTile(renderer, s->startx, s->starty, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                    colorTile(renderer, s->startx, s->starty, START_COLOR.r, START_COLOR.g, START_COLOR.b);
                 } else {
                     // reset the original start state tile to be the background color
-                    colorTile(renderer, s.startx, s.starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                    colorTile(renderer, s->startx, s->starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
-                    ret.startx = closest.x;
-                    ret.starty = closest.y;
+                    s->startx = closest.x;
+                    s->starty = closest.y;
+                    //
+                    // reset the old start to be a blank space
+                    s->states[s->start] = -1;
+                    // make the new index a start
+                    s->states[new_start] = 500;
+                    s->start = new_start;
 
                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?
                     usleep(5000);
                     // Color the new start state
-                    colorTileByIndex(renderer, ret.start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
+                    colorTileByIndex(renderer, s->start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
                 }
 
-                return ret;
+                return;
             case SDL_KEYDOWN:
                 // if the user clicks away or anything, don't do anything
-                return ret;
+                return;
         }
     }
-    return ret;
+    return;
 }
 
 void drawStartButton(SDL_Renderer* renderer, color textColor, color backgroundColor) {

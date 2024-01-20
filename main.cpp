@@ -13,7 +13,6 @@ int main() {
     int red_iter = 0;
     int blue_iter = 255;
 
-    draw_grid(disp.renderer);
     int* states = (int*) malloc((NUM_SQUARES * NUM_SQUARES) * sizeof(int));
 
     // draws grid, resets states array to be all empty, and draw state buttons
@@ -39,10 +38,6 @@ int main() {
     backgroundColor.g = 125;
     backgroundColor.b = 125;
 
-    drawStartButton(disp.renderer, textColor, backgroundColor);
-    drawGoalButton(disp.renderer, textColor, backgroundColor);
-
-
     tile closest;
     while (SDL_WaitEvent(&event) && !should_quit) {
 
@@ -60,7 +55,8 @@ int main() {
                 }
                 if (event.key.keysym.sym == SDLK_c) {
                     // clear the screen
-                    draw_grid(disp.renderer);
+                    // draws grid, resets states array to be all empty, and draw state buttons
+                    reset(disp.renderer, states);
                     continue;
                 }
                 if (event.key.keysym.sym == SDLK_s) {

@@ -62,10 +62,15 @@ screen init_display() {
         exit(1);
     }
 
-    setting.startButtonX = TILE_WIDTH * (NUM_SQUARES - 1);
+    // position buttons on the far right of display
+    int offset = setting.width * 0.05;
+    setting.startButtonX = setting.width - offset; // TILE_WIDTH * (NUM_SQUARES - 1);
+    setting.startButtonX2 = setting.width; // TILE_WIDTH * (NUM_SQUARES - 1);
+
     setting.startButtonY = 0;
 
-    setting.goalButtonX = TILE_WIDTH * (NUM_SQUARES - 2);
+    setting.goalButtonX = setting.width - (2 * offset); // TILE_WIDTH * (NUM_SQUARES - 2);
+    setting.goalButtonX2 = setting.width - offset; // TILE_WIDTH * (NUM_SQUARES - 2);
     setting.goalButtonY = 0;
 
     TTF_Init();
@@ -315,10 +320,14 @@ search selectStartState(SDL_Renderer* renderer, search s) {
 
 void drawStartButton(SDL_Renderer* renderer, color textColor, color backgroundColor) {
     char start[] = "START";
-    draw_text(renderer, start, setting.startButtonX, setting.startButtonY, TILE_WIDTH, MENU_HEIGHT, textColor, backgroundColor);
+    int width = setting.startButtonX2 - setting.startButtonX;
+
+    draw_text(renderer, start, setting.startButtonX, setting.startButtonY, width, MENU_HEIGHT, textColor, backgroundColor);
 }
 
 void drawGoalButton(SDL_Renderer* renderer, color textColor, color backgroundColor) {
     char goal[] = "GOAL";
-    draw_text(renderer, goal, setting.goalButtonX, setting.goalButtonY, TILE_WIDTH, MENU_HEIGHT, textColor, backgroundColor);
+    int width = setting.goalButtonX2 - setting.goalButtonX;
+
+    draw_text(renderer, goal, setting.goalButtonX, setting.goalButtonY, width, MENU_HEIGHT, textColor, backgroundColor);
 }

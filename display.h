@@ -5,13 +5,13 @@
 #include "search.h"
 
 #define TILE_BORDER_WIDTH 3
-#define NUM_SQUARES 10
+#define NUM_SQUARES 50
 #define MENU_HEIGHT 50
 
 // These may change in init_display
 // Maybe look into seeing if these could just be left alone
-#define SCREEN_WIDTH 1080
-#define SCREEN_HEIGHT 720
+#define SCREEN_WIDTH 1080 // 2560
+#define SCREEN_HEIGHT 720 // 1080
 
 // (255,255,255) is white
 const int BACKGROUND_R = 255;
@@ -29,7 +29,7 @@ const int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
 #define START_COLOR color{0, 255, 0}
 #define GOAL_COLOR color{255, 0, 0}
 
-#define FONT_SIZE 100
+#define FONT_SIZE 75
 
 struct tile {
     int x;
@@ -50,8 +50,10 @@ struct settings {
     int tileWidth;
     int tileHeight;
     int startButtonX;
+    int startButtonX2;
     int startButtonY;
     int goalButtonX;
+    int goalButtonX2;
     int goalButtonY;
 };
 

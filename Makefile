@@ -9,7 +9,7 @@ display.o:
 main.o:
 	g++ -c main.cpp
 
-run: build
+run: clean build
 	./algo-vis
 
 clean:

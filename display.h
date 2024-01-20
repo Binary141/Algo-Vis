@@ -5,7 +5,7 @@
 #include "search.h"
 
 #define TILE_BORDER_WIDTH 3
-#define NUM_SQUARES 50
+#define NUM_SQUARES 10
 #define MENU_HEIGHT 50
 
 // These may change in init_display
@@ -67,12 +67,13 @@ settings getDisplaySettings();
 screen init_display();
 void draw_grid(SDL_Renderer*);
 void draw_text(SDL_Renderer*, char*, int, int, int, int, color, color);
+void reset(SDL_Renderer*, int*);
 void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);
 void colorTile(SDL_Renderer* , int, int, int, int, int);
 void colorTileByIndex(SDL_Renderer* , int, int, int, int);
-search selectStartState(SDL_Renderer*, search);
-search selectGoalState(SDL_Renderer*, search);
+void selectStartState(SDL_Renderer*, search*);
+void selectGoalState(SDL_Renderer*, search*);
 void drawStartButton(SDL_Renderer*, color, color);
 void drawGoalButton(SDL_Renderer*, color, color);
 

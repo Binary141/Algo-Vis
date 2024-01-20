@@ -14,6 +14,21 @@ int main() {
     int blue_iter = 255;
 
     draw_grid(disp.renderer);
+    int* states = (int*) malloc((NUM_SQUARES * NUM_SQUARES) * sizeof(int));
+
+    // draws grid, resets states array to be all empty, and draw state buttons
+    reset(disp.renderer, states);
+
+    search search1;
+    search1.start = -1;
+    search1.startx = -1;
+    search1.starty = -1;
+    search1.goal = -1;
+    search1.goalx = -1;
+    search1.goaly = -1;
+
+    search1.states = states;
+
     color textColor;
     textColor.r = 0;
     textColor.g = 0;
@@ -27,13 +42,6 @@ int main() {
     drawStartButton(disp.renderer, textColor, backgroundColor);
     drawGoalButton(disp.renderer, textColor, backgroundColor);
 
-    search search1;
-    search1.start = -1;
-    search1.startx = -1;
-    search1.starty = -1;
-    search1.goal = -1;
-    search1.goalx = -1;
-    search1.goaly = -1;
 
     tile closest;
     while (SDL_WaitEvent(&event) && !should_quit) {
@@ -56,24 +64,22 @@ int main() {
                     continue;
                 }
                 if (event.key.keysym.sym == SDLK_s) {
-                    // select the start state
-
                     // color the button so the user knows
                     backgroundColor.r = 100;
                     backgroundColor.g = 200;
                     backgroundColor.b = 100;
                     drawStartButton(disp.renderer, textColor, backgroundColor);
 
-                    search res;
-                    res = selectStartState(disp.renderer, search1);
-                    search1.start = res.start;
-                    search1.startx = res.startx;
-                    search1.starty = res.starty;
+                    selectStartState(disp.renderer, &search1);
 
                     backgroundColor.r = 125;
                     backgroundColor.g = 125;
                     backgroundColor.b = 125;
                     drawStartButton(disp.renderer, textColor, backgroundColor);
+
+                    for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
+                        printf("%d\n", search1.states[i]);
+                    }
 
                     continue;
                 }
@@ -85,17 +91,16 @@ int main() {
                     backgroundColor.b = 100;
                     drawGoalButton(disp.renderer, textColor, backgroundColor);
 
-                    search res;
-
-                    res = selectGoalState(disp.renderer, search1);
-                    search1.goal = res.goal;
-                    search1.goalx = res.goalx;
-                    search1.goaly = res.goaly;
+                    selectGoalState(disp.renderer, &search1);
 
                     backgroundColor.r = 125;
                     backgroundColor.g = 125;
                     backgroundColor.b = 125;
                     drawGoalButton(disp.renderer, textColor, backgroundColor);
+
+                    for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
+                        printf("%d\n", search1.states[i]);
+                    }
 
                     continue;
                 }

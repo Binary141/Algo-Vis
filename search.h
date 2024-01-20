@@ -9,6 +9,7 @@ struct search {
     int goal;
     int goalx;
     int goaly;
+    int *states;
 };
 
 #endif

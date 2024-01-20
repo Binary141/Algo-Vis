@@ -1,13 +1,16 @@
 target: run
 
 build: display.o main.o
-	g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
+	gcc -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
+	# g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
 
 display.o:
-	g++ -c display.cpp
+	gcc -c display.cpp
+	# g++ -c display.cpp
 
 main.o:
-	g++ -c main.cpp
+	gcc -c main.cpp
+	# g++ -c main.cpp
 
 run: clean build
 	./algo-vis

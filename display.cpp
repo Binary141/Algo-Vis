@@ -42,23 +42,23 @@ screen init_display() {
                                           SDL_WINDOW_SHOWN);
     ret.window = window;
     if(!window) {
-        std::cout << "Failed to create window\n";
-        std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+        printf("Failed to create window!\n");
+        printf("SDL2 Error: %s\n", SDL_GetError());
         exit(1);
     }
 
     // Create renderer
     ret.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(!ret.renderer) {
-        std::cout << "Failed to get the renderer from the window\n";
-        std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+        printf("Failed to get the renderer from the window!\n");
+        printf("SDL2 Error: %s\n", SDL_GetError());
         exit(1);
     }
 
     ret.surface = SDL_GetWindowSurface(window);
     if(!ret.surface) {
-        std::cout << "Failed to get the surface from the window\n";
-        std::cout << "SDL2 Error: " << SDL_GetError() << "\n";
+        printf("Failed to get the surface from the window!\n");
+        printf("SDL2 Error: %s\n", SDL_GetError());
         exit(1);
     }
 
@@ -146,7 +146,7 @@ void reset(SDL_Renderer* renderer, int* states) {
 void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int height, color textColor, color backgroundColor) {
     TTF_Font* Sans = TTF_OpenFont("OpenSans-Regular.ttf", FONT_SIZE);
     if (!Sans) {
-        std::cout << "Error opening font!" << std::endl;
+        printf("Error opening font!");
         exit(1);
     }
 

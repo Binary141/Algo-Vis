@@ -1,7 +1,6 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
-
 struct search {
     int start;
     int startx;

@@ -136,8 +136,7 @@ void reset(SDL_Renderer* renderer, int* states) {
     drawStartButton(renderer, textColor, backgroundColor);
     drawGoalButton(renderer, textColor, backgroundColor);
 
-    int increments = 0;
-
+    // set all states to be open
     for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
         states[i] = -1;
     }
@@ -160,7 +159,7 @@ void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int 
 
     SDL_Rect Message_rect; //create a rect
     Message_rect.x = x;  //controls the rect's x coordinate
-    Message_rect.y = y; // controls the rect's y coordinte
+    Message_rect.y = y; // controls the rect's y coordinate
     Message_rect.w = width; // controls the width of the rect
     Message_rect.h = height; // controls the height of the rect
 

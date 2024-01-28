@@ -101,11 +101,10 @@ int main() {
                     continue;
                 }
             case SDL_MOUSEBUTTONDOWN:
-
                 // generate a wall
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                //
+
                 // don't do anything if it is in the menu bar at the moment
                 // adjust here for menu selections
                 if (mouse_y < MENU_HEIGHT + TILE_BORDER_WIDTH + 1) {
@@ -119,11 +118,13 @@ int main() {
                 if( event.button.button == SDL_BUTTON_LEFT ) {
 
                     colorTile(disp.renderer, closest.x, closest.y, 0, 0, 255);
+                    search1.states[closest.xIndex + (closest.yIndex * NUM_SQUARES)] = WALL;
                     continue;
                 }
                 if( event.button.button == SDL_BUTTON_RIGHT ) {
                     // clear the tile if it is the right mouse button
                     colorTile(disp.renderer, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                    search1.states[closest.xIndex + (closest.yIndex * NUM_SQUARES)] = EMPTY_SPACE;
                     continue;
                 }
         }

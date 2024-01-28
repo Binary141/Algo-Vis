@@ -138,7 +138,7 @@ void reset(SDL_Renderer* renderer, int* states) {
 
     // set all states to be open
     for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
-        states[i] = -1;
+        states[i] = WALL;
     }
 }
 
@@ -230,8 +230,8 @@ void colorTile(SDL_Renderer* renderer, int x, int y, int r, int g, int b) {
     squareRect.w = TILE_WIDTH - TILE_BORDER_WIDTH;
     squareRect.h = TILE_HEIGHT - TILE_BORDER_WIDTH;
 
-    squareRect.y = y; // closestTile.y;
-    squareRect.x = x; // closestTile.x;
+    squareRect.y = y;
+    squareRect.x = x;
 
     // Draw it
     SDL_RenderFillRect(renderer, &squareRect);
@@ -267,13 +267,13 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
-                if (s->goal == -1) {
+                if (s->goal == WALL) {
                     s->goalx = closest.x;
                     s->goaly = closest.y;
                     s->goal = new_goal;
 
                     // marks the new goal in the array
-                    s->states[new_goal] = 100;
+                    s->states[new_goal] = GOAL;
                     colorTile(renderer, s->goalx, s->goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                 } else {
                     // reset the original goal state tile to be the background color
@@ -281,11 +281,12 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
 
                     s->goalx = closest.x;
                     s->goaly = closest.y;
-                    //
+
                     // reset the old goal to be a blank space
-                    s->states[s->goal] = -1;
+                    s->states[s->goal] = EMPTY_SPACE;
+
                     // make the new index a goal
-                    s->states[new_goal] = 100;
+                    s->states[new_goal] = GOAL;
                     s->goal = new_goal;
 
                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?
@@ -324,13 +325,13 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
-                if (s->start == -1) {
+                if (s->start == WALL) {
                     s->startx = closest.x;
                     s->starty = closest.y;
                     s->start = new_start;
 
                     // marks the new start in the array
-                    s->states[new_start] = 500;
+                    s->states[new_start] = START;
                     colorTile(renderer, s->startx, s->starty, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                     colorTile(renderer, s->startx, s->starty, START_COLOR.r, START_COLOR.g, START_COLOR.b);
                 } else {
@@ -339,11 +340,12 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
 
                     s->startx = closest.x;
                     s->starty = closest.y;
-                    //
+
                     // reset the old start to be a blank space
-                    s->states[s->start] = -1;
+                    s->states[s->start] = EMPTY_SPACE;
+
                     // make the new index a start
-                    s->states[new_start] = 500;
+                    s->states[new_start] = START;
                     s->start = new_start;
 
                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?

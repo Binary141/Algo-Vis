@@ -138,7 +138,7 @@ void reset(SDL_Renderer* renderer, int* states) {
 
     // set all states to be open
     for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
-        states[i] = WALL;
+        states[i] = EMPTY_SPACE;
     }
 }
 
@@ -267,7 +267,7 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
-                if (s->goal == WALL) {
+                if (s->goal == EMPTY_SPACE) {
                     s->goalx = closest.x;
                     s->goaly = closest.y;
                     s->goal = new_goal;
@@ -290,7 +290,7 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                     s->goal = new_goal;
 
                     // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                    usleep(5000);
+                    usleep(7000);
                     // Color the new goal state
                     colorTileByIndex(renderer, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                 }
@@ -325,7 +325,7 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
-                if (s->start == WALL) {
+                if (s->start == EMPTY_SPACE) {
                     s->startx = closest.x;
                     s->starty = closest.y;
                     s->start = new_start;

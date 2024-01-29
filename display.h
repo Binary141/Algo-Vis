@@ -5,7 +5,7 @@
 #include "search.h"
 
 #define TILE_BORDER_WIDTH 3
-#define NUM_SQUARES 10
+#define NUM_SQUARES 5
 #define MENU_HEIGHT 50
 
 // These may change in init_display

@@ -267,6 +267,11 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
+                if (s->start == new_goal) {
+                    // remove what used to be the start state
+                    s->start = EMPTY_SPACE;
+                }
+
                 if (s->goal == EMPTY_SPACE) {
                     s->goalx = closest.x;
                     s->goaly = closest.y;
@@ -276,10 +281,6 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                     s->states[new_goal] = GOAL;
                     colorTile(renderer, s->goalx, s->goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                     return;
-                }
-                if (s->goal == new_goal) {
-                    // remove what used to be the start state
-                    s->start = EMPTY_SPACE;
                 }
 
                 // reset the original goal state tile to be the background color
@@ -296,7 +297,7 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                 s->goal = new_goal;
 
                 // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                usleep(7000);
+                usleep(5000);
                 // Color the new goal state
                 colorTileByIndex(renderer, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
 
@@ -330,6 +331,11 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
 
+                if (s->goal == new_start) {
+                    // remove what used to be the goal state
+                    s->goal = EMPTY_SPACE;
+                }
+
                 if (s->start == EMPTY_SPACE) {
                     s->startx = closest.x;
                     s->starty = closest.y;
@@ -340,10 +346,6 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
                     colorTile(renderer, s->startx, s->starty, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                     colorTile(renderer, s->startx, s->starty, START_COLOR.r, START_COLOR.g, START_COLOR.b);
                     return;
-                }
-                if (s->goal == new_start) {
-                    // remove what used to be the goal state
-                    s->goal = EMPTY_SPACE;
                 }
 
                 // reset the original start state tile to be the background color

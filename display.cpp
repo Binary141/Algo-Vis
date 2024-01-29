@@ -275,48 +275,30 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                     // marks the new goal in the array
                     s->states[new_goal] = GOAL;
                     colorTile(renderer, s->goalx, s->goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
-                } else if (s->goal == START) {
-                    // remove what used to be the start state
-
-                    // reset the original goal state tile to be the background color
-                    colorTile(renderer, s->goalx, s->goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                    s->goalx = closest.x;
-                    s->goaly = closest.y;
-
-                    // reset the old goal to be a blank space
-                    s->states[s->goal] = EMPTY_SPACE;
-
-                    // make the new index a goal
-                    s->states[new_goal] = GOAL;
-                    s->goal = new_goal;
-
-                    s->start = EMPTY_SPACE;
-
-                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                    usleep(7000);
-                    // Color the new goal state
-                    colorTileByIndex(renderer, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
-
-                } else {
-                    // reset the original goal state tile to be the background color
-                    colorTile(renderer, s->goalx, s->goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                    s->goalx = closest.x;
-                    s->goaly = closest.y;
-
-                    // reset the old goal to be a blank space
-                    s->states[s->goal] = EMPTY_SPACE;
-
-                    // make the new index a goal
-                    s->states[new_goal] = GOAL;
-                    s->goal = new_goal;
-
-                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                    usleep(7000);
-                    // Color the new goal state
-                    colorTileByIndex(renderer, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
+                    return;
                 }
+                if (s->goal == new_goal) {
+                    // remove what used to be the start state
+                    s->start = EMPTY_SPACE;
+                }
+
+                // reset the original goal state tile to be the background color
+                colorTile(renderer, s->goalx, s->goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                s->goalx = closest.x;
+                s->goaly = closest.y;
+
+                // reset the old goal to be a blank space
+                s->states[s->goal] = EMPTY_SPACE;
+
+                // make the new index a goal
+                s->states[new_goal] = GOAL;
+                s->goal = new_goal;
+
+                // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                usleep(7000);
+                // Color the new goal state
+                colorTileByIndex(renderer, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
 
                 return;
             case SDL_KEYDOWN:
@@ -357,47 +339,30 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
                     s->states[new_start] = START;
                     colorTile(renderer, s->startx, s->starty, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
                     colorTile(renderer, s->startx, s->starty, START_COLOR.r, START_COLOR.g, START_COLOR.b);
-                } else if (s->start == GOAL) {
-                    // remove what used to be the goal state
-
-                    // reset the original start state tile to be the background color
-                    colorTile(renderer, s->startx, s->starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                    s->startx = closest.x;
-                    s->starty = closest.y;
-
-                    // reset the old start to be a blank space
-                    s->states[s->start] = EMPTY_SPACE;
-
-                    // make the new index a start
-                    s->states[new_start] = START;
-                    s->start = new_start;
-
-                    s->goal = EMPTY_SPACE;
-
-                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                    usleep(5000);
-                    // Color the new start state
-                    colorTileByIndex(renderer, s->start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
-                } else {
-                    // reset the original start state tile to be the background color
-                    colorTile(renderer, s->startx, s->starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                    s->startx = closest.x;
-                    s->starty = closest.y;
-
-                    // reset the old start to be a blank space
-                    s->states[s->start] = EMPTY_SPACE;
-
-                    // make the new index a start
-                    s->states[new_start] = START;
-                    s->start = new_start;
-
-                    // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                    usleep(5000);
-                    // Color the new start state
-                    colorTileByIndex(renderer, s->start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
+                    return;
                 }
+                if (s->goal == new_start) {
+                    // remove what used to be the goal state
+                    s->goal = EMPTY_SPACE;
+                }
+
+                // reset the original start state tile to be the background color
+                colorTile(renderer, s->startx, s->starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                s->startx = closest.x;
+                s->starty = closest.y;
+
+                // reset the old start to be a blank space
+                s->states[s->start] = EMPTY_SPACE;
+
+                // make the new index a start
+                s->states[new_start] = START;
+                s->start = new_start;
+
+                // TODO look into why display blanks without this. Fast enough it doesn't really matter?
+                usleep(5000);
+                // Color the new start state
+                colorTileByIndex(renderer, s->start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
 
                 return;
             case SDL_KEYDOWN:

@@ -68,6 +68,9 @@ int main() {
                         printf("%d\n", search1.states[i]);
                     }
 
+                    printf("goal: %d\n", search1.goal);
+                    printf("start: %d\n", search1.start);
+
                     continue;
                 }
 
@@ -86,6 +89,9 @@ int main() {
                     for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
                         printf("%d\n", search1.states[i]);
                     }
+
+                    printf("goal: %d\n", search1.goal);
+                    printf("start: %d\n", search1.start);
 
                     continue;
                 }

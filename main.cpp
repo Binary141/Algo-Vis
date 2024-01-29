@@ -10,33 +10,26 @@ int main() {
     SDL_Event event;
 
     int should_quit = 0;
-    int red_iter = 0;
-    int blue_iter = 255;
 
+    // create the list of all the tiles on the grid
     int* states = (int*) malloc((NUM_SQUARES * NUM_SQUARES) * sizeof(int));
 
     // draws grid, resets states array to be all empty, and draw state buttons
     reset(disp.renderer, states);
 
     search search1;
-    search1.start = -1;
-    search1.startx = -1;
-    search1.starty = -1;
-    search1.goal = -1;
-    search1.goalx = -1;
-    search1.goaly = -1;
+    search1.start = EMPTY_SPACE;
+    search1.startx = EMPTY_SPACE;
+    search1.starty = EMPTY_SPACE;
+    search1.goal = EMPTY_SPACE;
+    search1.goalx = EMPTY_SPACE;
+    search1.goaly = EMPTY_SPACE;
 
     search1.states = states;
 
-    color textColor;
-    textColor.r = 0;
-    textColor.g = 0;
-    textColor.b = 0;
+    color textColor{0, 0, 0};
 
-    color backgroundColor;
-    backgroundColor.r = 125;
-    backgroundColor.g = 125;
-    backgroundColor.b = 125;
+    color backgroundColor{125, 125, 125};
 
     tile closest;
     while (SDL_WaitEvent(&event) && !should_quit) {
@@ -61,16 +54,14 @@ int main() {
                 }
                 if (event.key.keysym.sym == SDLK_s) {
                     // color the button so the user knows
-                    backgroundColor.r = 100;
-                    backgroundColor.g = 200;
-                    backgroundColor.b = 100;
+                    backgroundColor = {100, 200, 100};
+
                     drawStartButton(disp.renderer, textColor, backgroundColor);
 
                     selectStartState(disp.renderer, &search1);
 
-                    backgroundColor.r = 125;
-                    backgroundColor.g = 125;
-                    backgroundColor.b = 125;
+                    backgroundColor = {125, 125, 125};
+
                     drawStartButton(disp.renderer, textColor, backgroundColor);
 
                     for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
@@ -82,16 +73,14 @@ int main() {
 
                 if (event.key.keysym.sym == SDLK_g) {
                     // color the button so the user knows
-                    backgroundColor.r = 200;
-                    backgroundColor.g = 100;
-                    backgroundColor.b = 100;
+                    backgroundColor = {200, 100, 100};
+
                     drawGoalButton(disp.renderer, textColor, backgroundColor);
 
                     selectGoalState(disp.renderer, &search1);
 
-                    backgroundColor.r = 125;
-                    backgroundColor.g = 125;
-                    backgroundColor.b = 125;
+                    backgroundColor = {125, 125, 125};
+
                     drawGoalButton(disp.renderer, textColor, backgroundColor);
 
                     for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {

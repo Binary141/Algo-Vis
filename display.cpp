@@ -64,13 +64,13 @@ screen init_display() {
 
     // position buttons on the far right of display
     int offset = setting.width * 0.05;
-    setting.startButtonX = setting.width - offset; // TILE_WIDTH * (NUM_SQUARES - 1);
-    setting.startButtonX2 = setting.width; // TILE_WIDTH * (NUM_SQUARES - 1);
+    setting.startButtonX = setting.width - offset;
+    setting.startButtonX2 = setting.width;
 
     setting.startButtonY = 0;
 
-    setting.goalButtonX = setting.width - (2 * offset); // TILE_WIDTH * (NUM_SQUARES - 2);
-    setting.goalButtonX2 = setting.width - offset; // TILE_WIDTH * (NUM_SQUARES - 2);
+    setting.goalButtonX = setting.width - (2 * offset);
+    setting.goalButtonX2 = setting.width - offset;
     setting.goalButtonY = 0;
 
     TTF_Init();

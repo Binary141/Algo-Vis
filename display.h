@@ -49,6 +49,7 @@ struct settings {
     int height;
     int tileWidth;
     int tileHeight;
+    int numTiles;
     int startButtonX;
     int startButtonX2;
     int startButtonY;
@@ -76,5 +77,7 @@ void selectStartState(SDL_Renderer*, search*);
 void selectGoalState(SDL_Renderer*, search*);
 void drawStartButton(SDL_Renderer*, color, color);
 void drawGoalButton(SDL_Renderer*, color, color);
+
+extern settings setting;
 
 #endif

@@ -4,7 +4,19 @@
 #include <SDL2/SDL_ttf.h>
 #include <unistd.h> // usleep()
 
-settings setting;
+settings setting = {
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    TILE_WIDTH,
+    TILE_HEIGHT,
+    NUM_SQUARES,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+};
 
 settings getDisplaySettings() {
     return setting;
@@ -16,13 +28,13 @@ screen init_display() {
     // bottom or right of the window
     screen ret;
 
-    int calculated_width = (NUM_SQUARES * TILE_WIDTH) + TILE_BORDER_WIDTH;
+    int calculated_width = (setting.numTiles * TILE_WIDTH) + TILE_BORDER_WIDTH;
 
     if (calculated_width != SCREEN_WIDTH) {
         setting.width = calculated_width;
     }
 
-    int calculated_height = (NUM_SQUARES * TILE_HEIGHT) + TILE_BORDER_WIDTH + MENU_HEIGHT;
+    int calculated_height = (setting.numTiles * TILE_HEIGHT) + TILE_BORDER_WIDTH + MENU_HEIGHT;
 
     if (calculated_height != SCREEN_HEIGHT) {
         setting.height = calculated_height;
@@ -137,7 +149,7 @@ void reset(SDL_Renderer* renderer, int* states) {
     drawGoalButton(renderer, textColor, backgroundColor);
 
     // set all states to be open
-    for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
+    for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
         states[i] = EMPTY_SPACE;
     }
 }
@@ -241,8 +253,8 @@ void colorTile(SDL_Renderer* renderer, int x, int y, int r, int g, int b) {
 }
 
 void colorTileByIndex(SDL_Renderer* renderer, int index, int r, int g, int b) {
-    int y = index / NUM_SQUARES;
-    int x = index % NUM_SQUARES;
+    int y = index / setting.numTiles;
+    int x = index % setting.numTiles;
     colorTile(renderer, ((x * TILE_WIDTH) + TILE_BORDER_WIDTH), (((y * TILE_HEIGHT) + MENU_HEIGHT + TILE_BORDER_WIDTH)), r, g, b);
 }
 
@@ -265,7 +277,7 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                 }
 
                 closest = getClosestTile(mouse_x, mouse_y);
-                new_goal = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                new_goal = (closest.xIndex + (closest.yIndex * setting.numTiles));
 
                 if (s->start == new_goal) {
                     // remove what used to be the start state
@@ -329,7 +341,7 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
                 }
 
                 closest = getClosestTile(mouse_x, mouse_y);
-                new_start = (closest.xIndex + (closest.yIndex * NUM_SQUARES));
+                new_start = (closest.xIndex + (closest.yIndex * setting.numTiles));
 
                 if (s->goal == new_start) {
                     // remove what used to be the goal state

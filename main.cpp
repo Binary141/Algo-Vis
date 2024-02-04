@@ -10,9 +10,10 @@ int main() {
     SDL_Event event;
 
     int should_quit = 0;
+    settings setting = getDisplaySettings();
 
     // create the list of all the tiles on the grid
-    int* states = (int*) malloc((NUM_SQUARES * NUM_SQUARES) * sizeof(int));
+    int* states = (int*) malloc((setting.numTiles * setting.numTiles) * sizeof(int));
 
     // draws grid, resets states array to be all empty, and draw state buttons
     reset(disp.renderer, states);
@@ -64,7 +65,7 @@ int main() {
 
                     drawStartButton(disp.renderer, textColor, backgroundColor);
 
-                    for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
+                    for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
                         printf("%d\n", search1.states[i]);
                     }
 
@@ -86,7 +87,7 @@ int main() {
 
                     drawGoalButton(disp.renderer, textColor, backgroundColor);
 
-                    for(int i = 0; i < NUM_SQUARES * NUM_SQUARES; i++) {
+                    for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
                         printf("%d\n", search1.states[i]);
                     }
 
@@ -113,13 +114,13 @@ int main() {
                 if( event.button.button == SDL_BUTTON_LEFT ) {
 
                     colorTile(disp.renderer, closest.x, closest.y, 0, 0, 255);
-                    search1.states[closest.xIndex + (closest.yIndex * NUM_SQUARES)] = WALL;
+                    search1.states[closest.xIndex + (closest.yIndex * setting.numTiles)] = WALL;
                     continue;
                 }
                 if( event.button.button == SDL_BUTTON_RIGHT ) {
                     // clear the tile if it is the right mouse button
                     colorTile(disp.renderer, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-                    search1.states[closest.xIndex + (closest.yIndex * NUM_SQUARES)] = EMPTY_SPACE;
+                    search1.states[closest.xIndex + (closest.yIndex * setting.numTiles)] = EMPTY_SPACE;
                     continue;
                 }
         }

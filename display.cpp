@@ -22,6 +22,9 @@ settings getDisplaySettings() {
     return setting;
 }
 
+void setDisplaySettings(settings set) {
+    setting = set;
+}
 
 screen init_display() {
     // change the display dimensions if there is any extra space on the

@@ -2,6 +2,7 @@
 #include "display.h"
 #include <SDL2/SDL.h>
 #include "search.h"
+#include <unistd.h> // usleep()
 
 
 int main() {
@@ -13,7 +14,8 @@ int main() {
     settings setting = getDisplaySettings();
 
     // create the list of all the tiles on the grid
-    int* states = (int*) malloc((setting.numTiles * setting.numTiles) * sizeof(int));
+    int* states;
+    states = (int*) malloc((setting.numTiles * setting.numTiles) * sizeof(int));
 
     // draws grid, resets states array to be all empty, and draw state buttons
     reset(disp.renderer, states);
@@ -42,6 +44,31 @@ int main() {
                 should_quit = 1;
                 break;
             case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_a) {
+                    setting.numTiles += 1;
+                    setDisplaySettings(setting);
+                    destroy_window(disp.renderer, disp.window);
+                    disp = init_display();
+                    states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
+                    search1.states = states;
+                    usleep(5000);
+                    reset(disp.renderer, states);
+                }
+                if (event.key.keysym.sym == SDLK_d) {
+                    // do nothing if we are going to have less than a 2x2 grid
+                    // not sure what you would do with that
+                    if (setting.numTiles == 1) {
+                        continue;
+                    }
+                    setting.numTiles -= 1;
+                    setDisplaySettings(setting);
+                    destroy_window(disp.renderer, disp.window);
+                    disp = init_display();
+                    states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
+                    search1.states = states;
+                    usleep(5000);
+                    reset(disp.renderer, states);
+                }
                 if (event.key.keysym.sym == SDLK_q) {
                     // If the 'q' button is pressed, quit the application
                     should_quit = 1;

@@ -65,6 +65,7 @@ struct color {
 };
 
 settings getDisplaySettings();
+void setDisplaySettings(settings);
 screen init_display();
 void draw_grid(SDL_Renderer*);
 void draw_text(SDL_Renderer*, char*, int, int, int, int, color, color);

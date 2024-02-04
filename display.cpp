@@ -109,10 +109,10 @@ void draw_grid(SDL_Renderer* renderer) {
     squareRect.w = TILE_BORDER_WIDTH;
     squareRect.h = setting.height;
 
-    squareRect.y = MENU_HEIGHT; // SCREEN_HEIGHT / 2 - squareRect.h / 2;
+    squareRect.y = MENU_HEIGHT;
 
     // draw vertical lines
-    for (int i = 0; i < setting.width; i += TILE_WIDTH) {
+    for (int i = 0; i <= setting.width; i += setting.tileWidth) {
         squareRect.x = i;
 
         // Draw it
@@ -122,9 +122,11 @@ void draw_grid(SDL_Renderer* renderer) {
     squareRect.w = setting.width;
     squareRect.h = TILE_BORDER_WIDTH;
 
-    squareRect.x = setting.width / 2 - squareRect.w / 2;
+    // draw in the middle of the screen
+    squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+
     // draw horizontal lines
-    for (int i = MENU_HEIGHT; i < setting.height; i += TILE_HEIGHT) {
+    for (int i = MENU_HEIGHT; i <= setting.height; i += setting.tileHeight) {
         squareRect.y = i;
 
         // Draw it
@@ -210,23 +212,23 @@ tile getClosestTile(int x, int y) {
 
     int closest_x = TILE_BORDER_WIDTH;
     while ( closest_x < x ) {
-        closest_x += TILE_WIDTH;
+        closest_x += setting.tileWidth;
     }
-    // subtract the TILE_WIDTH since we over shot it
-    closest_x -= TILE_WIDTH;
+    // subtract the setting.tileWidth since we over shot it
+    closest_x -= setting.tileWidth;
 
     int closest_y = TILE_BORDER_WIDTH + MENU_HEIGHT;
     while ( closest_y < y ) {
-        closest_y += TILE_HEIGHT;
+        closest_y += setting.tileHeight;
     }
-    // subtract the TILE_HEIGHT since we over shot it
-    closest_y -= TILE_HEIGHT;
+    // subtract the setting.tileHeight since we over shot it
+    closest_y -= setting.tileHeight;
 
 
     closest.x = closest_x;
     closest.y = closest_y;
-    closest.xIndex = closest_x / TILE_WIDTH;
-    closest.yIndex = closest_y / TILE_HEIGHT;
+    closest.xIndex = closest_x / setting.tileWidth;
+    closest.yIndex = closest_y / setting.tileHeight;
 
     return closest;
 }
@@ -242,8 +244,8 @@ void colorTile(SDL_Renderer* renderer, int x, int y, int r, int g, int b) {
     SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 
     // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
-    squareRect.w = TILE_WIDTH - TILE_BORDER_WIDTH;
-    squareRect.h = TILE_HEIGHT - TILE_BORDER_WIDTH;
+    squareRect.w = setting.tileWidth - TILE_BORDER_WIDTH;
+    squareRect.h = setting.tileHeight - TILE_BORDER_WIDTH;
 
     squareRect.y = y;
     squareRect.x = x;
@@ -258,7 +260,7 @@ void colorTile(SDL_Renderer* renderer, int x, int y, int r, int g, int b) {
 void colorTileByIndex(SDL_Renderer* renderer, int index, int r, int g, int b) {
     int y = index / setting.numTiles;
     int x = index % setting.numTiles;
-    colorTile(renderer, ((x * TILE_WIDTH) + TILE_BORDER_WIDTH), (((y * TILE_HEIGHT) + MENU_HEIGHT + TILE_BORDER_WIDTH)), r, g, b);
+    colorTile(renderer, ((x * setting.tileWidth) + TILE_BORDER_WIDTH), (((y * setting.tileHeight) + MENU_HEIGHT + TILE_BORDER_WIDTH)), r, g, b);
 }
 
 void selectGoalState(SDL_Renderer* renderer, search* s) {

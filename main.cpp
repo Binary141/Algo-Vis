@@ -51,6 +51,14 @@ int main() {
                     disp = init_display();
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
                     search1.states = states;
+
+                    search1.start = EMPTY_SPACE;
+                    search1.startx = EMPTY_SPACE;
+                    search1.starty = EMPTY_SPACE;
+                    search1.goal = EMPTY_SPACE;
+                    search1.goalx = EMPTY_SPACE;
+                    search1.goaly = EMPTY_SPACE;
+
                     usleep(5000);
                     reset(disp.renderer, states);
                 }
@@ -66,6 +74,13 @@ int main() {
                     disp = init_display();
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
                     search1.states = states;
+
+                    search1.start = EMPTY_SPACE;
+                    search1.startx = EMPTY_SPACE;
+                    search1.starty = EMPTY_SPACE;
+                    search1.goal = EMPTY_SPACE;
+                    search1.goalx = EMPTY_SPACE;
+                    search1.goaly = EMPTY_SPACE;
                     usleep(5000);
                     reset(disp.renderer, states);
                 }

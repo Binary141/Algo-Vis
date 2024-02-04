@@ -169,13 +169,25 @@ int main() {
                 if( event.button.button == SDL_BUTTON_LEFT ) {
 
                     colorTile(disp.renderer, closest.x, closest.y, 0, 0, 255);
-                    search1.states[closest.xIndex + (closest.yIndex * setting.numTiles)] = WALL;
+                    int index = closest.xIndex + (closest.yIndex * setting.numTiles);
+
+                    search1.states[index] = WALL;
+                    if (search1.goal == index) {
+                        search1.goal = EMPTY_SPACE;
+                    }
+
+                    if (search1.start == index) {
+                        search1.start = EMPTY_SPACE;
+                    }
                     continue;
                 }
                 if( event.button.button == SDL_BUTTON_RIGHT ) {
                     // clear the tile if it is the right mouse button
                     colorTile(disp.renderer, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-                    search1.states[closest.xIndex + (closest.yIndex * setting.numTiles)] = EMPTY_SPACE;
+                    int index = closest.xIndex + (closest.yIndex * setting.numTiles);
+                    search1.states[index] = EMPTY_SPACE;
+
+
                     continue;
                 }
         }

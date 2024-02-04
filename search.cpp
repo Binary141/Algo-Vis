@@ -108,4 +108,5 @@ void bfs(SDL_Renderer* r, search* s) {
             visited[tmpStates[i]] = VISITED;
         }
     }
+    printf("Could not get to the goal!\n");
 }

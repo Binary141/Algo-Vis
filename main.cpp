@@ -172,6 +172,7 @@ int main() {
                     int index = closest.xIndex + (closest.yIndex * setting.numTiles);
 
                     search1.states[index] = WALL;
+
                     if (search1.goal == index) {
                         search1.goal = EMPTY_SPACE;
                     }
@@ -187,6 +188,13 @@ int main() {
                     int index = closest.xIndex + (closest.yIndex * setting.numTiles);
                     search1.states[index] = EMPTY_SPACE;
 
+                    if (search1.goal == index) {
+                        search1.goal = EMPTY_SPACE;
+                    }
+
+                    if (search1.start == index) {
+                        search1.start = EMPTY_SPACE;
+                    }
 
                     continue;
                 }

@@ -46,8 +46,11 @@ int main() {
                 should_quit = 1;
                 break;
             case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_r) {
+                    clearVisitedTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                }
                 if (event.key.keysym.sym == SDLK_b) {
-                    bfs(disp.renderer, search1);
+                    bfs(disp.renderer, &search1);
                 }
                 if (event.key.keysym.sym == SDLK_a) {
                     setting.numTiles += 1;

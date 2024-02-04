@@ -1,15 +1,18 @@
 target: run
 
-build: display.o main.o
-	gcc -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
+build: search.o display.o main.o
+	g++ -o algo-vis main.o display.o search.o -lSDL2 -lSDL2_ttf
 	# g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
 
+search.o:
+	g++ -c search.cpp
+
 display.o:
-	gcc -c display.cpp
+	g++ -c display.cpp
 	# g++ -c display.cpp
 
 main.o:
-	gcc -c main.cpp
+	g++ -c main.cpp
 	# g++ -c main.cpp
 
 run: clean build

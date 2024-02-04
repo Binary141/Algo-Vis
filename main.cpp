@@ -27,6 +27,8 @@ int main() {
     search1.goal = EMPTY_SPACE;
     search1.goalx = EMPTY_SPACE;
     search1.goaly = EMPTY_SPACE;
+    search1.stateSize = (setting.numTiles * setting.numTiles);
+    search1.numTiles = setting.numTiles;
 
     search1.states = states;
 
@@ -44,20 +46,25 @@ int main() {
                 should_quit = 1;
                 break;
             case SDL_KEYDOWN:
+                if (event.key.keysym.sym == SDLK_b) {
+                    bfs(disp.renderer, search1);
+                }
                 if (event.key.keysym.sym == SDLK_a) {
                     setting.numTiles += 1;
                     setDisplaySettings(setting);
                     destroy_window(disp.renderer, disp.window);
                     disp = init_display();
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
-                    search1.states = states;
 
+                    search1.states = states;
                     search1.start = EMPTY_SPACE;
                     search1.startx = EMPTY_SPACE;
                     search1.starty = EMPTY_SPACE;
                     search1.goal = EMPTY_SPACE;
                     search1.goalx = EMPTY_SPACE;
                     search1.goaly = EMPTY_SPACE;
+                    search1.stateSize = (setting.numTiles * setting.numTiles);
+                    search1.numTiles = setting.numTiles;
 
                     usleep(5000);
                     reset(disp.renderer, states);
@@ -73,14 +80,17 @@ int main() {
                     destroy_window(disp.renderer, disp.window);
                     disp = init_display();
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
-                    search1.states = states;
 
+                    search1.states = states;
                     search1.start = EMPTY_SPACE;
                     search1.startx = EMPTY_SPACE;
                     search1.starty = EMPTY_SPACE;
                     search1.goal = EMPTY_SPACE;
                     search1.goalx = EMPTY_SPACE;
                     search1.goaly = EMPTY_SPACE;
+                    search1.stateSize = (setting.numTiles * setting.numTiles);
+                    search1.numTiles = setting.numTiles;
+
                     usleep(5000);
                     reset(disp.renderer, states);
                 }

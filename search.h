@@ -1,6 +1,8 @@
 #ifndef SEARCH_H
 #define SEARCH_H
 
+#include <SDL2/SDL.h>
+
 #define WALL 0
 #define EMPTY_SPACE -1
 #define GOAL 100
@@ -14,6 +16,10 @@ struct search {
     int goalx;
     int goaly;
     int *states;
+    int stateSize;
+    int numTiles;
 };
+
+void bfs(SDL_Renderer*, search);
 
 #endif

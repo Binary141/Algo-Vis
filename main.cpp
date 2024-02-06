@@ -52,6 +52,9 @@ int main() {
                 if (event.key.keysym.sym == SDLK_b) {
                     bfs(disp.renderer, &search1);
                 }
+                if (event.key.keysym.sym == SDLK_u) {
+                    dfs(disp.renderer, &search1);
+                }
                 if (event.key.keysym.sym == SDLK_a) {
                     setting.numTiles += 1;
                     setDisplaySettings(setting);

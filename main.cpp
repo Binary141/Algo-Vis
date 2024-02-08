@@ -3,6 +3,26 @@
 #include <SDL2/SDL.h>
 #include "search.h"
 #include <unistd.h> // usleep()
+#include <thread>
+
+extern int doneSearching;
+int isSearching = 0;
+
+void waitForSearch() {
+    SDL_Event event2;
+    while (isSearching && !doneSearching) {
+        while (SDL_PollEvent(&event2)) {
+            switch (event2.type) {
+                case SDL_KEYDOWN:
+                    if (event2.key.keysym.sym == SDLK_h) {
+                        // If the 'h' button is pressed, stop the search
+                        isSearching = 0;
+                    }
+            }
+        }
+    }
+    return;
+}
 
 
 int main() {
@@ -37,7 +57,10 @@ int main() {
     color backgroundColor{125, 125, 125};
 
     tile closest;
-    while (SDL_WaitEvent(&event) && !should_quit) {
+    while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
+        while (isSearching) {
+            printf("We searching!\n");
+        }
 
         // SDL_BlitSurface(image, NULL, disp.surface, NULL);
         // SDL_UpdateWindowSurface(disp.window);
@@ -47,13 +70,49 @@ int main() {
                 break;
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_r) {
-                    clearVisitedTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                    clearTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
                 }
                 if (event.key.keysym.sym == SDLK_b) {
+                    char text[] = "Searching!";
+
+                    isSearching = 1;
+                    doneSearching = 0;
+
+                    // this thread will set isSearching to 0 (false) if a key is pressed
+                    // this stops the search from continuing
+                    std::thread t1(waitForSearch);
+
+                    // do the search
                     bfs(disp.renderer, &search1);
+
+                    isSearching = 0;
+
+                    // make sure that the thread finished
+                    t1.join();
+
+                    char doneText[] = "Done!";
+                    draw_text(disp.renderer, doneText, 0, 0, 100, MENU_HEIGHT, textColor, backgroundColor);
                 }
                 if (event.key.keysym.sym == SDLK_u) {
+                    char text[] = "Searching!";
+
+                    isSearching = 1;
+                    doneSearching = 0;
+
+                    // this thread will set isSearching to 0 (false) if a key is pressed
+                    // this stops the search from continuing
+                    std::thread t1(waitForSearch);
+
+                    // do the search
                     dfs(disp.renderer, &search1);
+
+                    isSearching = 0;
+
+                    // make sure that the thread finished
+                    t1.join();
+
+                    char doneText[] = "Done!";
+                    draw_text(disp.renderer, doneText, 0, 0, 100, MENU_HEIGHT, textColor, backgroundColor);
                 }
                 if (event.key.keysym.sym == SDLK_a) {
                     setting.numTiles += 1;
@@ -123,12 +182,12 @@ int main() {
 
                     drawStartButton(disp.renderer, textColor, backgroundColor);
 
-                    for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
-                        printf("%d\n", search1.states[i]);
-                    }
+                    // for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
+                    //     printf("%d\n", search1.states[i]);
+                    // }
 
-                    printf("goal: %d\n", search1.goal);
-                    printf("start: %d\n", search1.start);
+                    // printf("goal: %d\n", search1.goal);
+                    // printf("start: %d\n", search1.start);
 
                     continue;
                 }
@@ -145,12 +204,12 @@ int main() {
 
                     drawGoalButton(disp.renderer, textColor, backgroundColor);
 
-                    for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
-                        printf("%d\n", search1.states[i]);
-                    }
+                    // for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
+                    //     printf("%d\n", search1.states[i]);
+                    // }
 
-                    printf("goal: %d\n", search1.goal);
-                    printf("start: %d\n", search1.start);
+                    // printf("goal: %d\n", search1.goal);
+                    // printf("start: %d\n", search1.start);
 
                     continue;
                 }
@@ -203,6 +262,7 @@ int main() {
                 }
         }
     }
+    printf("Ouch\n");
     destroy_window(disp.renderer, disp.window);
 
     return 0;

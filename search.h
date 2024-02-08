@@ -23,6 +23,6 @@ struct search {
 
 void bfs(SDL_Renderer*, search*);
 void dfs(SDL_Renderer*, search*);
-void clearVisitedTiles(SDL_Renderer*, search*, int, int, int);
+void clearTiles(SDL_Renderer*, search*, int, int, int);
 
 #endif

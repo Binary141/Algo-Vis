@@ -4,6 +4,11 @@ build: search.o display.o main.o
 	g++ -o algo-vis main.o display.o search.o -lSDL2 -lSDL2_ttf
 	# g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
 
+debug: search.o display.o debug-main.o
+	g++ -o algo-vis main.o display.o search.o -lSDL2 -lSDL2_ttf
+	# g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
+	gdb ./algo-vis
+
 search.o:
 	g++ -c search.cpp
 
@@ -13,6 +18,10 @@ display.o:
 
 main.o:
 	g++ -c main.cpp
+	# g++ -c main.cpp
+
+debug-main.o:
+	g++ -c -g main.cpp
 	# g++ -c main.cpp
 
 run: clean build

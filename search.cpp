@@ -7,6 +7,9 @@
 #include <queue>
 #include <stack>
 
+int doneSearching = 0;
+extern int isSearching;
+
 std::vector<int> getNeighborIndexes(int current, const search* s, int lastRowIndex) {
     std::vector<int> res;
 
@@ -43,18 +46,36 @@ std::vector<int> getNeighborIndexes(int current, const search* s, int lastRowInd
     return res;
 }
 
-void clearVisitedTiles(SDL_Renderer* renderer, search* s, int r, int g, int b) {
+void clearTiles(SDL_Renderer* renderer, search* s, int r, int g, int b) {
+    // make sure if we visited a tile, or if it is marked blank, then just clear it out
     for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
-        if (s->states[i] == VISITED) {
+        if (s->states[i] == VISITED || s->states[i] == EMPTY_SPACE) {
             s->states[i] = EMPTY_SPACE;
             colorTileByIndex(renderer, i, r, g, b);
         }
     }
 }
 
+void clearStates(search* s) {
+    for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
+        // set the tile to be empty if it has been visited
+        // note this will not update the display, just used so
+        // if a search was stopped, it can search properly
+        if (s->states[i] == VISITED) {
+            s->states[i] = EMPTY_SPACE;
+        }
+    }
+}
+
+// caller needs to set doneSearching to 0 if they need
 void bfs(SDL_Renderer* r, search* s) {
+    color textColor{0, 0, 0};
+
+    color backgroundColor{125, 125, 125};
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
+        doneSearching = 1;
+        clearStates(s);
         return;
     }
 
@@ -66,6 +87,11 @@ void bfs(SDL_Renderer* r, search* s) {
     for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
         // set all to a defined val. Doesn't matter as long as it isn't equal to VISITED
         visited[i] = 0;
+
+        // If we have visited it before, then just clear it so we can visit it again
+        if (s->states[i] == VISITED) {
+            s->states[i] = EMPTY_SPACE;
+        }
     }
 
     // vec that get neighbors will return
@@ -77,10 +103,18 @@ void bfs(SDL_Renderer* r, search* s) {
     q.push(s->start);
 
     while (!q.empty()) {
+        if (!isSearching) {
+            doneSearching = 1;
+            clearStates(s);
+            return;
+        }
+
         int current = q.front();
         q.pop();
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
+            doneSearching = 1;
+            clearStates(s);
             return;
         }
         if (s->states[current] == WALL) {
@@ -98,7 +132,7 @@ void bfs(SDL_Renderer* r, search* s) {
 
         // if we are on a wall, just remove from the list and skip
         tmpStates = getNeighborIndexes(current, s, lastRowIndex);
-        for(int i=0; i < tmpStates.size(); i++){
+        for(int i = 0; i < tmpStates.size(); i++){
             // the (|| visited[tmpStates[i]] == visited) is to not
             // go indefinitely if there is no path to the goal
             // don't add to states if it is a wall, or we have been there
@@ -110,12 +144,16 @@ void bfs(SDL_Renderer* r, search* s) {
             visited[tmpStates[i]] = VISITED;
         }
     }
+    doneSearching = 1;
+    clearStates(s);
     printf("Could not get to the goal!\n");
+    return;
 }
 
 void dfs(SDL_Renderer* r, search* s) {
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
+        doneSearching = 1;
         return;
     }
 
@@ -127,6 +165,11 @@ void dfs(SDL_Renderer* r, search* s) {
     for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
         // set all to a defined val. Doesn't matter as long as it isn't equal to VISITED
         visited[i] = 0;
+
+        // If we have visited it before, then just clear it so we can visit it again
+        if (s->states[i] == VISITED) {
+            s->states[i] = EMPTY_SPACE;
+        }
     }
 
     // vec that get neighbors will return
@@ -138,10 +181,18 @@ void dfs(SDL_Renderer* r, search* s) {
     q.push(s->start);
 
     while (!q.empty()) {
+        if (!isSearching) {
+            doneSearching = 1;
+            clearStates(s);
+            return;
+        }
+
         int current = q.top();
         q.pop();
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
+            doneSearching = 1;
+            clearStates(s);
             return;
         }
         if (s->states[current] == WALL || s->states[current] == VISITED) {
@@ -171,5 +222,8 @@ void dfs(SDL_Renderer* r, search* s) {
             // visited[tmpStates[i]] = VISITED;
         }
     }
+    doneSearching = 1;
+    clearStates(s);
     printf("Could not get to the goal!\n");
+    return;
 }

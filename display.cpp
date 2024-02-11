@@ -233,7 +233,7 @@ void destroy_window(SDL_Renderer* renderer, SDL_Window* window) {
 
 tile getClosestTile(int x, int y) {
     tile closest;
-    printf("y passed in: %d\n", y);
+    // printf("y passed in: %d\n", y);
 
     int closest_x = TILE_BORDER_WIDTH;
     while ( closest_x < x ) {
@@ -242,20 +242,43 @@ tile getClosestTile(int x, int y) {
     // subtract the setting.tileWidth since we over shot it
     closest_x -= setting.tileWidth;
 
-    int closest_y = TILE_BORDER_WIDTH + setting.menuHeight;
-    while ( closest_y < y ) {
-        closest_y += setting.tileHeight;
+    // find out how many tiles it takes to subtract from the y position before it is negative
+    int closest_y = y - TILE_BORDER_WIDTH - setting.menuHeight;
+    if (closest_y < 0) {
+        printf("oofty");
     }
-    // subtract the setting.tileHeight since we over shot it
-    closest_y -= setting.tileHeight;
+    int numTilesAway = 0;
+
+    while (closest_y > 0) {
+        closest_y -= setting.tileHeight;
+        numTilesAway += 1;
+    }
+    numTilesAway -= 1;
+
+    // int closest_y = TILE_BORDER_WIDTH + setting.menuHeight;
+    // printf("starting search at y: %d\n", closest_y);
+    // while ( closest_y < y ) {
+    //     closest_y += setting.tileHeight;
+    //     printf("closest_y: %d\n", closest_y);
+    // }
+    // // subtract the setting.tileHeight since we over shot it
+    // closest_y -= setting.tileHeight;
+
+    // printf("closest_y: %d\n", closest_y);
+
+    // printf("tile border width: %d\nmenuHeight: %d\n", TILE_BORDER_WIDTH, setting.menuHeight);
+    // printf("tile height: %d\n", setting.tileHeight);
 
 
     closest.x = closest_x;
-    closest.y = closest_y;
+    closest.y = setting.menuHeight + (numTilesAway * setting.tileHeight) + TILE_BORDER_WIDTH;
+    // closest.y = closest_y;
     closest.xIndex = closest_x / setting.tileWidth;
-    closest.yIndex = closest_y / setting.tileHeight;
+    // closest.yIndex = closest_y / setting.tileHeight;
+    closest.yIndex = numTilesAway;
     printf("yIndex: %d\n", closest.yIndex);
-    printf("xIndex: %d\n", closest.xIndex);
+    // printf("xIndex: %d\n", closest.xIndex);
+    // printf("\n\n");
 
     return closest;
 }

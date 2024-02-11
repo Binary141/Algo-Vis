@@ -124,7 +124,7 @@ void bfs(SDL_Renderer* r, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, current, 125, 125, 0);
+            colorTileByIndex(r, current, 255, 125, 0);
             s->states[current] = VISITED;
         }
         // sleep for microseconds. 100_000 us is 0.1 seconds
@@ -201,7 +201,7 @@ void dfs(SDL_Renderer* r, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, current, 125, 125, 0);
+            colorTileByIndex(r, current, 125, 0, 125);
             s->states[current] = VISITED;
         }
         // sleep for microseconds. 100_000 us is 0.1 seconds

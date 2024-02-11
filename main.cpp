@@ -91,7 +91,7 @@ int main() {
                     t1.join();
 
                     char doneText[] = "Done!";
-                    draw_text(disp.renderer, doneText, 0, 0, 100, MENU_HEIGHT, textColor, backgroundColor);
+                    draw_text(disp.renderer, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
                 }
                 if (event.key.keysym.sym == SDLK_u) {
                     char text[] = "Searching!";
@@ -112,7 +112,7 @@ int main() {
                     t1.join();
 
                     char doneText[] = "Done!";
-                    draw_text(disp.renderer, doneText, 0, 0, 100, MENU_HEIGHT, textColor, backgroundColor);
+                    draw_text(disp.renderer, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
                 }
                 if (event.key.keysym.sym == SDLK_a) {
                     setting.numTiles += 1;
@@ -220,7 +220,7 @@ int main() {
 
                 // don't do anything if it is in the menu bar at the moment
                 // adjust here for menu selections
-                if (mouse_y < MENU_HEIGHT + TILE_BORDER_WIDTH + 1) {
+                if (mouse_y <= setting.menuHeight) { // + TILE_BORDER_WIDTH + 1) {
                     // +1 comes from adding a little padding just in case
                     continue;
                 }

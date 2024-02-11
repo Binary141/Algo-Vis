@@ -10,6 +10,7 @@ settings setting = {
     TILE_WIDTH,
     TILE_HEIGHT,
     NUM_SQUARES,
+    MENU_HEIGHT,
     0,
     0,
     0,
@@ -31,17 +32,40 @@ screen init_display() {
     // bottom or right of the window
     screen ret;
 
-    int calculated_width = (setting.numTiles * TILE_WIDTH) + TILE_BORDER_WIDTH;
+    // int calculated_width = (setting.numTiles * TILE_WIDTH) + TILE_BORDER_WIDTH;
+    // if (calculated_width != SCREEN_WIDTH) {
+    //     setting.width = calculated_width;
+    // }
 
-    if (calculated_width != SCREEN_WIDTH) {
-        setting.width = calculated_width;
+    int calculated_width = ((SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles);
+    setting.tileWidth = calculated_width;
+
+    int temp_width = 0;
+    // get largest width size
+    for (int i = 0; i <= setting.width; i += calculated_width) {
+        printf("i: %d\n", i);
+        temp_width = i;
     }
 
-    int calculated_height = (setting.numTiles * TILE_HEIGHT) + TILE_BORDER_WIDTH + MENU_HEIGHT;
+    setting.width = temp_width;
+    // setting.menuHeight = 0;
 
-    if (calculated_height != SCREEN_HEIGHT) {
-        setting.height = calculated_height;
-    }
+    // int calculated_width = (SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles;
+    // setting.tileWidth = calculated_width;
+
+    // int calculated_height = (setting.numTiles * TILE_HEIGHT) + TILE_BORDER_WIDTH + setting.menuHeight;
+
+    // if (calculated_height != SCREEN_HEIGHT) {
+    //     setting.height = calculated_height;
+    // }
+
+    // int calculated_height = (setting.numTiles * TILE_HEIGHT) + TILE_BORDER_WIDTH + setting.menuHeight;
+    int calculated_height = (SCREEN_HEIGHT - setting.menuHeight - TILE_BORDER_WIDTH) / setting.numTiles;
+    setting.tileHeight = calculated_height;
+
+    // if (calculated_height != SCREEN_HEIGHT) {
+    //     setting.height = calculated_height;
+    // }
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -109,7 +133,7 @@ void draw_grid(SDL_Renderer* renderer) {
     squareRect.w = TILE_BORDER_WIDTH;
     squareRect.h = setting.height;
 
-    squareRect.y = MENU_HEIGHT;
+    squareRect.y = setting.menuHeight;
 
     // draw vertical lines
     for (int i = 0; i <= setting.width; i += setting.tileWidth) {
@@ -126,7 +150,7 @@ void draw_grid(SDL_Renderer* renderer) {
     squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
     // draw horizontal lines
-    for (int i = MENU_HEIGHT; i <= setting.height; i += setting.tileHeight) {
+    for (int i = setting.menuHeight; i <= setting.height; i += setting.tileHeight) {
         squareRect.y = i;
 
         // Draw it
@@ -209,6 +233,7 @@ void destroy_window(SDL_Renderer* renderer, SDL_Window* window) {
 
 tile getClosestTile(int x, int y) {
     tile closest;
+    printf("y passed in: %d\n", y);
 
     int closest_x = TILE_BORDER_WIDTH;
     while ( closest_x < x ) {
@@ -217,7 +242,7 @@ tile getClosestTile(int x, int y) {
     // subtract the setting.tileWidth since we over shot it
     closest_x -= setting.tileWidth;
 
-    int closest_y = TILE_BORDER_WIDTH + MENU_HEIGHT;
+    int closest_y = TILE_BORDER_WIDTH + setting.menuHeight;
     while ( closest_y < y ) {
         closest_y += setting.tileHeight;
     }
@@ -229,6 +254,8 @@ tile getClosestTile(int x, int y) {
     closest.y = closest_y;
     closest.xIndex = closest_x / setting.tileWidth;
     closest.yIndex = closest_y / setting.tileHeight;
+    printf("yIndex: %d\n", closest.yIndex);
+    printf("xIndex: %d\n", closest.xIndex);
 
     return closest;
 }
@@ -260,7 +287,7 @@ void colorTile(SDL_Renderer* renderer, int x, int y, int r, int g, int b) {
 void colorTileByIndex(SDL_Renderer* renderer, int index, int r, int g, int b) {
     int y = index / setting.numTiles;
     int x = index % setting.numTiles;
-    colorTile(renderer, ((x * setting.tileWidth) + TILE_BORDER_WIDTH), (((y * setting.tileHeight) + MENU_HEIGHT + TILE_BORDER_WIDTH)), r, g, b);
+    colorTile(renderer, ((x * setting.tileWidth) + TILE_BORDER_WIDTH), (((y * setting.tileHeight) + setting.menuHeight + TILE_BORDER_WIDTH)), r, g, b);
 }
 
 void selectGoalState(SDL_Renderer* renderer, search* s) {
@@ -276,13 +303,14 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
             case SDL_MOUSEBUTTONDOWN:
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                if (mouse_y < MENU_HEIGHT) {
+                if (mouse_y < setting.menuHeight) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
                     return;
                 }
 
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_goal = (closest.xIndex + (closest.yIndex * setting.numTiles));
+                printf("New goal index: %d\n", new_goal);
 
                 if (s->start == new_goal) {
                     // remove what used to be the start state
@@ -340,7 +368,7 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
             case SDL_MOUSEBUTTONDOWN:
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                if (mouse_y < MENU_HEIGHT) {
+                if (mouse_y < setting.menuHeight) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
                     return;
                 }
@@ -396,12 +424,12 @@ void drawStartButton(SDL_Renderer* renderer, color textColor, color backgroundCo
     char start[] = "START";
     int width = setting.startButtonX2 - setting.startButtonX;
 
-    draw_text(renderer, start, setting.startButtonX, setting.startButtonY, width, MENU_HEIGHT, textColor, backgroundColor);
+    draw_text(renderer, start, setting.startButtonX, setting.startButtonY, width, setting.menuHeight, textColor, backgroundColor);
 }
 
 void drawGoalButton(SDL_Renderer* renderer, color textColor, color backgroundColor) {
     char goal[] = "GOAL";
     int width = setting.goalButtonX2 - setting.goalButtonX;
 
-    draw_text(renderer, goal, setting.goalButtonX, setting.goalButtonY, width, MENU_HEIGHT, textColor, backgroundColor);
+    draw_text(renderer, goal, setting.goalButtonX, setting.goalButtonY, width, setting.menuHeight, textColor, backgroundColor);
 }

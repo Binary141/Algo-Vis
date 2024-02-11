@@ -50,6 +50,7 @@ struct settings {
     int tileWidth;
     int tileHeight;
     int numTiles;
+    int menuHeight;
     int startButtonX;
     int startButtonX2;
     int startButtonY;

@@ -32,41 +32,24 @@ screen init_display() {
     // bottom or right of the window
     screen ret;
 
-    // int calculated_width = (setting.numTiles * TILE_WIDTH) + TILE_BORDER_WIDTH;
-    // if (calculated_width != SCREEN_WIDTH) {
-    //     setting.width = calculated_width;
-    // }
-
     int calculated_width = ((SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles);
     setting.tileWidth = calculated_width;
 
     int temp_width = 0;
+
     // get largest width size
     for (int i = 0; i <= setting.width; i += calculated_width) {
-        // printf("i: %d\n", i);
         temp_width = i;
     }
 
+    // update the display witdh. Add the tile border width to allow the drawing of the right most border
     setting.width = temp_width + TILE_BORDER_WIDTH;
-    // setting.menuHeight = 0;
 
-    // int calculated_width = (SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles;
-    // setting.tileWidth = calculated_width;
-
-    // int calculated_height = (setting.numTiles * TILE_HEIGHT) + TILE_BORDER_WIDTH + setting.menuHeight;
-
-    // if (calculated_height != SCREEN_HEIGHT) {
-    //     setting.height = calculated_height;
-    // }
-
-    // int calculated_height = (setting.numTiles * TILE_HEIGHT) + TILE_BORDER_WIDTH + setting.menuHeight;
     int calculated_height = (SCREEN_HEIGHT - setting.menuHeight - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
-    setting.height = (calculated_height * setting.numTiles) + setting.menuHeight + TILE_BORDER_WIDTH;
 
-    // if (calculated_height != SCREEN_HEIGHT) {
-    //     setting.height = calculated_height;
-    // }
+    // update the display height. Add in the tile baorder width to allow the drawing of the bottom most border
+    setting.height = (calculated_height * setting.numTiles) + setting.menuHeight + TILE_BORDER_WIDTH;
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -234,7 +217,6 @@ void destroy_window(SDL_Renderer* renderer, SDL_Window* window) {
 
 tile getClosestTile(int x, int y) {
     tile closest;
-    // printf("y passed in: %d\n", y);
 
     int closest_x = TILE_BORDER_WIDTH;
     while ( closest_x < x ) {
@@ -246,7 +228,8 @@ tile getClosestTile(int x, int y) {
     // find out how many tiles it takes to subtract from the y position before it is negative
     int closest_y = y - TILE_BORDER_WIDTH - setting.menuHeight;
     if (closest_y < 0) {
-        printf("oofty");
+        printf("closest_y was less than 0!\n");
+        exit(1);
     }
     int numTilesAway = 0;
 
@@ -256,30 +239,10 @@ tile getClosestTile(int x, int y) {
     }
     numTilesAway -= 1;
 
-    // int closest_y = TILE_BORDER_WIDTH + setting.menuHeight;
-    // printf("starting search at y: %d\n", closest_y);
-    // while ( closest_y < y ) {
-    //     closest_y += setting.tileHeight;
-    //     printf("closest_y: %d\n", closest_y);
-    // }
-    // // subtract the setting.tileHeight since we over shot it
-    // closest_y -= setting.tileHeight;
-
-    // printf("closest_y: %d\n", closest_y);
-
-    // printf("tile border width: %d\nmenuHeight: %d\n", TILE_BORDER_WIDTH, setting.menuHeight);
-    // printf("tile height: %d\n", setting.tileHeight);
-
-
     closest.x = closest_x;
     closest.y = setting.menuHeight + (numTilesAway * setting.tileHeight) + TILE_BORDER_WIDTH;
-    // closest.y = closest_y;
     closest.xIndex = closest_x / setting.tileWidth;
-    // closest.yIndex = closest_y / setting.tileHeight;
     closest.yIndex = numTilesAway;
-    printf("yIndex: %d\n", closest.yIndex);
-    // printf("xIndex: %d\n", closest.xIndex);
-    // printf("\n\n");
 
     return closest;
 }

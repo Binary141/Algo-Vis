@@ -43,11 +43,11 @@ screen init_display() {
     int temp_width = 0;
     // get largest width size
     for (int i = 0; i <= setting.width; i += calculated_width) {
-        printf("i: %d\n", i);
+        // printf("i: %d\n", i);
         temp_width = i;
     }
 
-    setting.width = temp_width;
+    setting.width = temp_width + TILE_BORDER_WIDTH;
     // setting.menuHeight = 0;
 
     // int calculated_width = (SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles;
@@ -62,6 +62,7 @@ screen init_display() {
     // int calculated_height = (setting.numTiles * TILE_HEIGHT) + TILE_BORDER_WIDTH + setting.menuHeight;
     int calculated_height = (SCREEN_HEIGHT - setting.menuHeight - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
+    setting.height = (calculated_height * setting.numTiles) + setting.menuHeight + TILE_BORDER_WIDTH;
 
     // if (calculated_height != SCREEN_HEIGHT) {
     //     setting.height = calculated_height;

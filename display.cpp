@@ -32,23 +32,21 @@ screen init_display() {
     // bottom or right of the window
     screen ret;
 
-    int calculated_width = ((SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles);
-    setting.tileWidth = calculated_width;
+    int tile_width = ((SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles);
+    setting.tileWidth = tile_width;
 
     int temp_width = 0;
 
     // get largest width size
-    for (int i = 0; i <= setting.width; i += calculated_width) {
-        temp_width = i;
-    }
+    temp_width = setting.numTiles * tile_width;
 
-    // update the display witdh. Add the tile border width to allow the drawing of the right most border
+    // update the display width. Add the tile border width to allow the drawing of the right most border
     setting.width = temp_width + TILE_BORDER_WIDTH;
 
     int calculated_height = (SCREEN_HEIGHT - setting.menuHeight - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
 
-    // update the display height. Add in the tile baorder width to allow the drawing of the bottom most border
+    // update the display height. Add in the tile boarder width to allow the drawing of the bottom most border
     setting.height = (calculated_height * setting.numTiles) + setting.menuHeight + TILE_BORDER_WIDTH;
 
     // Initialize SDL

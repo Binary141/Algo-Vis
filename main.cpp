@@ -137,7 +137,7 @@ int main() {
                 if (event.key.keysym.sym == SDLK_d) {
                     // do nothing if we are going to have less than a 2x2 grid
                     // not sure what you would do with that
-                    if (setting.numTiles == 1) {
+                    if (setting.numTiles == 2) {
                         continue;
                     }
                     setting.numTiles -= 1;
@@ -220,7 +220,7 @@ int main() {
 
                 // don't do anything if it is in the menu bar at the moment
                 // adjust here for menu selections
-                if (mouse_y <= setting.menuHeight) { // + TILE_BORDER_WIDTH + 1) {
+                if (mouse_y <= setting.menuHeight + TILE_BORDER_WIDTH) { // + TILE_BORDER_WIDTH + 1) {
                     // +1 comes from adding a little padding just in case
                     continue;
                 }

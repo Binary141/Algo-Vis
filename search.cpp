@@ -128,7 +128,7 @@ void bfs(SDL_Renderer* r, search* s) {
             s->states[current] = VISITED;
         }
         // sleep for microseconds. 100_000 us is 0.1 seconds
-        usleep(100000);
+        usleep(SLEEPTIME);
 
         // if we are on a wall, just remove from the list and skip
         tmpStates = getNeighborIndexes(current, s, lastRowIndex);
@@ -205,7 +205,7 @@ void dfs(SDL_Renderer* r, search* s) {
             s->states[current] = VISITED;
         }
         // sleep for microseconds. 100_000 us is 0.1 seconds
-        usleep(100000);
+        usleep(SLEEPTIME);
 
         visited[current] = VISITED;
         // if we are on a wall, just remove from the list and skip

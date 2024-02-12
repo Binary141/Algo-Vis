@@ -9,6 +9,8 @@
 #define GOAL 100
 #define START 500
 
+const int SLEEPTIME = 10000;
+
 struct search {
     int start;
     int startx;

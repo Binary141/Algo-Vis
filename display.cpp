@@ -139,12 +139,17 @@ void draw_grid(SDL_Renderer* renderer) {
         SDL_RenderFillRect(renderer, &squareRect);
     }
 
+    usleep(SLEEPTIME2);
+
     // Update screen
     SDL_RenderPresent(renderer);
+
+    usleep(SLEEPTIME2);
 }
 
 void reset(SDL_Renderer* renderer, int* states) {
     draw_grid(renderer);
+    usleep(SLEEPTIME2);
 
     color textColor;
     textColor.r = 0;
@@ -163,6 +168,8 @@ void reset(SDL_Renderer* renderer, int* states) {
     for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
         states[i] = EMPTY_SPACE;
     }
+
+    usleep(SLEEPTIME2);
 }
 
 void draw_text(SDL_Renderer* renderer, char* text, int x, int y, int width, int height, color textColor, color backgroundColor) {
@@ -265,14 +272,20 @@ void colorTile(SDL_Renderer* renderer, int x, int y, int r, int g, int b) {
     // Draw it
     SDL_RenderFillRect(renderer, &squareRect);
 
+    usleep(SLEEPTIME2);
+
     // Update screen
     SDL_RenderPresent(renderer);
+
+    usleep(SLEEPTIME2);
 }
 
 void colorTileByIndex(SDL_Renderer* renderer, int index, int r, int g, int b) {
     int y = index / setting.numTiles;
     int x = index % setting.numTiles;
     colorTile(renderer, ((x * setting.tileWidth) + TILE_BORDER_WIDTH), (((y * setting.tileHeight) + setting.menuHeight + TILE_BORDER_WIDTH)), r, g, b);
+
+    usleep(SLEEPTIME2);
 }
 
 void selectGoalState(SDL_Renderer* renderer, search* s) {
@@ -327,7 +340,7 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
                 s->goal = new_goal;
 
                 // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                usleep(5000);
+                usleep(SLEEPTIME2);
                 // Color the new goal state
                 colorTileByIndex(renderer, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b);
 
@@ -392,7 +405,7 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
                 s->start = new_start;
 
                 // TODO look into why display blanks without this. Fast enough it doesn't really matter?
-                usleep(5000);
+                usleep(SLEEPTIME2);
                 // Color the new start state
                 colorTileByIndex(renderer, s->start, START_COLOR.r, START_COLOR.g, START_COLOR.b);
 

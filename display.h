@@ -26,6 +26,8 @@ const int BORDER_B = 0;
 const int TILE_WIDTH = SCREEN_WIDTH / NUM_SQUARES;
 const int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
 
+#define SLEEPTIME2 1000
+
 #define START_COLOR color{0, 255, 0}
 #define GOAL_COLOR color{255, 0, 0}
 

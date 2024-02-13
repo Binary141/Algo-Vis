@@ -2,6 +2,7 @@
 #define SEARCH_H
 
 #include <SDL2/SDL.h>
+#include <vector>
 
 #define WALL 0
 #define EMPTY_SPACE -1
@@ -10,6 +11,10 @@
 #define START 500
 
 const int SLEEPTIME = 10000;
+extern int isSearching;
+
+// defined in search.cpp
+extern int doneSearching;
 
 struct search {
     int start;
@@ -26,5 +31,7 @@ struct search {
 void bfs(SDL_Renderer*, search*);
 void dfs(SDL_Renderer*, search*);
 void clearTiles(SDL_Renderer*, search*, int, int, int);
+void clearStates(search*);
+std::vector<int> getNeighborIndexes(int, const search*, int);
 
 #endif

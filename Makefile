@@ -1,11 +1,11 @@
 target: run
 
-build: search.o display.o main.o
-	g++ -o algo-vis main.o display.o search.o -lSDL2 -lSDL2_ttf
+build: search.o display.o dfs.o main.o
+	g++ -o algo-vis main.o display.o dfs.o search.o -lSDL2 -lSDL2_ttf
 	# g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
 
-debug: search.o display.o debug-main.o
-	g++ -o algo-vis main.o display.o search.o -lSDL2 -lSDL2_ttf
+debug: search.o display.o dfs.o debug-main.o
+	g++ -o algo-vis main.o dfs.o display.o search.o -lSDL2 -lSDL2_ttf
 	# g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
 	gdb ./algo-vis
 
@@ -15,6 +15,9 @@ search.o:
 display.o:
 	g++ -c display.cpp
 	# g++ -c display.cpp
+
+dfs.o:
+	g++ -c dfs.cpp
 
 main.o:
 	g++ -c main.cpp

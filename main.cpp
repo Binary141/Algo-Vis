@@ -8,8 +8,13 @@
 extern int doneSearching;
 int isSearching = 0;
 
+// Function to be launched in another thread
+// Only used to listed for a key and stop the searches mid way through
 void waitForSearch() {
     SDL_Event event2;
+
+    // the searches will set the doneSearching to be 1
+    // so we don't need to worry about breaking or anything
     while (isSearching && !doneSearching) {
         while (SDL_PollEvent(&event2)) {
             switch (event2.type) {
@@ -33,9 +38,10 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
     while (SDL_WaitEvent(&event2)) {
         switch (event2.type) {
         case SDL_MOUSEBUTTONUP:
+            // duplicated code so if a user clicks without moving the cursor, we will still do the action
             SDL_GetMouseState(&mouse_x, &mouse_y);
 
-            if (mouse_y <= setting.menuHeight + TILE_BORDER_WIDTH) {
+            if (isInMenu(mouse_y)) {
                 continue;
             }
 
@@ -53,9 +59,6 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
                 search1->states[index] = WALL;
 
                 colorTile(r, closest.x, closest.y, 0, 0, 255);
-                if (search1->goal != EMPTY_SPACE) {
-                    printf("heuristic: %d\n", getCost(closest.x, closest.y, search1->goalx, search1->goaly));
-                }
             }
 
             if (search1->goal == index) {
@@ -70,7 +73,7 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&mouse_x, &mouse_y);
 
-            if (mouse_y <= setting.menuHeight + TILE_BORDER_WIDTH) {
+            if (isInMenu(mouse_y)) {
                 continue;
             }
 
@@ -108,7 +111,16 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
     }
 }
 
-
+search getDefaultSearch() {
+    search search1;
+    search1.start = EMPTY_SPACE;
+    search1.startx = EMPTY_SPACE;
+    search1.starty = EMPTY_SPACE;
+    search1.goal = EMPTY_SPACE;
+    search1.goalx = EMPTY_SPACE;
+    search1.goaly = EMPTY_SPACE;
+    return search1;
+}
 
 int main() {
     screen disp = init_display();
@@ -125,13 +137,7 @@ int main() {
     // draws grid, resets states array to be all empty, and draw state buttons
     reset(disp.renderer, states);
 
-    search search1;
-    search1.start = EMPTY_SPACE;
-    search1.startx = EMPTY_SPACE;
-    search1.starty = EMPTY_SPACE;
-    search1.goal = EMPTY_SPACE;
-    search1.goalx = EMPTY_SPACE;
-    search1.goaly = EMPTY_SPACE;
+    search search1 = getDefaultSearch();
     search1.stateSize = (setting.numTiles * setting.numTiles);
     search1.numTiles = setting.numTiles;
 
@@ -159,23 +165,34 @@ int main() {
                         // draws grid, resets states array to be all empty, and draw state buttons
                         reset(disp.renderer, states);
                         continue;
+                    case SDLK_s:
+                        // color the button so the user knows
+                        backgroundColor = {100, 200, 100};
+
+                        drawStartButton(disp.renderer, textColor, backgroundColor);
+                        selectStartState(disp.renderer, &search1);
+
+                        backgroundColor = {125, 125, 125};
+
+                        drawStartButton(disp.renderer, textColor, backgroundColor);
+                        continue;
+                    case SDLK_g:
+                        // color the button so the user knows
+                        backgroundColor = {200, 100, 100};
+
+                        drawGoalButton(disp.renderer, textColor, backgroundColor);
+                        selectGoalState(disp.renderer, &search1);
+
+                        backgroundColor = {125, 125, 125};
+
+                        drawGoalButton(disp.renderer, textColor, backgroundColor);
+                        continue;
                 }
-                // if (event.key.keysym.sym == SDLK_q) {
-                //     // If the 'q' button is pressed, quit the application
-                //     should_quit = 1;
-                //     break;
-                // }
-                // if (event.key.keysym.sym == SDLK_r) {
-                //     clearTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-                // }
-                // if (event.key.keysym.sym == SDLK_c) {
-                //     // clear the screen
-                //     // draws grid, resets states array to be all empty, and draw state buttons
-                //     reset(disp.renderer, states);
-                //     continue;
-                // }
+
                 if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
                     char text[] = "Searching!";
+
+                    draw_text(disp.renderer, text, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
 
                     isSearching = 1;
                     doneSearching = 0;
@@ -224,48 +241,13 @@ int main() {
                     disp = init_display();
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
 
+                    search1 = getDefaultSearch();
                     search1.states = states;
-                    search1.start = EMPTY_SPACE;
-                    search1.startx = EMPTY_SPACE;
-                    search1.starty = EMPTY_SPACE;
-                    search1.goal = EMPTY_SPACE;
-                    search1.goalx = EMPTY_SPACE;
-                    search1.goaly = EMPTY_SPACE;
                     search1.stateSize = (setting.numTiles * setting.numTiles);
                     search1.numTiles = setting.numTiles;
 
                     usleep(5000);
                     reset(disp.renderer, states);
-                }
-
-                if (event.key.keysym.sym == SDLK_s) {
-                    // color the button so the user knows
-                    backgroundColor = {100, 200, 100};
-
-                    drawStartButton(disp.renderer, textColor, backgroundColor);
-
-                    selectStartState(disp.renderer, &search1);
-
-                    backgroundColor = {125, 125, 125};
-
-                    drawStartButton(disp.renderer, textColor, backgroundColor);
-
-                    continue;
-                }
-
-                if (event.key.keysym.sym == SDLK_g) {
-                    // color the button so the user knows
-                    backgroundColor = {200, 100, 100};
-
-                    drawGoalButton(disp.renderer, textColor, backgroundColor);
-
-                    selectGoalState(disp.renderer, &search1);
-
-                    backgroundColor = {125, 125, 125};
-
-                    drawGoalButton(disp.renderer, textColor, backgroundColor);
-
-                    continue;
                 }
             case SDL_MOUSEBUTTONDOWN:
                 // generate a wall
@@ -274,19 +256,16 @@ int main() {
 
                 // don't do anything if it is in the menu bar at the moment
                 // adjust here for menu selections
-                if (mouse_y <= setting.menuHeight + TILE_BORDER_WIDTH) { // + TILE_BORDER_WIDTH + 1) {
-                    // +1 comes from adding a little padding just in case
+                if (isInMenu(mouse_y)) {
                     continue;
                 }
 
-                closest = getClosestTile(mouse_x, mouse_y);
-
                 // color the tile if it is the left mouse button
                 if( event.button.button == SDL_BUTTON_LEFT ) {
-                    printf("In loop\n");
                     manyWalls(disp.renderer, &search1, 0);
                 }
 
+                // make the space a wall
                 if( event.button.button == SDL_BUTTON_RIGHT ) {
                     manyWalls(disp.renderer, &search1, 1);
                 }

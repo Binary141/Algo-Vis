@@ -232,6 +232,8 @@ tile getClosestTile(int x, int y) {
 
     // find out how many tiles it takes to subtract from the y position before it is negative
     int closest_y = y - TILE_BORDER_WIDTH - setting.menuHeight;
+
+    // this shouldn't happen. But if it does we should quit. Undefined behaviour if we were to do something in the menu relating to tiles
     if (closest_y < 0) {
         printf("closest_y was less than 0!\n");
         exit(1);
@@ -301,14 +303,13 @@ void selectGoalState(SDL_Renderer* renderer, search* s) {
             case SDL_MOUSEBUTTONDOWN:
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                if (mouse_y < setting.menuHeight) {
+                if (isInMenu(mouse_y)) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
                     return;
                 }
 
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_goal = (closest.xIndex + (closest.yIndex * setting.numTiles));
-                printf("New goal index: %d\n", new_goal);
 
                 if (s->start == new_goal) {
                     // remove what used to be the start state
@@ -366,7 +367,8 @@ void selectStartState(SDL_Renderer* renderer, search* s) {
             case SDL_MOUSEBUTTONDOWN:
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                if (mouse_y < setting.menuHeight) {
+
+                if (isInMenu(mouse_y)) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
                     return;
                 }
@@ -430,4 +432,12 @@ void drawGoalButton(SDL_Renderer* renderer, color textColor, color backgroundCol
     int width = setting.goalButtonX2 - setting.goalButtonX;
 
     draw_text(renderer, goal, setting.goalButtonX, setting.goalButtonY, width, setting.menuHeight, textColor, backgroundColor);
+}
+
+int isInMenu(int y) {
+    if (y <= setting.menuHeight + TILE_BORDER_WIDTH) {
+        // if it is within y 0 to the height of the menu, return true
+        return 1;
+    }
+    return 0;
 }

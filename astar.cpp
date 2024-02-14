@@ -20,12 +20,6 @@ struct thing {
 };
 
 double getCost(int currX, int currY, int goalX, int goalY) {
-    printf("currX: %d\n", currX);
-    printf("currY: %d\n", currY);
-
-    printf("goalX: %d\n", goalX);
-    printf("goalY: %d\n", goalY);
-
     int changeX = abs((currX - goalX));
     int changeY = abs((currY - goalY));
 
@@ -69,16 +63,16 @@ void astar(SDL_Renderer* r, search* s) {
     thing t;
 
     t.Index = s->start;
-    printf("Index: %d\n", t.Index);
+
     t.x = s->startx;
     t.y = s->starty;
     t.Cost = 0;
 
+    // the goal doesn't move while we search
     int goalX = s->goal % setting.numTiles;
     int goalY = s->goal / setting.numTiles;
 
     t.heuristic = getCost(s->startx, s->starty, goalX, goalY);
-    printf("heuristic: %lf\n", t.heuristic);
     pq.push(t);
 
     while (!pq.empty()) {
@@ -92,12 +86,6 @@ void astar(SDL_Renderer* r, search* s) {
         pq.pop();
         int current = curr.Index;
 
-        // we don't have an estimate, since we are already here :)
-        // curr.heuristic = 0;
-
-        // printf("Current: %d\n", current);
-        printf("Cost: %lf\n", curr.heuristic);
-
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
             doneSearching = 1;
@@ -107,8 +95,6 @@ void astar(SDL_Renderer* r, search* s) {
         if (s->states[current] == WALL) {
             continue;
         }
-        // double currHeuristic = getCost(curr.x, curr.y, goalX, goalY);
-        // visited[current] = currHeuristic;
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {

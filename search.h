@@ -32,6 +32,8 @@ void bfs(SDL_Renderer*, search*);
 void dfs(SDL_Renderer*, search*);
 void clearTiles(SDL_Renderer*, search*, int, int, int);
 void clearStates(search*);
+void astar(SDL_Renderer*, search*);
+double getCost(int, int, int, int);
 std::vector<int> getNeighborIndexes(int, const search*, int);
 
 #endif

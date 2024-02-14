@@ -26,13 +26,46 @@ void waitForSearch() {
 
 void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
     int mouse_x, mouse_y;
+    int index;
     SDL_Event event2;
     tile closest;
 
     while (SDL_WaitEvent(&event2)) {
         switch (event2.type) {
         case SDL_MOUSEBUTTONUP:
-            printf("Up!\n");
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+
+            if (mouse_y <= setting.menuHeight + TILE_BORDER_WIDTH) {
+                continue;
+            }
+
+            closest = getClosestTile(mouse_x, mouse_y);
+
+            index = closest.xIndex + (closest.yIndex * setting.numTiles);
+
+            if (shouldDelete) {
+                // make it an empty space
+                colorTile(r, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                search1->states[index] = EMPTY_SPACE;
+            } else {
+                // make it a wall
+                search1->states[index] = WALL;
+
+                colorTile(r, closest.x, closest.y, 0, 0, 255);
+                if (search1->goal != EMPTY_SPACE) {
+                    printf("heuristic: %d\n", getCost(closest.x, closest.y, search1->goalx, search1->goaly));
+                }
+            }
+
+            if (search1->goal == index) {
+                search1->goal = EMPTY_SPACE;
+            }
+
+            if (search1->start == index) {
+                search1->start = EMPTY_SPACE;
+            }
+
             return;
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&mouse_x, &mouse_y);
@@ -43,7 +76,7 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
 
             closest = getClosestTile(mouse_x, mouse_y);
 
-            int index = closest.xIndex + (closest.yIndex * setting.numTiles);
+            index = closest.xIndex + (closest.yIndex * setting.numTiles);
 
             if (index < 0) {
                 return;
@@ -59,6 +92,7 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
                 search1->states[index] = WALL;
 
                 colorTile(r, closest.x, closest.y, 0, 0, 255);
+                // printf("heuristic: %d\n", 1);
             }
 
             if (search1->goal == index) {
@@ -128,7 +162,7 @@ int main() {
                     reset(disp.renderer, states);
                     continue;
                 }
-                if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u) {
+                if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j) {
                     char text[] = "Searching!";
 
                     isSearching = 1;
@@ -141,8 +175,10 @@ int main() {
                     // do the search
                     if (event.key.keysym.sym == SDLK_b) {
                         bfs(disp.renderer, &search1);
-                    } else {
+                    } else if (event.key.keysym.sym == SDLK_u) {
                         dfs(disp.renderer, &search1);
+                    } else {
+                        astar(disp.renderer, &search1);
                     }
 
                     isSearching = 0;

@@ -148,21 +148,33 @@ int main() {
                 should_quit = 1;
                 break;
             case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_q) {
-                    // If the 'q' button is pressed, quit the application
-                    should_quit = 1;
-                    break;
+                switch (event.key.keysym.sym) {
+                    case SDLK_q:
+                        should_quit = 1;
+                        break;
+                    case SDLK_r:
+                        clearTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                    case SDLK_c:
+                        // clear the screen
+                        // draws grid, resets states array to be all empty, and draw state buttons
+                        reset(disp.renderer, states);
+                        continue;
                 }
-                if (event.key.keysym.sym == SDLK_r) {
-                    clearTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-                }
-                if (event.key.keysym.sym == SDLK_c) {
-                    // clear the screen
-                    // draws grid, resets states array to be all empty, and draw state buttons
-                    reset(disp.renderer, states);
-                    continue;
-                }
-                if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j) {
+                // if (event.key.keysym.sym == SDLK_q) {
+                //     // If the 'q' button is pressed, quit the application
+                //     should_quit = 1;
+                //     break;
+                // }
+                // if (event.key.keysym.sym == SDLK_r) {
+                //     clearTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                // }
+                // if (event.key.keysym.sym == SDLK_c) {
+                //     // clear the screen
+                //     // draws grid, resets states array to be all empty, and draw state buttons
+                //     reset(disp.renderer, states);
+                //     continue;
+                // }
+                if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
                     char text[] = "Searching!";
 
                     isSearching = 1;
@@ -177,6 +189,8 @@ int main() {
                         bfs(disp.renderer, &search1);
                     } else if (event.key.keysym.sym == SDLK_u) {
                         dfs(disp.renderer, &search1);
+                    } else if (event.key.keysym.sym == SDLK_k) {
+                        greedy(disp.renderer, &search1);
                     } else {
                         astar(disp.renderer, &search1);
                     }

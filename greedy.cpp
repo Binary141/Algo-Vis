@@ -19,16 +19,8 @@ struct thing {
     }
 };
 
-double getCost(int currX, int currY, int goalX, int goalY) {
-    int changeX = abs((currX - goalX));
-    int changeY = abs((currY - goalY));
-
-    double dist = changeX + changeY + 0.0;
-    return dist;
-}
-
 // caller needs to set doneSearching to 0 if they need
-void astar(SDL_Renderer* r, search* s) {
+void greedy(SDL_Renderer* r, search* s) {
     color textColor{0, 0, 0};
 
     color backgroundColor{125, 125, 125};
@@ -98,7 +90,7 @@ void astar(SDL_Renderer* r, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, current, 255, 0, 255);
+            colorTileByIndex(r, current, 92, 49, 148);
             s->states[current] = VISITED;
         }
 
@@ -126,8 +118,8 @@ void astar(SDL_Renderer* r, search* s) {
             tmp.Index = tmpState;
 
             // Cost of parent + 1 since our step Cost is 1
-            tmp.Cost = curr.Cost + 1;
-            tmp.heuristic = heuristic + tmp.Cost;
+            // tmp.Cost = curr.Cost + 1;
+            tmp.heuristic = heuristic;
 
             pq.push(tmp);
             visited[tmpState] = heuristic;

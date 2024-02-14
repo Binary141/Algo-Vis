@@ -30,11 +30,6 @@ double getCost(int currX, int currY, int goalX, int goalY) {
     int changeY = abs((currY - goalY));
 
     double dist = changeX + changeY + 0.0;
-
-    // int changeX = ((currX - goalX) * (currX - goalX));
-    // int changeY = ((currY - goalY) * (currY - goalY));
-
-    // double dist = sqrt(changeX + changeY);
     return dist;
 }
 
@@ -117,7 +112,7 @@ void astar(SDL_Renderer* r, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, current, 255, 125, 0);
+            colorTileByIndex(r, current, 255, 0, 255);
             s->states[current] = VISITED;
         }
 
@@ -131,14 +126,8 @@ void astar(SDL_Renderer* r, search* s) {
 
             int x = tmpState % setting.numTiles;
             int y = tmpState / setting.numTiles;
-            printf("x: %d\n", x);
-            printf("y: %d\n", y);
-
-            printf("goalx: %d\n", x);
-            printf("goaly: %d\n", y);
 
             double heuristic = getCost(x, y, goalX, goalY);
-            printf("heuristic: %lf\n", heuristic);
 
             // the (|| visited[tmpStates[i]] == visited) is to not
             // go indefinitely if there is no path to the goal

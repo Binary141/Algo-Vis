@@ -5,7 +5,7 @@
 #include "search.h"
 
 #define TILE_BORDER_WIDTH 3
-#define NUM_SQUARES 25
+#define NUM_SQUARES 50
 #define MENU_HEIGHT 50
 
 // These may change in init_display
@@ -26,7 +26,7 @@ const int BORDER_B = 0;
 const int TILE_WIDTH = SCREEN_WIDTH / NUM_SQUARES;
 const int TILE_HEIGHT = SCREEN_HEIGHT / NUM_SQUARES;
 
-#define SLEEPTIME2 1000
+#define SLEEPTIME2 750
 
 #define START_COLOR color{0, 255, 0}
 #define GOAL_COLOR color{255, 0, 0}

@@ -79,6 +79,7 @@ void astar(SDL_Renderer* r, search* s) {
         if (!isSearching) {
             doneSearching = 1;
             clearStates(s);
+            free(visited);
             return;
         }
 
@@ -90,6 +91,7 @@ void astar(SDL_Renderer* r, search* s) {
             printf("Found the goal at index %d!\n", current);
             doneSearching = 1;
             clearStates(s);
+            free(visited);
             return;
         }
         if (s->states[current] == WALL) {
@@ -137,5 +139,6 @@ void astar(SDL_Renderer* r, search* s) {
     doneSearching = 1;
     clearStates(s);
     printf("Could not get to the goal!\n");
+    free(visited);
     return;
 }

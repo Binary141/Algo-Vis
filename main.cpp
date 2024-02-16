@@ -29,7 +29,7 @@ void waitForSearch() {
     return;
 }
 
-void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
+void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelete) {
     int mouse_x, mouse_y;
     int index;
     SDL_Event event2;
@@ -51,14 +51,14 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
 
             if (shouldDelete) {
                 // make it an empty space
-                colorTile(r, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
                 search1->states[index] = EMPTY_SPACE;
             } else {
                 // make it a wall
                 search1->states[index] = WALL;
 
-                colorTile(r, closest.x, closest.y, 0, 0, 255);
+                colorTile(r, t, closest.x, closest.y, 0, 0, 255);
             }
 
             if (search1->goal == index) {
@@ -87,14 +87,14 @@ void manyWalls(SDL_Renderer* r, search* search1, int shouldDelete) {
 
             if (shouldDelete) {
                 // make it an empty space
-                colorTile(r, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
                 search1->states[index] = EMPTY_SPACE;
             } else {
                 // make it a wall
                 search1->states[index] = WALL;
 
-                colorTile(r, closest.x, closest.y, 0, 0, 255);
+                colorTile(r, t, closest.x, closest.y, 0, 0, 255);
                 // printf("heuristic: %d\n", 1);
             }
 
@@ -135,7 +135,11 @@ int main() {
     states = (int*) malloc((setting.numTiles * setting.numTiles) * sizeof(int));
 
     // draws grid, resets states array to be all empty, and draw state buttons
-    reset(disp.renderer, states);
+    reset(disp.renderer, disp.texture1, states);
+    usleep(5000);
+    reset(disp.renderer, disp.texture2, states);
+
+    disp.currTexture = disp.texture1;
 
     search search1 = getDefaultSearch();
     search1.stateSize = (setting.numTiles * setting.numTiles);
@@ -148,6 +152,8 @@ int main() {
     color backgroundColor{125, 125, 125};
 
     tile closest;
+    int thing = 0;
+
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
             case SDL_QUIT:
@@ -155,44 +161,76 @@ int main() {
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
+                    case SDLK_p:
+                        printf("%d\n", thing);
+                        if (!thing) {
+                            // alternate the current
+                            disp.currTexture = disp.texture1;
+
+                            thing = 1;
+                            // SDL_SetRenderTarget(disp.renderer, disp.texture1);
+                            SDL_RenderCopy(disp.renderer,
+                                           disp.currTexture,
+                                           NULL,
+                                           NULL);
+                            usleep(SLEEPTIME2);
+                            SDL_RenderPresent(disp.renderer);
+                            usleep(SLEEPTIME2);
+                            SDL_SetRenderTarget(disp.renderer, NULL);
+                        } else {
+                            // alternate the current
+                            disp.currTexture = disp.texture2;
+
+                            // SDL_SetRenderTarget(disp.renderer, disp.texture2);
+                            SDL_RenderCopy(disp.renderer,
+                                           disp.currTexture,
+                                           NULL,
+                                           NULL);
+                            thing = 0;
+                            usleep(SLEEPTIME2);
+                            SDL_RenderPresent(disp.renderer);
+                            usleep(SLEEPTIME2);
+                            SDL_SetRenderTarget(disp.renderer, NULL);
+                        }
+                        continue;
                     case SDLK_q:
                         should_quit = 1;
                         break;
                     case SDLK_r:
-                        clearTiles(disp.renderer, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                        clearTiles(disp.renderer, disp.currTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
                     case SDLK_c:
                         // clear the screen
                         // draws grid, resets states array to be all empty, and draw state buttons
-                        reset(disp.renderer, states);
+                        reset(disp.renderer, disp.currTexture, states);
                         continue;
                     case SDLK_s:
                         // color the button so the user knows
                         backgroundColor = {100, 200, 100};
 
-                        drawStartButton(disp.renderer, textColor, backgroundColor);
-                        selectStartState(disp.renderer, &search1);
+                        drawStartButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
+                        selectStartState(disp.renderer, disp.currTexture, &search1);
 
                         backgroundColor = {125, 125, 125};
 
-                        drawStartButton(disp.renderer, textColor, backgroundColor);
+                        drawStartButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
                         continue;
                     case SDLK_g:
                         // color the button so the user knows
                         backgroundColor = {200, 100, 100};
 
-                        drawGoalButton(disp.renderer, textColor, backgroundColor);
-                        selectGoalState(disp.renderer, &search1);
+                        drawGoalButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
+                        selectGoalState(disp.renderer, disp.currTexture, &search1);
 
                         backgroundColor = {125, 125, 125};
 
-                        drawGoalButton(disp.renderer, textColor, backgroundColor);
+                        drawGoalButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
                         continue;
                 }
 
                 if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
                     char text[] = "Searching!";
 
-                    draw_text(disp.renderer, text, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, disp.currTexture, text, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
 
                     isSearching = 1;
                     doneSearching = 0;
@@ -203,13 +241,13 @@ int main() {
 
                     // do the search
                     if (event.key.keysym.sym == SDLK_b) {
-                        bfs(disp.renderer, &search1);
+                        bfs(disp.renderer, disp.currTexture, &search1);
                     } else if (event.key.keysym.sym == SDLK_u) {
-                        dfs(disp.renderer, &search1);
+                        dfs(disp.renderer, disp.currTexture, &search1);
                     } else if (event.key.keysym.sym == SDLK_k) {
-                        greedy(disp.renderer, &search1);
+                        greedy(disp.renderer, disp.currTexture, &search1);
                     } else {
-                        astar(disp.renderer, &search1);
+                        astar(disp.renderer, disp.currTexture, &search1);
                     }
 
                     isSearching = 0;
@@ -218,7 +256,7 @@ int main() {
                     t1.join();
 
                     char doneText[] = "Done!";
-                    draw_text(disp.renderer, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, disp.currTexture, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
                 }
 
                 if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d) {
@@ -247,7 +285,7 @@ int main() {
                     search1.numTiles = setting.numTiles;
 
                     usleep(5000);
-                    reset(disp.renderer, states);
+                    reset(disp.renderer, disp.currTexture, states);
                 }
             case SDL_MOUSEBUTTONDOWN:
                 // generate a wall
@@ -262,12 +300,12 @@ int main() {
 
                 // color the tile if it is the left mouse button
                 if( event.button.button == SDL_BUTTON_LEFT ) {
-                    manyWalls(disp.renderer, &search1, 0);
+                    manyWalls(disp.renderer, disp.currTexture, &search1, 0);
                 }
 
                 // make the space a wall
                 if( event.button.button == SDL_BUTTON_RIGHT ) {
-                    manyWalls(disp.renderer, &search1, 1);
+                    manyWalls(disp.renderer, disp.currTexture, &search1, 1);
                 }
         }
     }

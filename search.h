@@ -28,12 +28,12 @@ struct search {
     int numTiles;
 };
 
-void bfs(SDL_Renderer*, search*);
-void dfs(SDL_Renderer*, search*);
-void clearTiles(SDL_Renderer*, search*, int, int, int);
+void bfs(SDL_Renderer*, SDL_Texture*, search*);
+void dfs(SDL_Renderer*, SDL_Texture*, search*);
+void clearTiles(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
 void clearStates(search*);
-void astar(SDL_Renderer*, search*);
-void greedy(SDL_Renderer*, search*);
+void astar(SDL_Renderer*, SDL_Texture*, search*);
+void greedy(SDL_Renderer*, SDL_Texture*, search*);
 double getCost(int, int, int, int);
 std::vector<int> getNeighborIndexes(int, const search*, int);
 

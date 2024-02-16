@@ -44,6 +44,10 @@ struct screen {
     SDL_Window* window;
     SDL_Surface* surface;
     SDL_Renderer* renderer;
+    SDL_Texture* texture1;
+    SDL_Texture* texture2;
+    SDL_Texture* renderedTexture;
+    SDL_Texture* currTexture;
 };
 
 struct settings {
@@ -70,17 +74,17 @@ struct color {
 settings getDisplaySettings();
 void setDisplaySettings(settings);
 screen init_display();
-void draw_grid(SDL_Renderer*);
-void draw_text(SDL_Renderer*, char*, int, int, int, int, color, color);
-void reset(SDL_Renderer*, int*);
+void draw_grid(SDL_Renderer*, SDL_Texture*);
+void draw_text(SDL_Renderer*, SDL_Texture*, char*, int, int, int, int, color, color);
+void reset(SDL_Renderer*, SDL_Texture*, int*);
 void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);
-void colorTile(SDL_Renderer* , int, int, int, int, int);
-void colorTileByIndex(SDL_Renderer* , int, int, int, int);
-void selectStartState(SDL_Renderer*, search*);
-void selectGoalState(SDL_Renderer*, search*);
-void drawStartButton(SDL_Renderer*, color, color);
-void drawGoalButton(SDL_Renderer*, color, color);
+void colorTile(SDL_Renderer* , SDL_Texture*, int, int, int, int, int);
+void colorTileByIndex(SDL_Renderer* , SDL_Texture*, int, int, int, int);
+void selectStartState(SDL_Renderer*, SDL_Texture*, search*);
+void selectGoalState(SDL_Renderer*, SDL_Texture*, search*);
+void drawStartButton(SDL_Renderer*, SDL_Texture*, color, color);
+void drawGoalButton(SDL_Renderer*, SDL_Texture*, color, color);
 int isInMenu(int);
 
 extern settings setting;

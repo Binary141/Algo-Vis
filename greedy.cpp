@@ -20,7 +20,7 @@ struct thing {
 };
 
 // caller needs to set doneSearching to 0 if they need
-void greedy(SDL_Renderer* r, search* s) {
+void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
     color textColor{0, 0, 0};
 
     color backgroundColor{125, 125, 125};
@@ -92,7 +92,7 @@ void greedy(SDL_Renderer* r, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, current, 92, 49, 148);
+            colorTileByIndex(r, texture, current, 92, 49, 148);
             s->states[current] = VISITED;
         }
 

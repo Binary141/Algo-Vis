@@ -43,10 +43,10 @@ std::vector<int> getNeighborIndexes(int current, const search* s, int lastRowInd
     return res;
 }
 
-void clearTiles(SDL_Renderer* renderer, search* s, int r, int g, int b) {
+void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
     // make sure if we visited a tile, or if it is marked blank, then just clear it out
     int tmp;
-    draw_grid(renderer);
+    draw_grid(renderer, texture);
 
     for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
         tmp = s->states[i];
@@ -56,17 +56,17 @@ void clearTiles(SDL_Renderer* renderer, search* s, int r, int g, int b) {
 
         if (tmp == WALL) { // || tmp == EMPTY_SPACE) {
             // s->states[i] = EMPTY_SPACE;
-            colorTileByIndex(renderer, i, 0, 0, 255);
+            colorTileByIndex(renderer, texture, i, 0, 0, 255);
         }
 
         if (tmp == GOAL) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, i, 255, 0, 0);
+            colorTileByIndex(renderer, texture, i, 255, 0, 0);
         }
 
         if (tmp == START) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, i, 0, 255, 0);
+            colorTileByIndex(renderer, texture, i, 0, 255, 0);
         }
     }
 }

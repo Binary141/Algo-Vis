@@ -28,7 +28,7 @@ double getCost(int currX, int currY, int goalX, int goalY) {
 }
 
 // caller needs to set doneSearching to 0 if they need
-void astar(SDL_Renderer* r, search* s) {
+void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
     color textColor{0, 0, 0};
 
     color backgroundColor{125, 125, 125};
@@ -100,7 +100,7 @@ void astar(SDL_Renderer* r, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, current, 255, 0, 255);
+            colorTileByIndex(r, texture, current, 255, 0, 255);
             s->states[current] = VISITED;
         }
 

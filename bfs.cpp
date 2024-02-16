@@ -7,7 +7,7 @@
 #include <queue>
 
 // caller needs to set doneSearching to 0 if they need
-void bfs(SDL_Renderer* r, search* s) {
+void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
     color textColor{0, 0, 0};
 
     color backgroundColor{125, 125, 125};
@@ -65,7 +65,7 @@ void bfs(SDL_Renderer* r, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, current, 255, 125, 0);
+            colorTileByIndex(r, t, current, 255, 125, 0);
             s->states[current] = VISITED;
         }
         // sleep for microseconds. 100_000 us is 0.1 seconds

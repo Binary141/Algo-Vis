@@ -85,6 +85,7 @@ void selectStartState(SDL_Renderer*, SDL_Texture*, search*);
 void selectGoalState(SDL_Renderer*, SDL_Texture*, search*);
 void drawStartButton(SDL_Renderer*, SDL_Texture*, color, color);
 void drawGoalButton(SDL_Renderer*, SDL_Texture*, color, color);
+void drawStatesCount(SDL_Renderer*, SDL_Texture*, color, color, int);
 int isInMenu(int);
 
 extern settings setting;

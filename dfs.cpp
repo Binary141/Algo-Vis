@@ -36,6 +36,11 @@ void dfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
     // LIFO queue we will use
     q.push(s->start);
 
+    color bg{0,0,0};
+    color text{255,255,255};
+
+    int visitedCount = 0;
+
     while (!q.empty()) {
         if (!isSearching) {
             doneSearching = 1;
@@ -46,6 +51,10 @@ void dfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
 
         int current = q.top();
         q.pop();
+
+        visitedCount += 1;
+        drawStatesCount(r, t, bg, text, visitedCount);
+
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
             doneSearching = 1;

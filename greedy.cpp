@@ -67,6 +67,10 @@ void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
     t.heuristic = getCost(s->startx, s->starty, goalX, goalY);
     pq.push(t);
 
+    int visitedCount = 0;
+    color bg{0,0,0};
+    color text{255,255,255};
+
     while (!pq.empty()) {
         if (!isSearching) {
             doneSearching = 1;
@@ -78,6 +82,8 @@ void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
         thing curr = pq.top();
         pq.pop();
         int current = curr.Index;
+        visitedCount += 1;
+        drawStatesCount(r, texture, bg, text, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);

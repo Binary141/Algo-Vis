@@ -75,6 +75,11 @@ void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
     t.heuristic = getCost(s->startx, s->starty, goalX, goalY);
     pq.push(t);
 
+    color bg{0,0,0};
+    color text{255,255,255};
+
+    int visitedCount = 0;
+
     while (!pq.empty()) {
         if (!isSearching) {
             doneSearching = 1;
@@ -86,6 +91,9 @@ void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
         thing curr = pq.top();
         pq.pop();
         int current = curr.Index;
+
+        visitedCount += 1;
+        drawStatesCount(r, texture, bg, text, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
@@ -120,7 +128,10 @@ void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
             // the (|| visited[tmpStates[i]] == visited) is to not
             // go indefinitely if there is no path to the goal
             // don't add to states if it is a wall, or we have been there
-            if (s->states[tmpState] == WALL || visited[tmpStates[i]] != DBL_MAX) {
+            if (s->states[tmpState] == WALL || heuristic > visited[tmpStates[i]]) {
+                // if (heuristic > visited[tmpStates[i]]) {
+                //     continue;
+                // }
                 continue;
             }
 

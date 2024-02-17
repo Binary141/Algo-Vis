@@ -169,10 +169,10 @@ int main() {
 
                             thing = 1;
                             // SDL_SetRenderTarget(disp.renderer, disp.texture1);
-                            SDL_RenderCopy(disp.renderer,
-                                           disp.currTexture,
-                                           NULL,
-                                           NULL);
+                            // SDL_RenderCopy(disp.renderer,
+                            //                disp.currTexture,
+                            //                NULL,
+                            //                NULL);
                             usleep(SLEEPTIME2);
                             SDL_RenderPresent(disp.renderer);
                             usleep(SLEEPTIME2);
@@ -182,10 +182,10 @@ int main() {
                             disp.currTexture = disp.texture2;
 
                             // SDL_SetRenderTarget(disp.renderer, disp.texture2);
-                            SDL_RenderCopy(disp.renderer,
-                                           disp.currTexture,
-                                           NULL,
-                                           NULL);
+                            // SDL_RenderCopy(disp.renderer,
+                            //                disp.currTexture,
+                            //                NULL,
+                            //                NULL);
                             thing = 0;
                             usleep(SLEEPTIME2);
                             SDL_RenderPresent(disp.renderer);
@@ -198,6 +198,7 @@ int main() {
                         break;
                     case SDLK_r:
                         clearTiles(disp.renderer, disp.currTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                        continue;
                     case SDLK_c:
                         // clear the screen
                         // draws grid, resets states array to be all empty, and draw state buttons

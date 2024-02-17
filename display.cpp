@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
 #include <unistd.h> // usleep()
+#include <stdlib.h>
 
 settings setting = {
     SCREEN_WIDTH,
@@ -485,6 +486,13 @@ void drawStartButton(SDL_Renderer* renderer, SDL_Texture* texture, color textCol
     int width = setting.startButtonX2 - setting.startButtonX;
 
     draw_text(renderer, texture, start, setting.startButtonX, setting.startButtonY, width, setting.menuHeight, textColor, backgroundColor);
+}
+
+void drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color textColor, color backgroundColor, int value) {
+    char str[5];
+    sprintf(str, "%d", value);
+
+    draw_text(r, t, str, 125, 0, 40, setting.menuHeight, textColor, backgroundColor);
 }
 
 void drawGoalButton(SDL_Renderer* renderer, SDL_Texture* texture, color textColor, color backgroundColor) {

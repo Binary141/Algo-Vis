@@ -34,7 +34,11 @@ void clearTiles(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
 void clearStates(search*);
 void astar(SDL_Renderer*, SDL_Texture*, search*);
 void greedy(SDL_Renderer*, SDL_Texture*, search*);
-double getCost(int, int, int, int);
 std::vector<int> getNeighborIndexes(int, const search*, int);
+
+double manhattanHeuristic(int, int, int, int);
+double euclideanHeuristic(int, int, int, int);
+double hammingHeuristic(int, int, int, int);
+double getCost(int, int, int, int);
 
 #endif

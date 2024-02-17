@@ -19,14 +19,6 @@ struct thing {
     }
 };
 
-double getCost(int currX, int currY, int goalX, int goalY) {
-    int changeX = abs((currX - goalX));
-    int changeY = abs((currY - goalY));
-
-    double dist = changeX + changeY + 0.0;
-    return dist;
-}
-
 // caller needs to set doneSearching to 0 if they need
 void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
     color textColor{0, 0, 0};

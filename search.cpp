@@ -82,3 +82,24 @@ void clearStates(search* s) {
     }
 }
 
+// manhattan distance
+double manhattanHeuristic(int currX, int currY, int goalX, int goalY) {
+    int changeX = abs((currX - goalX));
+    int changeY = abs((currY - goalY));
+
+    double dist = changeX + changeY + 0.0;
+    return dist;
+}
+
+// euclidean distance
+// straight line distance
+double euclideanHeuristic(int currX, int currY, int goalX, int goalY) {
+    int changeX = ((currX - goalX) * (currX - goalX));
+    int changeY = ((currY - goalY) * (currY - goalY));
+
+    return sqrt(changeX + changeY);
+}
+
+double getCost(int currX, int currY, int goalX, int goalY) {
+    return euclideanHeuristic(currX, currY, goalX, goalY);
+}

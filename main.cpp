@@ -1,6 +1,7 @@
 #include <iostream>
 #include "display.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "search.h"
 #include <unistd.h> // usleep()
 #include <thread>
@@ -161,6 +162,10 @@ int main() {
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
+                    case SDLK_m:
+                        printf("Saving?\n");
+                        IMG_SavePNG(disp.surface, "testing.png");
+                        continue;
                     case SDLK_p:
                         printf("%d\n", thing);
                         if (!thing) {

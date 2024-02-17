@@ -1,7 +1,7 @@
 target: run
 
-build: search.o display.o astar.o greedy.o dfs.o bfs.o main.o
-	g++ -o algo-vis main.o display.o astar.o greedy.o bfs.o dfs.o search.o -lSDL2 -lSDL2_ttf
+build: main.o search.o display.o astar.o greedy.o dfs.o bfs.o
+	g++ -o algo-vis main.o display.o astar.o greedy.o bfs.o dfs.o search.o -lSDL2 -lSDL2_ttf -lSDL2_image
 	# g++ -o algo-vis main.o display.o -lSDL2 -lSDL2_ttf
 
 debug: search.o display.o dfs.o bfs.o greedy.o astar.o debug-main.o

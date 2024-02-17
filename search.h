@@ -39,6 +39,7 @@ std::vector<int> getNeighborIndexes(int, const search*, int);
 double manhattanHeuristic(int, int, int, int);
 double euclideanHeuristic(int, int, int, int);
 double hammingHeuristic(int, int, int, int);
+double zeroHeuristic(int, int, int, int);
 double getCost(int, int, int, int);
 
 #endif

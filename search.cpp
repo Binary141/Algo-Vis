@@ -100,6 +100,15 @@ double euclideanHeuristic(int currX, int currY, int goalX, int goalY) {
     return sqrt(changeX + changeY);
 }
 
+double zeroHeuristic(int currX, int currY, int goalX, int goalY) {
+    (void) currX;
+    (void) currY;
+    (void) goalX;
+    (void) goalY;
+
+    return 0.0;
+}
+
 double getCost(int currX, int currY, int goalX, int goalY) {
     return euclideanHeuristic(currX, currY, goalX, goalY);
 }

@@ -160,6 +160,8 @@ int main() {
     texr.w = 100;
     texr.h = 200;
 
+    SDL_Surface* textureSurface;
+
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
             case SDL_QUIT:
@@ -172,33 +174,30 @@ int main() {
                         IMG_SavePNG(disp.surface, "testing.png");
                         continue;
                     case SDLK_p:
+                        // demo to swap the textures
                         printf("%d\n", thing);
 
                         if (!thing) {
                             // alternate the current
-                            disp.currTexture = disp.texture1;
+                            disp.currTexture = disp.texture2;
 
-                            // SDL_SetRenderTarget(disp.renderer, disp.currTexture);
                             SDL_RenderCopy(disp.renderer,
                                            disp.currTexture,
                                            NULL,
                                            NULL);
                             thing = 1;
 
-                            // SDL_SetRenderTarget(disp.renderer, NULL);
                             SDL_RenderPresent(disp.renderer);
                         } else {
                             // alternate the current
-                            disp.currTexture = disp.texture2;
+                            disp.currTexture = disp.texture1;
 
-                            // SDL_SetRenderTarget(disp.renderer, disp.currTexture);
                             SDL_RenderCopy(disp.renderer,
                                            disp.currTexture,
                                            NULL,
                                            NULL);
                             thing = 0;
 
-                            // SDL_SetRenderTarget(disp.renderer, NULL);
                             SDL_RenderPresent(disp.renderer);
                         }
                         continue;

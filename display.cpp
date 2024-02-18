@@ -246,16 +246,7 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     // Actually draw the desired color
     SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
 
-        /* Let's copy the other textures onto the target texture. */
-    // SDL_RenderCopy(renderer, texture, NULL, NULL);
-    // SDL_RenderCopy(renderer, Message, NULL, NULL);
-
-    /* Resetting to the default render target which is the frame buffer
-       that gets displayed on screen. */
     SDL_SetRenderTarget(renderer, NULL);
-
-    // Update screen
-    // SDL_RenderPresent(renderer);
 
     // Clear the renderer
     SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
@@ -320,9 +311,6 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
     // Declare rect of square
     SDL_Rect squareRect;
 
-    // Initialize renderer color white for the background
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
     // Actually draw the desired color
     SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 
@@ -339,7 +327,13 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
     // Reset the rendering target to the default (the window)
     SDL_SetRenderTarget(renderer, nullptr);
 
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_Rect srcrect;
+    srcrect.w = setting.width;
+    srcrect.h = setting.height - setting.menuHeight - TILE_BORDER_WIDTH;
+    srcrect.x = 0;
+    srcrect.y = setting.menuHeight + TILE_BORDER_WIDTH;
+
+    SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
 
     // Update screen
     SDL_RenderPresent(renderer);

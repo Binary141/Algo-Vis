@@ -8,22 +8,19 @@
 #include <math.h> // sqrt()
 #include <float.h>
 
-struct thing {
+struct greedyStruct {
     int Index;
     int x;
     int y;
     int Cost;
     double heuristic;
-    bool operator<(const thing& rhs) const {
+    bool operator<(const greedyStruct& rhs) const {
         return heuristic > rhs.heuristic;
     }
 };
 
 // caller needs to set doneSearching to 0 if they need
-void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
-    color textColor{0, 0, 0};
-
-    color backgroundColor{125, 125, 125};
+void greedy(SDL_Renderer* r, SDL_Texture* t, search* s) {
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
         doneSearching = 1;
@@ -50,26 +47,24 @@ void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
     std::vector<int> tmpStates;
 
     // prio queue we will use
-    std::priority_queue<thing> pq;
+    std::priority_queue<greedyStruct> pq;
 
-    thing t;
+    greedyStruct gs;
 
-    t.Index = s->start;
+    gs.Index = s->start;
 
-    t.x = s->startx;
-    t.y = s->starty;
-    t.Cost = 0;
+    gs.x = s->startx;
+    gs.y = s->starty;
+    gs.Cost = 0;
 
     // the goal doesn't move while we search
     int goalX = s->goal % setting.numTiles;
     int goalY = s->goal / setting.numTiles;
 
-    t.heuristic = getCost(s->startx, s->starty, goalX, goalY);
-    pq.push(t);
+    gs.heuristic = getCost(s->startx, s->starty, goalX, goalY);
+    pq.push(gs);
 
     int visitedCount = 0;
-    color bg{0,0,0};
-    color text{255,255,255};
 
     while (!pq.empty()) {
         if (!isSearching) {
@@ -79,11 +74,11 @@ void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
             return;
         }
 
-        thing curr = pq.top();
+        greedyStruct curr = pq.top();
         pq.pop();
         int current = curr.Index;
         visitedCount += 1;
-        drawStatesCount(r, texture, bg, text, visitedCount);
+        drawStatesCount(r, t, textColor, bg, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
@@ -98,7 +93,7 @@ void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, texture, current, 92, 49, 148);
+            colorTileByIndex(r, t, current, 92, 49, 148);
             s->states[current] = VISITED;
         }
 
@@ -122,7 +117,7 @@ void greedy(SDL_Renderer* r, SDL_Texture* texture, search* s) {
                 continue;
             }
 
-            thing tmp;
+            greedyStruct tmp;
             tmp.Index = tmpState;
 
             // Cost of parent + 1 since our step Cost is 1

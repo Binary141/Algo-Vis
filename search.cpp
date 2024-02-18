@@ -48,7 +48,7 @@ void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, 
     int tmp;
     draw_grid(renderer, texture);
 
-    for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
+    for (int i = 0; i < s->stateSize; i++) {
         tmp = s->states[i];
         if (tmp == VISITED) {
             continue;
@@ -72,7 +72,7 @@ void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, 
 }
 
 void clearStates(search* s) {
-    for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
+    for (int i = 0; i < s->stateSize; i++) {
         // set the tile to be empty if it has been visited
         // note this will not update the display, just used so
         // if a search was stopped, it can search properly

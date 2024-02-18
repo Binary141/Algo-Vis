@@ -8,9 +8,13 @@
 
 // caller needs to set doneSearching to 0 if they need
 void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
-    color textColor{0, 0, 0};
+    // create a list of visited states. Used to not have repeats
+    int* visited = (int*) malloc(s->stateSize * sizeof(int));
+    if (!visited) {
+        printf("Couldn't malloc bfs visited array!");
+        exit(1);
+    }
 
-    color backgroundColor{125, 125, 125};
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
         doneSearching = 1;
@@ -19,11 +23,9 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
     }
 
     // get the start index for the last row. Used for a quick lookup in the generate neighbors function
-    int lastRowIndex = ((s->numTiles * s->numTiles) - s->numTiles);
+    int lastRowIndex = s->stateSize - s->numTiles;
 
-    // create a list of visited states. Used to not have repeats
-    int* visited = (int*) malloc((s->numTiles * s->numTiles) * sizeof(int));
-    for (int i = 0; i < (s->numTiles * s->numTiles); i++) {
+    for (int i = 0; i < s->stateSize; i++) {
         // set all to a defined val. Doesn't matter as long as it isn't equal to VISITED
         visited[i] = 0;
 
@@ -36,20 +38,16 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
     // vec that get neighbors will return
     std::vector<int> tmpStates;
 
+    // FIFO queue we will use
     std::queue<int> q;
 
-    // FIFO queue we will use
     q.push(s->start);
 
     int visitedCount = 0;
 
-    color bg{0,0,0};
-    color text{255,255,255};
-
     while (!q.empty()) {
         if (!isSearching) {
             doneSearching = 1;
-            clearStates(s);
             free(visited);
             return;
         }
@@ -57,19 +55,21 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
         int current = q.front();
         q.pop();
 
+        // do nothing if it is a wall
+        if (s->states[current] == WALL) {
+            continue;
+        }
+
         visitedCount += 1;
-        drawStatesCount(r, t, bg, text, visitedCount);
+        drawStatesCount(r, t, textColor, bg, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
             doneSearching = 1;
-            clearStates(s);
             free(visited);
             return;
         }
-        if (s->states[current] == WALL) {
-            continue;
-        }
+
         visited[current] = VISITED;
 
         // don't mark or color the start state if we come to it
@@ -77,6 +77,7 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
             colorTileByIndex(r, t, current, 255, 125, 0);
             s->states[current] = VISITED;
         }
+
         // sleep for microseconds. 100_000 us is 0.1 seconds
         usleep(SLEEPTIME);
 
@@ -94,8 +95,8 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
             visited[tmpStates[i]] = VISITED;
         }
     }
+
     doneSearching = 1;
-    clearStates(s);
     printf("Could not get to the goal!\n");
     free(visited);
     return;

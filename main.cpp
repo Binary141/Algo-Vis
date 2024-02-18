@@ -148,10 +148,6 @@ int main() {
 
     search1.states = states;
 
-    color textColor{0, 0, 0};
-
-    color backgroundColor{125, 125, 125};
-
     tile closest;
     int thing = 0;
 
@@ -211,23 +207,17 @@ int main() {
                         continue;
                     case SDLK_s:
                         // color the button so the user knows
-                        backgroundColor = {100, 200, 100};
 
-                        drawStartButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
+                        drawStartButton(disp.renderer, disp.currTexture, textColor, color{100, 200, 100});
                         selectStartState(disp.renderer, disp.currTexture, &search1);
-
-                        backgroundColor = {125, 125, 125};
 
                         drawStartButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
                         continue;
                     case SDLK_g:
                         // color the button so the user knows
-                        backgroundColor = {200, 100, 100};
 
-                        drawGoalButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
+                        drawGoalButton(disp.renderer, disp.currTexture, textColor, color{200, 100, 100});
                         selectGoalState(disp.renderer, disp.currTexture, &search1);
-
-                        backgroundColor = {125, 125, 125};
 
                         drawGoalButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
                         continue;

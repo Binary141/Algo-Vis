@@ -90,4 +90,12 @@ int isInMenu(int);
 
 extern settings setting;
 
+// white
+const color bg{255, 255, 255};
+// color text{255,255,255};
+
+// black
+const color textColor{0, 0, 0};
+const color backgroundColor{255, 255, 255};
+
 #endif

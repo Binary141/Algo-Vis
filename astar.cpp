@@ -8,22 +8,19 @@
 #include <math.h> // sqrt()
 #include <float.h>
 
-struct thing {
+struct astarStruct {
     int Index;
     int x;
     int y;
     int Cost;
     double heuristic;
-    bool operator<(const thing& rhs) const {
+    bool operator<(const astarStruct& rhs) const {
         return heuristic > rhs.heuristic;
     }
 };
 
 // caller needs to set doneSearching to 0 if they need
-void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
-    color textColor{0, 0, 0};
-
-    color backgroundColor{125, 125, 125};
+void astar(SDL_Renderer* r, SDL_Texture* t, search* s) {
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
         doneSearching = 1;
@@ -50,25 +47,22 @@ void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
     std::vector<int> tmpStates;
 
     // prio queue we will use
-    std::priority_queue<thing> pq;
+    std::priority_queue<astarStruct> pq;
 
-    thing t;
+    astarStruct as;
 
-    t.Index = s->start;
+    as.Index = s->start;
 
-    t.x = s->startx;
-    t.y = s->starty;
-    t.Cost = 0;
+    as.x = s->startx;
+    as.y = s->starty;
+    as.Cost = 0;
 
     // the goal doesn't move while we search
     int goalX = s->goal % setting.numTiles;
     int goalY = s->goal / setting.numTiles;
 
-    t.heuristic = getCost(s->startx, s->starty, goalX, goalY);
-    pq.push(t);
-
-    color bg{0,0,0};
-    color text{255,255,255};
+    as.heuristic = getCost(s->startx, s->starty, goalX, goalY);
+    pq.push(as);
 
     int visitedCount = 0;
 
@@ -80,12 +74,12 @@ void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
             return;
         }
 
-        thing curr = pq.top();
+        astarStruct curr = pq.top();
         pq.pop();
         int current = curr.Index;
 
         visitedCount += 1;
-        drawStatesCount(r, texture, bg, text, visitedCount);
+        drawStatesCount(r, t, textColor, bg, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
@@ -100,7 +94,7 @@ void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, texture, current, 255, 0, 255);
+            colorTileByIndex(r, t, current, 255, 0, 255);
             s->states[current] = VISITED;
         }
 
@@ -120,14 +114,14 @@ void astar(SDL_Renderer* r, SDL_Texture* texture, search* s) {
             // the (|| visited[tmpStates[i]] == visited) is to not
             // go indefinitely if there is no path to the goal
             // don't add to states if it is a wall, or we have been there
-            if (s->states[tmpState] == WALL || heuristic > visited[tmpStates[i]]) {
+            if (s->states[tmpState] == WALL || visited[tmpStates[i]] != DBL_MAX) {
                 // if (heuristic > visited[tmpStates[i]]) {
                 //     continue;
                 // }
                 continue;
             }
 
-            thing tmp;
+            astarStruct tmp;
             tmp.Index = tmpState;
 
             // Cost of parent + 1 since our step Cost is 1

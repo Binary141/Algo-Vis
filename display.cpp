@@ -197,18 +197,13 @@ void reset(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
     draw_grid(renderer, texture);
     usleep(SLEEPTIME2);
 
-    color textColor;
-    textColor.r = 0;
-    textColor.g = 0;
-    textColor.b = 0;
+    color bgColor;
+    bgColor.r = 125;
+    bgColor.g = 125;
+    bgColor.b = 125;
 
-    color backgroundColor;
-    backgroundColor.r = 125;
-    backgroundColor.g = 125;
-    backgroundColor.b = 125;
-
-    drawStartButton(renderer, texture, textColor, backgroundColor);
-    drawGoalButton(renderer, texture, textColor, backgroundColor);
+    drawStartButton(renderer, texture, textColor, bg);
+    drawGoalButton(renderer, texture, textColor, bg);
 
     // set all states to be open
     for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
@@ -218,7 +213,7 @@ void reset(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
     usleep(SLEEPTIME2);
 }
 
-void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, int y, int width, int height, color textColor, color backgroundColor) {
+void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, int y, int width, int height, color txtColor, color bgColor) {
     TTF_Font* Sans = TTF_OpenFont("OpenSans-Regular.ttf", FONT_SIZE);
     if (!Sans) {
         printf("Error opening font!");
@@ -228,7 +223,7 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(renderer, texture);
 
-    SDL_Color textColorSDL = {textColor.r, textColor.g, textColor.b};
+    SDL_Color textColorSDL = {txtColor.r, txtColor.g, txtColor.b};
 
     SDL_Surface* surfaceMessage =
         TTF_RenderText_Solid(Sans, text, textColorSDL);
@@ -244,7 +239,7 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
 
 
     // draw the background of the start button
-    SDL_SetRenderDrawColor(renderer, backgroundColor.r, backgroundColor.g, backgroundColor.b, 255);
+    SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, 255);
 
     // Draw it
     SDL_RenderFillRect(renderer, &Message_rect);
@@ -481,25 +476,25 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
     return;
 }
 
-void drawStartButton(SDL_Renderer* renderer, SDL_Texture* texture, color textColor, color backgroundColor) {
+void drawStartButton(SDL_Renderer* renderer, SDL_Texture* texture, color txtColor, color bgColor) {
     char start[] = "START";
     int width = setting.startButtonX2 - setting.startButtonX;
 
-    draw_text(renderer, texture, start, setting.startButtonX, setting.startButtonY, width, setting.menuHeight, textColor, backgroundColor);
+    draw_text(renderer, texture, start, setting.startButtonX, setting.startButtonY, width, setting.menuHeight, txtColor, bgColor);
 }
 
-void drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color textColor, color backgroundColor, int value) {
+void drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, int value) {
     char str[5];
     sprintf(str, "%d", value);
 
-    draw_text(r, t, str, 125, 0, 40, setting.menuHeight, textColor, backgroundColor);
+    draw_text(r, t, str, 125, 0, 40, setting.menuHeight, txtColor, bgColor);
 }
 
-void drawGoalButton(SDL_Renderer* renderer, SDL_Texture* texture, color textColor, color backgroundColor) {
+void drawGoalButton(SDL_Renderer* renderer, SDL_Texture* texture, color txtColor, color bgColor) {
     char goal[] = "GOAL";
     int width = setting.goalButtonX2 - setting.goalButtonX;
 
-    draw_text(renderer, texture, goal, setting.goalButtonX, setting.goalButtonY, width, setting.menuHeight, textColor, backgroundColor);
+    draw_text(renderer, texture, goal, setting.goalButtonX, setting.goalButtonY, width, setting.menuHeight, txtColor, bgColor);
 }
 
 int isInMenu(int y) {

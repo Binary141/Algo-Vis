@@ -91,18 +91,18 @@ screen init_display() {
                                     setting.width,
                                     setting.height);
     if(!ret.texture1) {
-        printf("Failed to get the surface from the window!\n");
+        printf("Failed to create texture1!\n");
         printf("SDL2 Error: %s\n", SDL_GetError());
         exit(1);
     }
 
-    ret.renderedTexture = SDL_CreateTexture(ret.renderer,
+    ret.statusTexture = SDL_CreateTexture(ret.renderer,
                                     SDL_PIXELFORMAT_RGBA8888,
                                     SDL_TEXTUREACCESS_TARGET,
                                     setting.width,
-                                    setting.height);
-    if(!ret.renderedTexture) {
-        printf("Failed to get the surface from the window!\n");
+                                    setting.menuHeight);
+    if(!ret.statusTexture) {
+        printf("Failed to create statusTexture!\n");
         printf("SDL2 Error: %s\n", SDL_GetError());
         exit(1);
     }
@@ -113,7 +113,18 @@ screen init_display() {
                                     setting.width,
                                     setting.height);
     if(!ret.texture2) {
-        printf("Failed to get the surface from the window!\n");
+        printf("Failed to create texture2!\n");
+        printf("SDL2 Error: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    ret.backTexture = SDL_CreateTexture(ret.renderer,
+                                    SDL_PIXELFORMAT_RGBA8888,
+                                    SDL_TEXTUREACCESS_TARGET,
+                                    setting.width,
+                                    setting.height);
+    if(!ret.backTexture) {
+        printf("Failed to create backTexture!\n");
         printf("SDL2 Error: %s\n", SDL_GetError());
         exit(1);
     }
@@ -197,12 +208,14 @@ void testTexture(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
     usleep(SLEEPTIME2);
 }
 
+void drawStatusBar(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor) {
+    drawStartButton(r, t, txtColor, bgColor);
+    drawGoalButton(r, t, txtColor, bgColor);
+}
+
 void reset(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
     draw_grid(renderer, texture);
     usleep(SLEEPTIME2);
-
-    drawStartButton(renderer, texture, textColor, bg);
-    drawGoalButton(renderer, texture, textColor, bg);
 
     // set all states to be open
     for(int i = 0; i < setting.numTiles * setting.numTiles; i++) {
@@ -236,7 +249,6 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     Message_rect.w = width; // controls the width of the rect
     Message_rect.h = height; // controls the height of the rect
 
-
     // draw the background of the start button
     SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, 255);
 
@@ -250,6 +262,14 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
 
     // Clear the renderer
     SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+
+    SDL_Rect srcrect;
+    srcrect.x = x;
+    srcrect.y = y;
+    srcrect.w = width;
+    srcrect.h = height;
+
+    SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
 
     // SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderCopy(renderer, Message, NULL, &Message_rect);

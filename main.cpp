@@ -37,6 +37,9 @@ int main() {
     usleep(5000);
     testTexture(disp.renderer, disp.texture2, states);
 
+    // draw the start and goal buttons
+    drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+
     disp.currTexture = disp.texture1;
 
     search search1 = getDefaultSearch();
@@ -110,25 +113,25 @@ int main() {
                     case SDLK_s:
                         // color the button so the user knows
 
-                        drawStartButton(disp.renderer, disp.currTexture, textColor, color{100, 200, 100});
+                        drawStartButton(disp.renderer, disp.statusTexture, textColor, color{100, 200, 100});
                         selectStartState(disp.renderer, disp.currTexture, &search1);
 
-                        drawStartButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
+                        drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
                         continue;
                     case SDLK_g:
                         // color the button so the user knows
 
-                        drawGoalButton(disp.renderer, disp.currTexture, textColor, color{200, 100, 100});
+                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, color{200, 100, 100});
                         selectGoalState(disp.renderer, disp.currTexture, &search1);
 
-                        drawGoalButton(disp.renderer, disp.currTexture, textColor, backgroundColor);
+                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
                         continue;
                 }
 
                 if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
                     char text[] = "Searching!";
 
-                    draw_text(disp.renderer, disp.currTexture, text, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, disp.statusTexture, text, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
 
                     isSearching = 1;
                     doneSearching = 0;
@@ -154,7 +157,7 @@ int main() {
                     t1.join();
 
                     char doneText[] = "Done!";
-                    draw_text(disp.renderer, disp.currTexture, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, disp.statusTexture, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
                 }
 
                 if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d) {

@@ -46,8 +46,9 @@ struct screen {
     SDL_Renderer* renderer;
     SDL_Texture* texture1;
     SDL_Texture* texture2;
-    SDL_Texture* renderedTexture;
+    SDL_Texture* statusTexture;
     SDL_Texture* currTexture;
+    SDL_Texture* backTexture;
 };
 
 struct settings {
@@ -89,6 +90,7 @@ void drawStatesCount(SDL_Renderer*, SDL_Texture*, color, color, int);
 void testTexture(SDL_Renderer*, SDL_Texture*, int*);
 int isInMenu(int);
 void manyWalls(SDL_Renderer*, SDL_Texture*, search*, int);
+void drawStatusBar(SDL_Renderer*, SDL_Texture*, color, color);
 
 extern settings setting;
 

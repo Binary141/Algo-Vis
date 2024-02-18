@@ -69,6 +69,8 @@ void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, 
             colorTileByIndex(renderer, texture, i, 0, 255, 0);
         }
     }
+    drawStartButton(renderer, texture, textColor, bg);
+    drawGoalButton(renderer, texture, textColor, bg);
 }
 
 void clearStates(search* s) {

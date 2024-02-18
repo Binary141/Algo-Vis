@@ -138,9 +138,12 @@ int main() {
     // draws grid, resets states array to be all empty, and draw state buttons
     reset(disp.renderer, disp.texture1, states);
     usleep(5000);
-    reset(disp.renderer, disp.texture2, states);
+    testTexture(disp.renderer, disp.texture2, states);
 
     disp.currTexture = disp.texture1;
+
+    printf("texture1: %x\n", &(*disp.texture1));
+    printf("texture2: %x\n", &(*disp.texture2));
 
     search search1 = getDefaultSearch();
     search1.stateSize = (setting.numTiles * setting.numTiles);
@@ -150,6 +153,12 @@ int main() {
 
     tile closest;
     int thing = 0;
+
+    SDL_Rect texr;
+    texr.x = 0;
+    texr.y = 0;
+    texr.w = 100;
+    texr.h = 200;
 
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
@@ -164,34 +173,33 @@ int main() {
                         continue;
                     case SDLK_p:
                         printf("%d\n", thing);
+
                         if (!thing) {
                             // alternate the current
                             disp.currTexture = disp.texture1;
 
+                            // SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+                            SDL_RenderCopy(disp.renderer,
+                                           disp.currTexture,
+                                           NULL,
+                                           NULL);
                             thing = 1;
-                            // SDL_SetRenderTarget(disp.renderer, disp.texture1);
-                            // SDL_RenderCopy(disp.renderer,
-                            //                disp.currTexture,
-                            //                NULL,
-                            //                NULL);
-                            usleep(SLEEPTIME2);
+
+                            // SDL_SetRenderTarget(disp.renderer, NULL);
                             SDL_RenderPresent(disp.renderer);
-                            usleep(SLEEPTIME2);
-                            SDL_SetRenderTarget(disp.renderer, NULL);
                         } else {
                             // alternate the current
                             disp.currTexture = disp.texture2;
 
-                            // SDL_SetRenderTarget(disp.renderer, disp.texture2);
-                            // SDL_RenderCopy(disp.renderer,
-                            //                disp.currTexture,
-                            //                NULL,
-                            //                NULL);
+                            // SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+                            SDL_RenderCopy(disp.renderer,
+                                           disp.currTexture,
+                                           NULL,
+                                           NULL);
                             thing = 0;
-                            usleep(SLEEPTIME2);
+
+                            // SDL_SetRenderTarget(disp.renderer, NULL);
                             SDL_RenderPresent(disp.renderer);
-                            usleep(SLEEPTIME2);
-                            SDL_SetRenderTarget(disp.renderer, NULL);
                         }
                         continue;
                     case SDLK_q:

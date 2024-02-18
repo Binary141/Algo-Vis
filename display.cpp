@@ -70,7 +70,8 @@ screen init_display() {
     }
 
     // Create renderer
-    ret.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    // ret.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    ret.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(!ret.renderer) {
         printf("Failed to get the renderer from the window!\n");
         printf("SDL2 Error: %s\n", SDL_GetError());
@@ -86,7 +87,7 @@ screen init_display() {
 
     ret.texture1 = SDL_CreateTexture(ret.renderer,
                                     SDL_PIXELFORMAT_RGBA8888,
-                                    SDL_TEXTUREACCESS_STREAMING,
+                                    SDL_TEXTUREACCESS_TARGET,
                                     setting.width,
                                     setting.height);
     if(!ret.texture1) {
@@ -108,7 +109,7 @@ screen init_display() {
 
     ret.texture2 = SDL_CreateTexture(ret.renderer,
                                     SDL_PIXELFORMAT_RGBA8888,
-                                    SDL_TEXTUREACCESS_STREAMING,
+                                    SDL_TEXTUREACCESS_TARGET,
                                     setting.width,
                                     setting.height);
     if(!ret.texture2) {
@@ -134,10 +135,9 @@ screen init_display() {
 }
 
 void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture) {
-    // SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_NONE);
 
-    // Declare rect of square
-    SDL_Rect squareRect;
+    // anything drawn to renderer will be drawn to the texture
+    SDL_SetRenderTarget(renderer, texture);
 
     // Initialize renderer color white for the background
     SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
@@ -145,11 +145,11 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture) {
     // Clear screen
     SDL_RenderClear(renderer);
 
-    // anything drawn to renderer will be drawn to the texture
-    SDL_SetRenderTarget(renderer, texture);
-
     // Actually draw the desired color
     SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
+
+    // Declare rect of square
+    SDL_Rect squareRect;
 
     squareRect.w = TILE_BORDER_WIDTH;
     squareRect.h = setting.height;
@@ -178,17 +178,21 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture) {
         SDL_RenderFillRect(renderer, &squareRect);
     }
 
-    // int a = SDL_RenderCopy(renderer, texture, NULL, NULL);
-    // if (a != 0) {
-    //     printf("SDL renderer copy issue! %s\n", SDL_GetError());
-    //     exit(1);
-    // }
+    // Reset the rendering target to the default (the window)
+    SDL_SetRenderTarget(renderer, nullptr);
 
-    usleep(SLEEPTIME2);
+    // Clear the renderer
+    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+    SDL_RenderClear(renderer);
+
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
 
     // Update screen
     SDL_RenderPresent(renderer);
-    SDL_SetRenderTarget(renderer, NULL);
+}
+
+void testTexture(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
+    draw_grid(renderer, texture);
 
     usleep(SLEEPTIME2);
 }
@@ -196,11 +200,6 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture) {
 void reset(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
     draw_grid(renderer, texture);
     usleep(SLEEPTIME2);
-
-    color bgColor;
-    bgColor.r = 125;
-    bgColor.g = 125;
-    bgColor.b = 125;
 
     drawStartButton(renderer, texture, textColor, bg);
     drawGoalButton(renderer, texture, textColor, bg);
@@ -247,7 +246,6 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     // Actually draw the desired color
     SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
 
-    SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
         /* Let's copy the other textures onto the target texture. */
     // SDL_RenderCopy(renderer, texture, NULL, NULL);
     // SDL_RenderCopy(renderer, Message, NULL, NULL);
@@ -255,6 +253,15 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     /* Resetting to the default render target which is the frame buffer
        that gets displayed on screen. */
     SDL_SetRenderTarget(renderer, NULL);
+
+    // Update screen
+    // SDL_RenderPresent(renderer);
+
+    // Clear the renderer
+    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+
+    // SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 
     // Update screen
     SDL_RenderPresent(renderer);
@@ -306,11 +313,12 @@ tile getClosestTile(int x, int y) {
 }
 
 void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r, int g, int b) {
-    // Declare rect of square
-    SDL_Rect squareRect;
 
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(renderer, texture);
+
+    // Declare rect of square
+    SDL_Rect squareRect;
 
     // Initialize renderer color white for the background
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -328,14 +336,13 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
     // Draw it
     SDL_RenderFillRect(renderer, &squareRect);
 
-    usleep(SLEEPTIME2);
+    // Reset the rendering target to the default (the window)
+    SDL_SetRenderTarget(renderer, nullptr);
+
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
 
     // Update screen
     SDL_RenderPresent(renderer);
-
-    SDL_SetRenderTarget(renderer, NULL);
-
-    usleep(SLEEPTIME2);
 }
 
 void colorTileByIndex(SDL_Renderer* renderer, SDL_Texture* texture, int index, int r, int g, int b) {

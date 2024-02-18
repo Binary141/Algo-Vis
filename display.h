@@ -80,12 +80,13 @@ void reset(SDL_Renderer*, SDL_Texture*, int*);
 void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);
 void colorTile(SDL_Renderer* , SDL_Texture*, int, int, int, int, int);
-void colorTileByIndex(SDL_Renderer* , SDL_Texture*, int, int, int, int);
+void colorTileByIndex(SDL_Renderer*, SDL_Texture*, int, int, int, int);
 void selectStartState(SDL_Renderer*, SDL_Texture*, search*);
 void selectGoalState(SDL_Renderer*, SDL_Texture*, search*);
 void drawStartButton(SDL_Renderer*, SDL_Texture*, color, color);
 void drawGoalButton(SDL_Renderer*, SDL_Texture*, color, color);
 void drawStatesCount(SDL_Renderer*, SDL_Texture*, color, color, int);
+void testTexture(SDL_Renderer*, SDL_Texture*, int*);
 int isInMenu(int);
 
 extern settings setting;

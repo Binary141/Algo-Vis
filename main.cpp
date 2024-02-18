@@ -184,6 +184,7 @@ int main() {
                     search1.states = states;
                     search1.stateSize = (setting.numTiles * setting.numTiles);
                     search1.numTiles = setting.numTiles;
+                    disp.currTexture = disp.texture1;
 
                     usleep(5000);
                     reset(disp.renderer, disp.currTexture, states);

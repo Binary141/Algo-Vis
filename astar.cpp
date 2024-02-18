@@ -94,7 +94,7 @@ void astar(SDL_Renderer* r, SDL_Texture* t, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, t, current, 255, 0, 255);
+            colorTileByIndex(r, t, current, 255, 0, 255, 1);
             s->states[current] = VISITED;
         }
 

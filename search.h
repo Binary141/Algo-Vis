@@ -42,5 +42,7 @@ double hammingHeuristic(int, int, int, int);
 double zeroHeuristic(int, int, int, int);
 double getCost(int, int, int, int);
 void waitForSearch();
+void clearTilesFromTexture(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
+void clearTilesBulk(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
 
 #endif

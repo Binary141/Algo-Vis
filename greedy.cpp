@@ -93,7 +93,7 @@ void greedy(SDL_Renderer* r, SDL_Texture* t, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, t, current, 92, 49, 148);
+            colorTileByIndex(r, t, current, 92, 49, 148, 1);
             s->states[current] = VISITED;
         }
 

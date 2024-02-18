@@ -40,7 +40,10 @@ int main() {
     // draw the start and goal buttons
     drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
 
+    // we shouldn't really be directly accessing the texture1 and texture2 vars
+    // outside of here except for performing a swap on then
     disp.currTexture = disp.texture1;
+    disp.backTexture = disp.texture2;
 
     search search1 = getDefaultSearch();
     search1.stateSize = (setting.numTiles * setting.numTiles);
@@ -58,6 +61,7 @@ int main() {
     texr.h = 200;
 
     SDL_Surface* textureSurface;
+    int hasRan = 0;
 
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
@@ -73,37 +77,34 @@ int main() {
                     case SDLK_p:
                         // demo to swap the textures
 
+                        disp.backTexture = disp.currTexture;
+
+                        // alternate the current
                         if (!thing) {
-                            // alternate the current
-                            // disp.backTexture = disp.currTexture;
                             disp.currTexture = disp.texture2;
-
-                            SDL_RenderCopy(disp.renderer,
-                                           disp.currTexture,
-                                           NULL,
-                                           NULL);
                             thing = 1;
-
-                            SDL_RenderPresent(disp.renderer);
                         } else {
-                            // alternate the current
-                            // disp.backTexture = disp.currTexture;
                             disp.currTexture = disp.texture1;
-
-                            SDL_RenderCopy(disp.renderer,
-                                           disp.currTexture,
-                                           NULL,
-                                           NULL);
                             thing = 0;
-
-                            SDL_RenderPresent(disp.renderer);
                         }
+
+                        SDL_RenderCopy(disp.renderer,
+                                       disp.currTexture,
+                                       NULL,
+                                       NULL);
+                        SDL_RenderPresent(disp.renderer);
                         continue;
                     case SDLK_q:
                         should_quit = 1;
                         break;
+                    case SDLK_t:
+                        // clears all tiles and redraws onto selected buffer
+                        clearTilesFromTexture(disp.renderer, disp.backTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                        continue;
                     case SDLK_r:
-                        clearTiles(disp.renderer, disp.currTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                        // much faster way of clearing the screen
+                        clearTilesBulk(disp.renderer, disp.currTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
                         continue;
                     case SDLK_c:
                         // clear the screen
@@ -139,6 +140,7 @@ int main() {
                     // this thread will set isSearching to 0 (false) if a key is pressed
                     // this stops the search from continuing
                     std::thread t1(waitForSearch);
+                    // std::thread t2(clearTilesFromTexture, disp.renderer, disp.backTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
                     // do the search
                     if (event.key.keysym.sym == SDLK_b) {
@@ -152,9 +154,11 @@ int main() {
                     }
 
                     isSearching = 0;
+                    hasRan = 1;
 
                     // make sure that the thread finished
                     t1.join();
+                    // t2.join();
 
                     char doneText[] = "Done!";
                     draw_text(disp.renderer, disp.statusTexture, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);

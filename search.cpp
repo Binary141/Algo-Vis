@@ -43,10 +43,40 @@ std::vector<int> getNeighborIndexes(int current, const search* s, int lastRowInd
     return res;
 }
 
-void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
+void clearTilesBulk(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
     // make sure if we visited a tile, or if it is marked blank, then just clear it out
     int tmp;
-    draw_grid(renderer, texture);
+    int shouldRender = 0;
+    draw_grid(renderer, texture, shouldRender);
+
+    for (int i = 0; i < s->stateSize; i++) {
+        tmp = s->states[i];
+        if (tmp == VISITED) {
+            continue;
+        }
+
+        if (tmp == WALL) {
+            colorTileByIndex(renderer, texture, i, 0, 0, 255, shouldRender);
+        }
+
+        if (tmp == GOAL) {
+            colorTileByIndex(renderer, texture, i, 255, 0, 0, shouldRender);
+        }
+
+        if (tmp == START) {
+            colorTileByIndex(renderer, texture, i, 0, 255, 0, shouldRender);
+        }
+    }
+
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
+}
+
+void clearTilesFromTexture(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
+    // make sure if we visited a tile, or if it is marked blank, then just clear it out
+    int tmp;
+    int shouldRender = 0;
+    draw_grid(renderer, texture, shouldRender);
 
     for (int i = 0; i < s->stateSize; i++) {
         tmp = s->states[i];
@@ -56,17 +86,46 @@ void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, 
 
         if (tmp == WALL) { // || tmp == EMPTY_SPACE) {
             // s->states[i] = EMPTY_SPACE;
-            colorTileByIndex(renderer, texture, i, 0, 0, 255);
+            colorTileByIndex(renderer, texture, i, 0, 0, 255, shouldRender);
         }
 
         if (tmp == GOAL) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, texture, i, 255, 0, 0);
+            colorTileByIndex(renderer, texture, i, 255, 0, 0, shouldRender);
         }
 
         if (tmp == START) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, texture, i, 0, 255, 0);
+            colorTileByIndex(renderer, texture, i, 0, 255, 0, shouldRender);
+        }
+    }
+}
+
+void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
+    // make sure if we visited a tile, or if it is marked blank, then just clear it out
+    int tmp;
+    int shouldRender = 1;
+    draw_grid(renderer, texture, shouldRender);
+
+    for (int i = 0; i < s->stateSize; i++) {
+        tmp = s->states[i];
+        if (tmp == VISITED) {
+            continue;
+        }
+
+        if (tmp == WALL) { // || tmp == EMPTY_SPACE) {
+            // s->states[i] = EMPTY_SPACE;
+            colorTileByIndex(renderer, texture, i, 0, 0, 255, shouldRender);
+        }
+
+        if (tmp == GOAL) { // || tmp == empty_space) {
+            // s->states[i] = empty_space;
+            colorTileByIndex(renderer, texture, i, 255, 0, 0, shouldRender);
+        }
+
+        if (tmp == START) { // || tmp == empty_space) {
+            // s->states[i] = empty_space;
+            colorTileByIndex(renderer, texture, i, 0, 255, 0, shouldRender);
         }
     }
     drawStartButton(renderer, texture, textColor, bg);

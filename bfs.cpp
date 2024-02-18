@@ -74,7 +74,7 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
-            colorTileByIndex(r, t, current, 255, 125, 0);
+            colorTileByIndex(r, t, current, 255, 125, 0, 1);
             s->states[current] = VISITED;
         }
 

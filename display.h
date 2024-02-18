@@ -88,6 +88,7 @@ void drawGoalButton(SDL_Renderer*, SDL_Texture*, color, color);
 void drawStatesCount(SDL_Renderer*, SDL_Texture*, color, color, int);
 void testTexture(SDL_Renderer*, SDL_Texture*, int*);
 int isInMenu(int);
+void manyWalls(SDL_Renderer*, SDL_Texture*, search*, int);
 
 extern settings setting;
 

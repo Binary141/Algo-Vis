@@ -114,3 +114,24 @@ double zeroHeuristic(int currX, int currY, int goalX, int goalY) {
 double getCost(int currX, int currY, int goalX, int goalY) {
     return euclideanHeuristic(currX, currY, goalX, goalY);
 }
+
+// Function to be launched in another thread
+// Only used to listed for a key and stop the searches mid way through
+void waitForSearch() {
+    SDL_Event event2;
+
+    // the searches will set the doneSearching to be 1
+    // so we don't need to worry about breaking or anything
+    while (isSearching && !doneSearching) {
+        while (SDL_PollEvent(&event2)) {
+            switch (event2.type) {
+                case SDL_KEYDOWN:
+                    if (event2.key.keysym.sym == SDLK_h) {
+                        // If the 'h' button is pressed, stop the search
+                        isSearching = 0;
+                    }
+            }
+        }
+    }
+    return;
+}

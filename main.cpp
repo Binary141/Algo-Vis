@@ -9,109 +9,6 @@
 extern int doneSearching;
 int isSearching = 0;
 
-// Function to be launched in another thread
-// Only used to listed for a key and stop the searches mid way through
-void waitForSearch() {
-    SDL_Event event2;
-
-    // the searches will set the doneSearching to be 1
-    // so we don't need to worry about breaking or anything
-    while (isSearching && !doneSearching) {
-        while (SDL_PollEvent(&event2)) {
-            switch (event2.type) {
-                case SDL_KEYDOWN:
-                    if (event2.key.keysym.sym == SDLK_h) {
-                        // If the 'h' button is pressed, stop the search
-                        isSearching = 0;
-                    }
-            }
-        }
-    }
-    return;
-}
-
-void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelete) {
-    int mouse_x, mouse_y;
-    int index;
-    SDL_Event event2;
-    tile closest;
-
-    while (SDL_WaitEvent(&event2)) {
-        switch (event2.type) {
-        case SDL_MOUSEBUTTONUP:
-            // duplicated code so if a user clicks without moving the cursor, we will still do the action
-            SDL_GetMouseState(&mouse_x, &mouse_y);
-
-            if (isInMenu(mouse_y)) {
-                continue;
-            }
-
-            closest = getClosestTile(mouse_x, mouse_y);
-
-            index = closest.xIndex + (closest.yIndex * setting.numTiles);
-
-            if (shouldDelete) {
-                // make it an empty space
-                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                search1->states[index] = EMPTY_SPACE;
-            } else {
-                // make it a wall
-                search1->states[index] = WALL;
-
-                colorTile(r, t, closest.x, closest.y, 0, 0, 255);
-            }
-
-            if (search1->goal == index) {
-                search1->goal = EMPTY_SPACE;
-            }
-
-            if (search1->start == index) {
-                search1->start = EMPTY_SPACE;
-            }
-
-            return;
-        case SDL_MOUSEMOTION:
-            SDL_GetMouseState(&mouse_x, &mouse_y);
-
-            if (isInMenu(mouse_y)) {
-                continue;
-            }
-
-            closest = getClosestTile(mouse_x, mouse_y);
-
-            index = closest.xIndex + (closest.yIndex * setting.numTiles);
-
-            if (index < 0) {
-                return;
-            }
-
-            if (shouldDelete) {
-                // make it an empty space
-                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
-
-                search1->states[index] = EMPTY_SPACE;
-            } else {
-                // make it a wall
-                search1->states[index] = WALL;
-
-                colorTile(r, t, closest.x, closest.y, 0, 0, 255);
-                // printf("heuristic: %d\n", 1);
-            }
-
-            if (search1->goal == index) {
-                search1->goal = EMPTY_SPACE;
-            }
-
-            if (search1->start == index) {
-                search1->start = EMPTY_SPACE;
-            }
-
-            continue;
-        }
-    }
-}
-
 search getDefaultSearch() {
     search search1;
     search1.start = EMPTY_SPACE;
@@ -141,9 +38,6 @@ int main() {
     testTexture(disp.renderer, disp.texture2, states);
 
     disp.currTexture = disp.texture1;
-
-    printf("texture1: %x\n", &(*disp.texture1));
-    printf("texture2: %x\n", &(*disp.texture2));
 
     search search1 = getDefaultSearch();
     search1.stateSize = (setting.numTiles * setting.numTiles);
@@ -175,10 +69,10 @@ int main() {
                         continue;
                     case SDLK_p:
                         // demo to swap the textures
-                        printf("%d\n", thing);
 
                         if (!thing) {
                             // alternate the current
+                            // disp.backTexture = disp.currTexture;
                             disp.currTexture = disp.texture2;
 
                             SDL_RenderCopy(disp.renderer,
@@ -190,6 +84,7 @@ int main() {
                             SDL_RenderPresent(disp.renderer);
                         } else {
                             // alternate the current
+                            // disp.backTexture = disp.currTexture;
                             disp.currTexture = disp.texture1;
 
                             SDL_RenderCopy(disp.renderer,

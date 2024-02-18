@@ -505,3 +505,85 @@ int isInMenu(int y) {
     }
     return 0;
 }
+
+void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelete) {
+    int mouse_x, mouse_y;
+    int index;
+    SDL_Event event2;
+    tile closest;
+
+    while (SDL_WaitEvent(&event2)) {
+        switch (event2.type) {
+        case SDL_MOUSEBUTTONUP:
+            // duplicated code so if a user clicks without moving the cursor, we will still do the action
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+
+            if (isInMenu(mouse_y)) {
+                continue;
+            }
+
+            closest = getClosestTile(mouse_x, mouse_y);
+
+            index = closest.xIndex + (closest.yIndex * setting.numTiles);
+
+            if (shouldDelete) {
+                // make it an empty space
+                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                search1->states[index] = EMPTY_SPACE;
+            } else {
+                // make it a wall
+                search1->states[index] = WALL;
+
+                colorTile(r, t, closest.x, closest.y, 0, 0, 255);
+            }
+
+            if (search1->goal == index) {
+                search1->goal = EMPTY_SPACE;
+            }
+
+            if (search1->start == index) {
+                search1->start = EMPTY_SPACE;
+            }
+
+            return;
+        case SDL_MOUSEMOTION:
+            SDL_GetMouseState(&mouse_x, &mouse_y);
+
+            if (isInMenu(mouse_y)) {
+                continue;
+            }
+
+            closest = getClosestTile(mouse_x, mouse_y);
+
+            index = closest.xIndex + (closest.yIndex * setting.numTiles);
+
+            if (index < 0) {
+                return;
+            }
+
+            if (shouldDelete) {
+                // make it an empty space
+                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+
+                search1->states[index] = EMPTY_SPACE;
+            } else {
+                // make it a wall
+                search1->states[index] = WALL;
+
+                colorTile(r, t, closest.x, closest.y, 0, 0, 255);
+                // printf("heuristic: %d\n", 1);
+            }
+
+            if (search1->goal == index) {
+                search1->goal = EMPTY_SPACE;
+            }
+
+            if (search1->start == index) {
+                search1->start = EMPTY_SPACE;
+            }
+
+            continue;
+        }
+    }
+}

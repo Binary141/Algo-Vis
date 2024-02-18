@@ -41,5 +41,6 @@ double euclideanHeuristic(int, int, int, int);
 double hammingHeuristic(int, int, int, int);
 double zeroHeuristic(int, int, int, int);
 double getCost(int, int, int, int);
+void waitForSearch();
 
 #endif

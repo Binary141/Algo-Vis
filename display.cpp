@@ -20,6 +20,10 @@ settings setting = {
     0
 };
 
+struct Font {
+    TTF_Font* f;
+} font;
+
 settings getDisplaySettings() {
     return setting;
 }
@@ -142,6 +146,13 @@ screen init_display() {
 
     TTF_Init();
 
+    font.f = TTF_OpenFont("./OpenSans-Regular.ttf", FONT_SIZE);
+    if (!font.f) {
+        printf("Error opening font!\n");
+        printf("%s\n", TTF_GetError());
+        exit(1);
+    }
+
     return ret;
 }
 
@@ -230,11 +241,6 @@ void reset(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
 }
 
 void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, int y, int width, int height, color txtColor, color bgColor) {
-    TTF_Font* Sans = TTF_OpenFont("OpenSans-Regular.ttf", FONT_SIZE);
-    if (!Sans) {
-        printf("Error opening font!");
-        exit(1);
-    }
 
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(renderer, texture);
@@ -242,7 +248,7 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     SDL_Color textColorSDL = {txtColor.r, txtColor.g, txtColor.b};
 
     SDL_Surface* surfaceMessage =
-        TTF_RenderText_Solid(Sans, text, textColorSDL);
+        TTF_RenderText_Solid(font.f, text, textColorSDL);
 
     // now you can convert it into a texture
     SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);

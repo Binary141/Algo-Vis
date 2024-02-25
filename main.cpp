@@ -32,13 +32,15 @@ int main() {
     int* states;
     states = (int*) malloc((setting.numTiles * setting.numTiles) * sizeof(int));
 
-    // draws grid, resets states array to be all empty, and draw state buttons
-    reset(disp.renderer, disp.texture1, states);
-    usleep(5000);
-    testTexture(disp.renderer, disp.texture2, states);
-
     // draw the start and goal buttons
     drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+
+    // draws grid, resets states array to be all empty, and draw state buttons
+    reset(disp.renderer, disp.texture1, states);
+
+    usleep(5000);
+
+    testTexture(disp.renderer, disp.texture2, states);
 
     // we shouldn't really be directly accessing the texture1 and texture2 vars
     // outside of here except for performing a swap on then
@@ -105,11 +107,17 @@ int main() {
                         // much faster way of clearing the screen
                         clearTilesBulk(disp.renderer, disp.currTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
+                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+                        drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+
                         continue;
                     case SDLK_c:
                         // clear the screen
                         // draws grid, resets states array to be all empty, and draw state buttons
                         reset(disp.renderer, disp.currTexture, states);
+                        search1.goal = EMPTY_SPACE;
+                        search1.start = EMPTY_SPACE;
+
                         continue;
                     case SDLK_s:
                         // color the button so the user knows
@@ -144,7 +152,7 @@ int main() {
 
                     // do the search
                     if (event.key.keysym.sym == SDLK_b) {
-                        bfs(disp.renderer, disp.currTexture, &search1);
+                        bfs(disp.renderer, disp.currTexture, disp.statusTexture, &search1);
                     } else if (event.key.keysym.sym == SDLK_u) {
                         dfs(disp.renderer, disp.currTexture, &search1);
                     } else if (event.key.keysym.sym == SDLK_k) {

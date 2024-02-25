@@ -28,7 +28,7 @@ struct search {
     int numTiles;
 };
 
-void bfs(SDL_Renderer*, SDL_Texture*, search*);
+void bfs(SDL_Renderer*, SDL_Texture*, SDL_Texture*, search*);
 void dfs(SDL_Renderer*, SDL_Texture*, search*);
 void clearTiles(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
 void clearStates(search*);

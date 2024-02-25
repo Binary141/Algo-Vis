@@ -7,7 +7,7 @@
 #include <queue>
 
 // caller needs to set doneSearching to 0 if they need
-void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
+void bfs(SDL_Renderer* r, SDL_Texture* t, SDL_Texture* statusT, search* s) {
     // create a list of visited states. Used to not have repeats
     int* visited = (int*) malloc(s->stateSize * sizeof(int));
     if (!visited) {
@@ -61,7 +61,7 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
         }
 
         visitedCount += 1;
-        drawStatesCount(r, t, textColor, bg, visitedCount);
+        drawStatesCount(r, statusT, textColor, bg, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);

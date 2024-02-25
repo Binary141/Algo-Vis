@@ -223,13 +223,39 @@ void testTexture(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
 }
 
 void drawStatusBar(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor) {
+
+    // anything drawn to renderer will be drawn to the texture
+    SDL_SetRenderTarget(r, t);
+
+    // Declare rect of square
+    SDL_Rect squareRect;
+
+    // Actually draw the desired color
+    SDL_SetRenderDrawColor(r, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+
+    // Square dimensions
+    squareRect.w = setting.width;
+    squareRect.h = MENU_HEIGHT;
+
+    squareRect.y = 0;
+    squareRect.x = 0;
+
+    // Draw it
+    SDL_RenderFillRect(r, &squareRect);
+
+    // Reset the rendering target to the default (the window)
+    SDL_SetRenderTarget(r, NULL);
+
+    SDL_RenderCopy(r, t, NULL, NULL);
+
     drawStartButton(r, t, txtColor, bgColor);
     drawGoalButton(r, t, txtColor, bgColor);
 }
 
-void reset(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
+void reset(SDL_Renderer* r, SDL_Texture* t, int* states) {
     int shouldRender = 1;
-    draw_grid(renderer, texture, shouldRender);
+
+    draw_grid(r, t, shouldRender);
     usleep(SLEEPTIME2);
 
     // set all states to be open
@@ -245,6 +271,9 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(renderer, texture);
 
+    // Clear the renderer
+    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+
     SDL_Color textColorSDL = {txtColor.r, txtColor.g, txtColor.b};
 
     SDL_Surface* surfaceMessage =
@@ -259,7 +288,7 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     Message_rect.w = width; // controls the width of the rect
     Message_rect.h = height; // controls the height of the rect
 
-    // draw the background of the start button
+    // draw the background of the text box
     SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, 255);
 
     // Draw it
@@ -269,9 +298,6 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
 
     SDL_SetRenderTarget(renderer, NULL);
-
-    // Clear the renderer
-    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
 
     SDL_Rect srcrect;
     srcrect.x = x;
@@ -359,6 +385,7 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
 
     // Update screen if needed
     if (shouldRender) {
+        // don't try to update the status bar portion of the display
         SDL_Rect srcrect;
         srcrect.w = setting.width;
         srcrect.h = setting.height - setting.menuHeight - TILE_BORDER_WIDTH;
@@ -477,7 +504,6 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
 
                     // marks the new start in the array
                     s->states[new_start] = START;
-                    colorTile(renderer, texture, s->startx, s->starty, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b, 1);
                     colorTile(renderer, texture, s->startx, s->starty, START_COLOR.r, START_COLOR.g, START_COLOR.b, 1);
                     return;
                 }

@@ -61,7 +61,6 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, SDL_Texture* statusT, search* s) {
         }
 
         visitedCount += 1;
-        drawStatesCount(r, statusT, textColor, bg, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
@@ -75,6 +74,7 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, SDL_Texture* statusT, search* s) {
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
             colorTileByIndex(r, t, current, 255, 125, 0, 1);
+            drawStatesCount(r, statusT, textColor, bg, visitedCount);
             s->states[current] = VISITED;
         }
 

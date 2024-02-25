@@ -74,7 +74,10 @@ int main() {
                 switch (event.key.keysym.sym) {
                     case SDLK_m:
                         printf("Saving?\n");
-                        IMG_SavePNG(disp.surface, "testing.png");
+                          // Read the pixels from the current render target and save them onto the surface
+                          SDL_RenderReadPixels(disp.renderer, NULL, SDL_GetWindowPixelFormat(disp.window), disp.surface->pixels, disp.surface->pitch);
+
+                          SDL_SaveBMP(disp.surface, "Screenshot.bmp");
                         continue;
                     case SDLK_p:
                         // demo to swap the textures

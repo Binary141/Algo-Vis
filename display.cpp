@@ -227,6 +227,9 @@ void drawStatusBar(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColo
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(r, t);
 
+    // Clear screen
+    SDL_RenderClear(r);
+
     // Declare rect of square
     SDL_Rect squareRect;
 
@@ -303,7 +306,7 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     srcrect.x = x;
     srcrect.y = y;
     srcrect.w = width;
-    srcrect.h = height;
+    srcrect.h = setting.menuHeight;
 
     SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
 
@@ -388,9 +391,9 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
         // don't try to update the status bar portion of the display
         SDL_Rect srcrect;
         srcrect.w = setting.width;
-        srcrect.h = setting.height - setting.menuHeight - TILE_BORDER_WIDTH;
+        srcrect.h = setting.height - setting.menuHeight;
         srcrect.x = 0;
-        srcrect.y = setting.menuHeight + TILE_BORDER_WIDTH;
+        srcrect.y = setting.menuHeight;
 
         SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
 

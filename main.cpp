@@ -114,6 +114,7 @@ int main() {
                     case SDLK_c:
                         // clear the screen
                         // draws grid, resets states array to be all empty, and draw state buttons
+                        drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
                         reset(disp.renderer, disp.currTexture, states);
                         search1.goal = EMPTY_SPACE;
                         search1.start = EMPTY_SPACE;

@@ -17,6 +17,7 @@ settings setting = {
     0,
     0,
     0,
+    0,
     0
 };
 
@@ -32,27 +33,59 @@ void setDisplaySettings(settings set) {
     setting = set;
 }
 
+void resizeGridLayout() {
+    // change the display dimensions if there is any extra space on the
+    // bottom or right of the window
+    screen ret;
+
+    int tile_width = (setting.width / setting.numTiles);
+    setting.tileWidth = tile_width;
+
+    int calculated_height = (setting.height - MENU_HEIGHT - TILE_BORDER_WIDTH) / setting.numTiles;
+    setting.tileHeight = calculated_height;
+
+    setting.menuHeight = setting.height - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
+    setting.gridHeight = setting.height - setting.menuHeight;
+
+    // position buttons on the far right of display
+    int offset = setting.width * 0.05;
+    setting.startButtonX = setting.width - offset;
+    setting.startButtonX2 = setting.width;
+
+    setting.startButtonY = 0;
+
+    setting.goalButtonX = setting.width - (2 * offset);
+    setting.goalButtonX2 = setting.width - offset;
+    setting.goalButtonY = 0;
+
+    return;
+}
+
 screen init_display() {
     // change the display dimensions if there is any extra space on the
     // bottom or right of the window
     screen ret;
 
-    int tile_width = ((SCREEN_WIDTH - TILE_BORDER_WIDTH) / setting.numTiles);
+    int tile_width = (SCREEN_WIDTH / setting.numTiles);
     setting.tileWidth = tile_width;
 
-    int temp_width = 0;
+    // int temp_width = 0;
 
     // get largest width size
-    temp_width = setting.numTiles * tile_width;
+    // temp_width = setting.numTiles * tile_width;
 
     // update the display width. Add the tile border width to allow the drawing of the right most border
-    setting.width = temp_width + TILE_BORDER_WIDTH;
+    // setting.width = temp_width + TILE_BORDER_WIDTH;
+    setting.width = SCREEN_WIDTH;
 
     int calculated_height = (SCREEN_HEIGHT - setting.menuHeight - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
 
     // update the display height. Add in the tile boarder width to allow the drawing of the bottom most border
-    setting.height = (calculated_height * setting.numTiles) + setting.menuHeight + TILE_BORDER_WIDTH;
+    setting.height = SCREEN_HEIGHT; // (calculated_height * setting.numTiles) + setting.menuHeight + TILE_BORDER_WIDTH;
+
+    setting.menuHeight = SCREEN_HEIGHT - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
+    setting.gridHeight = setting.height - setting.menuHeight;
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -185,6 +218,13 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
         // Draw it
         SDL_RenderFillRect(renderer, &squareRect);
     }
+
+    // draw the right most vertical border
+    squareRect.x = (setting.numTiles * setting.tileWidth);
+    squareRect.w = setting.width;
+
+    // Draw it
+    SDL_RenderFillRect(renderer, &squareRect);
 
     squareRect.w = setting.width;
     squareRect.h = TILE_BORDER_WIDTH;

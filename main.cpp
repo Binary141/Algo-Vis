@@ -192,8 +192,11 @@ int main() {
                     }
 
                     setDisplaySettings(setting);
-                    destroy_window(disp.renderer, disp.window);
-                    disp = init_display();
+                    // destroy_window(disp.renderer, disp.window);
+
+                    // disp = init_display();
+                    resizeGridLayout();
+
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
 
                     search1 = getDefaultSearch();

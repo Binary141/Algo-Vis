@@ -5,8 +5,8 @@
 #include "search.h"
 
 #define TILE_BORDER_WIDTH 3
-#define NUM_SQUARES 50
-#define MENU_HEIGHT 50
+#define NUM_SQUARES 12
+#define MENU_HEIGHT 40
 
 // These may change in init_display
 // Maybe look into seeing if these could just be left alone
@@ -58,6 +58,7 @@ struct settings {
     int tileHeight;
     int numTiles;
     int menuHeight;
+    int gridHeight;
     int startButtonX;
     int startButtonX2;
     int startButtonY;
@@ -74,6 +75,7 @@ struct color {
 
 settings getDisplaySettings();
 void setDisplaySettings(settings);
+void resizeGridLayout();
 screen init_display();
 void draw_grid(SDL_Renderer*, SDL_Texture*, int);
 void draw_text(SDL_Renderer*, SDL_Texture*, char*, int, int, int, int, color, color);

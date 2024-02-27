@@ -401,6 +401,41 @@ tile getClosestTile(int x, int y) {
 
     return closest;
 }
+void ColorBlankTile(SDL_Renderer* renderer, SDL_Texture* texture) {
+
+    // anything drawn to renderer will be drawn to the texture
+    SDL_SetRenderTarget(renderer, texture);
+
+    // Declare rect of square
+    SDL_Rect squareRect;
+
+    // Actually draw the desired color
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+
+    // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
+    squareRect.w = 1;
+    squareRect.h = 1;
+
+    squareRect.y = 1;
+    squareRect.x = 1;
+
+    // Draw it
+    SDL_RenderFillRect(renderer, &squareRect);
+
+    // Reset the rendering target to the default (the window)
+    SDL_SetRenderTarget(renderer, NULL);
+
+    // don't try to update the status bar portion of the display
+    SDL_Rect srcrect;
+    srcrect.w = setting.width;
+    srcrect.h = setting.height - setting.menuHeight;
+    srcrect.x = 0;
+    srcrect.y = setting.menuHeight;
+
+    SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
+
+    SDL_RenderPresent(renderer);
+}
 
 void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r, int g, int b, int shouldRender) {
 
@@ -424,7 +459,7 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
     SDL_RenderFillRect(renderer, &squareRect);
 
     // Reset the rendering target to the default (the window)
-    SDL_SetRenderTarget(renderer, nullptr);
+    SDL_SetRenderTarget(renderer, NULL);
 
     // Update screen if needed
     if (shouldRender) {

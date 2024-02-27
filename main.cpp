@@ -20,7 +20,7 @@ search getDefaultSearch() {
     return search1;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     screen disp = init_display();
 
     SDL_Event event;
@@ -73,12 +73,27 @@ int main() {
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
                     case SDLK_m:
+                        {
                         printf("Saving?\n");
                           // Read the pixels from the current render target and save them onto the surface
                           SDL_RenderReadPixels(disp.renderer, NULL, SDL_GetWindowPixelFormat(disp.window), disp.surface->pixels, disp.surface->pitch);
 
-                          SDL_SaveBMP(disp.surface, "Screenshot.bmp");
+                          char str[3];
+                          char name[12] = "-result.bmp";
+                          snprintf( str, 3, "%d", setting.numTiles );
+
+                          char *result = (char*) malloc(strlen(str) + strlen(name) + 1);
+                          if (!result) {
+                              printf("Couldn't Malloc!\n");
+                              continue;
+                          }
+
+                          strcpy(result, str);
+                          strcat(result, name);
+
+                          SDL_SaveBMP(disp.surface, result);
                         continue;
+                        }
                     case SDLK_p:
                         // demo to swap the textures
 
@@ -102,6 +117,70 @@ int main() {
                     case SDLK_q:
                         should_quit = 1;
                         break;
+                    case SDLK_z:
+                        {
+                            if (argc <= 1) {
+                                printf("No filename passed in\n");
+                                continue;
+                            }
+                            int size = 2;
+                            int iterator = 0;
+
+                            char* name = argv[1];
+
+                            char* tiles = (char*) malloc(6 * sizeof(char));
+                            for (int i = 0; i < 6; i++) {
+                                tiles[i] = '\0';
+                            }
+
+                            while (name[iterator] != '\0' && isdigit(name[iterator])) {
+                                tiles[iterator] = name[iterator];
+                                iterator++;
+                            }
+
+                            int number = atoi(tiles);
+
+                        SDL_Surface* abc = SDL_LoadBMP(name);
+
+                        if ( !abc ) {
+                            // load failed
+                            printf("Couldn't open image!\n");
+                            printf("%s\n", SDL_GetError());
+                            continue;
+                        }
+
+                        setting.numTiles = number;
+                        setDisplaySettings(setting);
+
+                        resizeGridLayout();
+
+                        states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
+
+                        search1 = getDefaultSearch();
+                        search1.states = states;
+                        search1.stateSize = (setting.numTiles * setting.numTiles);
+                        search1.numTiles = setting.numTiles;
+                        disp.currTexture = disp.texture1;
+
+                        usleep(5000);
+                        reset(disp.renderer, disp.currTexture, states);
+
+                        // now you can convert it into a texture
+                        SDL_Texture* tmp = SDL_CreateTextureFromSurface(disp.renderer, abc);
+
+                        SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+
+                        // Render the full original texture onto the new one
+                        SDL_RenderCopy(disp.renderer, tmp, NULL, NULL);
+
+                        // Reset the rendering target to the default (the window)
+                        SDL_SetRenderTarget(disp.renderer, NULL);
+
+                        usleep(5000);
+                        SDL_RenderPresent(disp.renderer);
+                        ColorBlankTile(disp.renderer, disp.currTexture);
+                        continue;
+                        }
                     case SDLK_t:
                         // clears all tiles and redraws onto selected buffer
                         clearTilesFromTexture(disp.renderer, disp.backTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);

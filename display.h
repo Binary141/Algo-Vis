@@ -82,6 +82,7 @@ void draw_text(SDL_Renderer*, SDL_Texture*, char*, int, int, int, int, color, co
 void reset(SDL_Renderer*, SDL_Texture*, int*);
 void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);
+void ColorBlankTile(SDL_Renderer*, SDL_Texture*);
 void colorTile(SDL_Renderer* , SDL_Texture*, int, int, int, int, int);
 void colorTileByIndex(SDL_Renderer*, SDL_Texture*, int, int, int, int, int);
 void selectStartState(SDL_Renderer*, SDL_Texture*, search*);

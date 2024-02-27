@@ -76,9 +76,8 @@ void greedy(SDL_Renderer* r, SDL_Texture* t, search* s) {
 
         greedyStruct curr = pq.top();
         pq.pop();
+
         int current = curr.Index;
-        visitedCount += 1;
-        drawStatesCount(r, t, textColor, bg, visitedCount);
 
         if (s->states[current] == GOAL) {
             printf("Found the goal at index %d!\n", current);
@@ -93,7 +92,11 @@ void greedy(SDL_Renderer* r, SDL_Texture* t, search* s) {
 
         // don't mark or color the start state if we come to it
         if (s->states[current] != START) {
+            visitedCount += 1;
+
             colorTileByIndex(r, t, current, 92, 49, 148, 1);
+            drawStatesCount(r, t, textColor, bg, visitedCount);
+
             s->states[current] = VISITED;
         }
 

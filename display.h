@@ -94,6 +94,7 @@ void drawGoalButton(SDL_Renderer*, SDL_Texture*, color, color);
 void drawStatesCount(SDL_Renderer*, SDL_Texture*, color, color, int);
 void testTexture(SDL_Renderer*, SDL_Texture*, int*);
 int isInMenu(int);
+int isOutOfGrid(int, int);
 void manyWalls(SDL_Renderer*, SDL_Texture*, search*, int);
 void drawStatusBar(SDL_Renderer*, SDL_Texture*, color, color);
 

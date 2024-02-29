@@ -294,7 +294,7 @@ int main(int argc, char* argv[]) {
 
                 // don't do anything if it is in the menu bar at the moment
                 // adjust here for menu selections
-                if (isInMenu(mouse_y)) {
+                if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
                     continue;
                 }
 

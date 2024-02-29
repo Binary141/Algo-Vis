@@ -496,7 +496,7 @@ void selectGoalState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
             case SDL_MOUSEBUTTONDOWN:
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
-                if (isInMenu(mouse_y)) {
+                if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
                     return;
                 }
@@ -561,7 +561,7 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
                 int mouse_x, mouse_y;
                 SDL_GetMouseState(&mouse_x, &mouse_y);
 
-                if (isInMenu(mouse_y)) {
+                if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
                     // don't do anything if it is in the menu bar. That will be handled elsewhere
                     return;
                 }
@@ -655,7 +655,7 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
             // duplicated code so if a user clicks without moving the cursor, we will still do the action
             SDL_GetMouseState(&mouse_x, &mouse_y);
 
-            if (isInMenu(mouse_y)) {
+            if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
                 continue;
             }
 
@@ -687,7 +687,7 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
         case SDL_MOUSEMOTION:
             SDL_GetMouseState(&mouse_x, &mouse_y);
 
-            if (isInMenu(mouse_y)) {
+            if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
                 continue;
             }
 
@@ -723,4 +723,12 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
             continue;
         }
     }
+}
+
+int isOutOfGrid(int x, int y) {
+    if (x <= (setting.gridStartX + TILE_BORDER_WIDTH) || x > ((setting.numTiles * setting.tileWidth) + setting.gridStartX) || y > ((setting.numTiles * setting.tileHeight) + setting.menuHeight)) {
+        return 1;
+    }
+
+    return 0;
 }

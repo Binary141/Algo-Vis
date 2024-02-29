@@ -58,6 +58,8 @@ struct settings {
     int tileHeight;
     int numTiles;
     int menuHeight;
+    int gridStartX;
+    int gridEndY;
     int gridHeight;
     int startButtonX;
     int startButtonX2;

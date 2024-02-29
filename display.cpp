@@ -18,6 +18,8 @@ settings setting = {
     0,
     0,
     0,
+    0,
+    0,
     0
 };
 
@@ -40,11 +42,14 @@ void resizeGridLayout() {
 
     int tile_width = (setting.width / setting.numTiles);
     setting.tileWidth = tile_width;
+    setting.gridStartX = ((setting.width - (setting.tileWidth * setting.numTiles)) / 2);
+    // setting.gridStartX = 3;
+    printf("%d\n", setting.gridStartX);
 
     int calculated_height = (setting.height - MENU_HEIGHT - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
 
-    setting.menuHeight = setting.height - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
+    // setting.menuHeight = setting.height - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
     setting.gridHeight = setting.height - setting.menuHeight;
 
     // position buttons on the far right of display
@@ -207,34 +212,28 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
     SDL_Rect squareRect;
 
     squareRect.w = TILE_BORDER_WIDTH;
-    squareRect.h = setting.height;
+    squareRect.h = (setting.numTiles * setting.tileHeight) + TILE_BORDER_WIDTH;
 
+    squareRect.x = 0;
     squareRect.y = setting.menuHeight;
 
     // draw vertical lines
-    for (int i = 0; i <= setting.width; i += setting.tileWidth) {
-        squareRect.x = i;
+    for (int i = 0; i < setting.numTiles + 1; i++) {
+        squareRect.x = (i * setting.tileWidth) + setting.gridStartX;
 
         // Draw it
         SDL_RenderFillRect(renderer, &squareRect);
     }
 
-    // draw the right most vertical border
-    squareRect.x = (setting.numTiles * setting.tileWidth);
-    squareRect.w = setting.width;
-
-    // Draw it
-    SDL_RenderFillRect(renderer, &squareRect);
-
-    squareRect.w = setting.width;
+    squareRect.w = setting.numTiles * setting.tileWidth;
     squareRect.h = TILE_BORDER_WIDTH;
 
     // draw in the middle of the screen
     squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
     // draw horizontal lines
-    for (int i = setting.menuHeight; i <= setting.height; i += setting.tileHeight) {
-        squareRect.y = i;
+    for (int i = 0; i < setting.numTiles + 1; i++) {
+        squareRect.y = (i * setting.tileHeight) + setting.menuHeight;
 
         // Draw it
         SDL_RenderFillRect(renderer, &squareRect);
@@ -371,7 +370,7 @@ void destroy_window(SDL_Renderer* renderer, SDL_Window* window) {
 tile getClosestTile(int x, int y) {
     tile closest;
 
-    int closest_x = TILE_BORDER_WIDTH;
+    int closest_x = TILE_BORDER_WIDTH + setting.gridStartX;
     while ( closest_x < x ) {
         closest_x += setting.tileWidth;
     }
@@ -396,7 +395,7 @@ tile getClosestTile(int x, int y) {
 
     closest.x = closest_x;
     closest.y = setting.menuHeight + (numTilesAway * setting.tileHeight) + TILE_BORDER_WIDTH;
-    closest.xIndex = closest_x / setting.tileWidth;
+    closest.xIndex = (closest_x - TILE_BORDER_WIDTH - setting.gridStartX) / setting.tileWidth;
     closest.yIndex = numTilesAway;
 
     return closest;
@@ -479,7 +478,7 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
 void colorTileByIndex(SDL_Renderer* renderer, SDL_Texture* texture, int index, int r, int g, int b, int shouldUpdate) {
     int y = index / setting.numTiles;
     int x = index % setting.numTiles;
-    colorTile(renderer, texture, ((x * setting.tileWidth) + TILE_BORDER_WIDTH), (((y * setting.tileHeight) + setting.menuHeight + TILE_BORDER_WIDTH)), r, g, b, shouldUpdate);
+    colorTile(renderer, texture, ((x * setting.tileWidth) + TILE_BORDER_WIDTH + setting.gridStartX), (((y * setting.tileHeight) + setting.menuHeight + TILE_BORDER_WIDTH)), r, g, b, shouldUpdate);
 
     usleep(SLEEPTIME2);
 }
@@ -569,6 +568,8 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
 
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_start = (closest.xIndex + (closest.yIndex * setting.numTiles));
+                printf("closest x: %d\n", closest.xIndex);
+                printf("closest y: %d\n", closest.yIndex);
 
                 if (s->goal == new_start) {
                     // remove what used to be the goal state

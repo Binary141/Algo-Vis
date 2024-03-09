@@ -1,4 +1,3 @@
-#include <iostream>
 #include "display.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -32,11 +31,11 @@ int main(int argc, char* argv[]) {
     int* states;
     states = (int*) malloc((setting.numTiles * setting.numTiles) * sizeof(int));
 
-    // draw the start and goal buttons
-    drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
-
     // draws grid, resets states array to be all empty, and draw state buttons
     reset(disp.renderer, disp.texture1, states);
+
+    // draw the start and goal buttons
+    drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
 
     usleep(5000);
 

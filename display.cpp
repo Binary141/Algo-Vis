@@ -1,6 +1,5 @@
 #include "display.h"
 #include <SDL2/SDL.h>
-#include <iostream>
 #include <SDL2/SDL_ttf.h>
 #include <unistd.h> // usleep()
 #include <stdlib.h>
@@ -178,8 +177,9 @@ screen init_display() {
 
     setting.startButtonY = 0;
 
-    setting.goalButtonX = setting.width - (2 * offset);
-    setting.goalButtonX2 = setting.width - offset;
+    setting.goalButtonX = setting.width - (2.4 * offset);
+    // setting.goalButtonX2 = setting.width - setting.goalButtonX2 - offset;
+    setting.goalButtonX2 = setting.width - (1.4 * offset);
     setting.goalButtonY = 0;
 
     TTF_Init();
@@ -225,11 +225,23 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
         SDL_RenderFillRect(renderer, &squareRect);
     }
 
-    squareRect.w = setting.numTiles * setting.tileWidth;
+    squareRect.w = setting.width;
     squareRect.h = TILE_BORDER_WIDTH;
 
     // draw in the middle of the screen
     squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+
+    // draw the first line all the way across the screen
+    squareRect.y = (0 * setting.tileHeight) + setting.menuHeight;
+
+    // Draw it
+    SDL_RenderFillRect(renderer, &squareRect);
+
+    // draw all the rest in the grid
+    squareRect.w = setting.numTiles * setting.tileWidth;
+    squareRect.h = TILE_BORDER_WIDTH;
+    squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+    squareRect.y = 0;
 
     // draw horizontal lines
     for (int i = 0; i < setting.numTiles + 1; i++) {
@@ -252,6 +264,9 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
     if (shouldRender) {
         SDL_RenderPresent(renderer);
     }
+
+    drawStartButton(renderer, texture, textColor, backgroundColor);
+    drawGoalButton(renderer, texture, textColor, backgroundColor);
 }
 
 void testTexture(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {

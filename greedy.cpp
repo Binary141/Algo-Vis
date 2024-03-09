@@ -2,10 +2,8 @@
 #include "display.h"
 #include <SDL2/SDL.h>
 #include <vector>
-#include <iostream>
 #include <unistd.h> // usleep()
 #include <queue>
-#include <math.h> // sqrt()
 #include <float.h>
 
 struct greedyStruct {

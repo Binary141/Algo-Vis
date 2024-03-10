@@ -1,5 +1,6 @@
 #include "display.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_events.h>
 #include <SDL2/SDL_ttf.h>
 #include <unistd.h> // usleep()
 #include <stdlib.h>
@@ -42,13 +43,10 @@ void resizeGridLayout() {
     int tile_width = (setting.width / setting.numTiles);
     setting.tileWidth = tile_width;
     setting.gridStartX = ((setting.width - (setting.tileWidth * setting.numTiles)) / 2);
-    // setting.gridStartX = 3;
-    printf("%d\n", setting.gridStartX);
 
     int calculated_height = (setting.height - MENU_HEIGHT - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
 
-    // setting.menuHeight = setting.height - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
     setting.gridHeight = setting.height - setting.menuHeight;
 
     // position buttons on the far right of display
@@ -58,8 +56,9 @@ void resizeGridLayout() {
 
     setting.startButtonY = 0;
 
-    setting.goalButtonX = setting.width - (2 * offset);
-    setting.goalButtonX2 = setting.width - offset;
+    setting.goalButtonX = setting.width - (2.4 * offset);
+    setting.goalButtonX2 = setting.width - (1.4 * offset);
+
     setting.goalButtonY = 0;
 
     return;
@@ -69,27 +68,16 @@ screen init_display() {
     // change the display dimensions if there is any extra space on the
     // bottom or right of the window
     screen ret;
-
-    int tile_width = (SCREEN_WIDTH / setting.numTiles);
-    setting.tileWidth = tile_width;
-
-    // int temp_width = 0;
-
-    // get largest width size
-    // temp_width = setting.numTiles * tile_width;
-
-    // update the display width. Add the tile border width to allow the drawing of the right most border
-    // setting.width = temp_width + TILE_BORDER_WIDTH;
     setting.width = SCREEN_WIDTH;
+    setting.height = SCREEN_HEIGHT;
 
-    int calculated_height = (SCREEN_HEIGHT - setting.menuHeight - TILE_BORDER_WIDTH) / setting.numTiles;
+    int calculated_height = (setting.height - MENU_HEIGHT - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
 
-    // update the display height. Add in the tile boarder width to allow the drawing of the bottom most border
-    setting.height = SCREEN_HEIGHT; // (calculated_height * setting.numTiles) + setting.menuHeight + TILE_BORDER_WIDTH;
-
-    setting.menuHeight = SCREEN_HEIGHT - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
+    setting.menuHeight = setting.height - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
     setting.gridHeight = setting.height - setting.menuHeight;
+
+    resizeGridLayout();
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -110,8 +98,7 @@ screen init_display() {
         exit(1);
     }
 
-    // Create renderer
-    // ret.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    // create all the textures we need
     ret.renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(!ret.renderer) {
         printf("Failed to get the renderer from the window!\n");
@@ -170,18 +157,7 @@ screen init_display() {
         exit(1);
     }
 
-    // position buttons on the far right of display
-    int offset = setting.width * 0.05;
-    setting.startButtonX = setting.width - offset;
-    setting.startButtonX2 = setting.width;
-
-    setting.startButtonY = 0;
-
-    setting.goalButtonX = setting.width - (2.4 * offset);
-    // setting.goalButtonX2 = setting.width - setting.goalButtonX2 - offset;
-    setting.goalButtonX2 = setting.width - (1.4 * offset);
-    setting.goalButtonY = 0;
-
+    // need to call this so we can load fonts
     TTF_Init();
 
     font.f = TTF_OpenFont("./OpenSans-Regular.ttf", FONT_SIZE);
@@ -426,7 +402,6 @@ void ColorBlankTile(SDL_Renderer* renderer, SDL_Texture* texture) {
     // Actually draw the desired color
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
-    // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
     squareRect.w = 1;
     squareRect.h = 1;
 
@@ -583,8 +558,6 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
 
                 closest = getClosestTile(mouse_x, mouse_y);
                 new_start = (closest.xIndex + (closest.yIndex * setting.numTiles));
-                printf("closest x: %d\n", closest.xIndex);
-                printf("closest y: %d\n", closest.yIndex);
 
                 if (s->goal == new_start) {
                     // remove what used to be the goal state
@@ -637,7 +610,8 @@ void drawStartButton(SDL_Renderer* renderer, SDL_Texture* texture, color txtColo
 }
 
 void drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, int value) {
-    char str[5];
+    // I don't think we will have any counts larger than 6 digits
+    char str[6];
     sprintf(str, "%d", value);
 
     draw_text(r, t, str, 125, 0, 40, setting.menuHeight, txtColor, bgColor);
@@ -666,44 +640,16 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
 
     while (SDL_WaitEvent(&event2)) {
         switch (event2.type) {
+        case SDL_MOUSEMOTION:
+            // don't need to do anything specific here. The following case will either return or continue if needed
+            // continues if it is a mouse motion, but returns if it was a mouse button up
         case SDL_MOUSEBUTTONUP:
             // duplicated code so if a user clicks without moving the cursor, we will still do the action
             SDL_GetMouseState(&mouse_x, &mouse_y);
 
+            // if we are not in the grid, then bail out
             if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
-                continue;
-            }
-
-            closest = getClosestTile(mouse_x, mouse_y);
-
-            index = closest.xIndex + (closest.yIndex * setting.numTiles);
-
-            if (shouldDelete) {
-                // make it an empty space
-                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 1);
-
-                search1->states[index] = EMPTY_SPACE;
-            } else {
-                // make it a wall
-                search1->states[index] = WALL;
-
-                colorTile(r, t, closest.x, closest.y, 0, 0, 255, 1);
-            }
-
-            if (search1->goal == index) {
-                search1->goal = EMPTY_SPACE;
-            }
-
-            if (search1->start == index) {
-                search1->start = EMPTY_SPACE;
-            }
-
-            return;
-        case SDL_MOUSEMOTION:
-            SDL_GetMouseState(&mouse_x, &mouse_y);
-
-            if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
-                continue;
+                return;
             }
 
             closest = getClosestTile(mouse_x, mouse_y);
@@ -724,7 +670,6 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
                 search1->states[index] = WALL;
 
                 colorTile(r, t, closest.x, closest.y, 0, 0, 255, 1);
-                // printf("heuristic: %d\n", 1);
             }
 
             if (search1->goal == index) {
@@ -735,6 +680,9 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
                 search1->start = EMPTY_SPACE;
             }
 
+            if (event2.type == SDL_MOUSEBUTTONUP) {
+                return;
+            }
             continue;
         }
     }

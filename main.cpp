@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
     search1.states = states;
 
     tile closest;
-    int thing = 0;
+    int indicator = 0;
 
     SDL_Rect texr;
     texr.x = 0;
@@ -63,6 +63,7 @@ int main(int argc, char* argv[]) {
 
     SDL_Surface* textureSurface;
     int hasRan = 0;
+    int menuDisplayed = 0;
 
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
@@ -73,7 +74,7 @@ int main(int argc, char* argv[]) {
                 switch (event.key.keysym.sym) {
                     case SDLK_m:
                         {
-                        printf("Saving?\n");
+                        printf("Saving!\n");
                           // Read the pixels from the current render target and save them onto the surface
                           SDL_RenderReadPixels(disp.renderer, NULL, SDL_GetWindowPixelFormat(disp.window), disp.surface->pixels, disp.surface->pitch);
 
@@ -93,25 +94,99 @@ int main(int argc, char* argv[]) {
                           SDL_SaveBMP(disp.surface, result);
                         continue;
                         }
-                    case SDLK_p:
+                    case SDLK_o:
                         // demo to swap the textures
 
                         disp.backTexture = disp.currTexture;
 
                         // alternate the current
-                        if (!thing) {
+                        if (!indicator) {
                             disp.currTexture = disp.texture2;
-                            thing = 1;
+                            indicator = 1;
                         } else {
                             disp.currTexture = disp.texture1;
-                            thing = 0;
+                            indicator = 0;
                         }
 
+                        // clear out the menu
                         SDL_RenderCopy(disp.renderer,
                                        disp.currTexture,
                                        NULL,
                                        NULL);
+
                         SDL_RenderPresent(disp.renderer);
+                        ColorBlankTile(disp.renderer, disp.currTexture);
+
+                        continue;
+                    case SDLK_p:
+
+                        // Declare rect of square
+                        SDL_Rect squareRect;
+                        // Square dimensions
+                        squareRect.w = setting.width / 2;
+                        squareRect.h = setting.height / 1.2;
+
+                        squareRect.y = (setting.height / 2) - (squareRect.h / 2);
+                        squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+
+                        // if the menu is not showing, show it
+                        if (!menuDisplayed) {
+                            printf("Displaying Menu!\n");
+                            menuDisplayed = 1;
+                            drawMenu(disp.renderer, disp.menuTexture);
+                            // usleep(5000);
+
+                            // SDL_SetRenderTarget(disp.renderer, disp.scratchTexture);
+                            // SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+
+                            SDL_RenderCopy(disp.renderer,
+                                           disp.statusTexture,
+                                           NULL,
+                                           NULL);
+
+
+                            SDL_RenderCopy(disp.renderer,
+                                           disp.currTexture,
+                                           NULL,
+                                           NULL);
+
+                            SDL_RenderCopy(disp.renderer,
+                                           disp.menuTexture,
+                                           &squareRect,
+                                           &squareRect);
+
+                            // SDL_SetRenderTarget(disp.renderer, NULL);
+
+                            SDL_RenderPresent(disp.renderer);
+
+                            // ColorBlankTile(disp.renderer, disp.currTexture);
+                            // ColorBlankTile(disp.renderer, disp.menuTexture);
+                            continue;
+                            printf("Here?\n");
+                        }
+
+                        squareRect.w = setting.width;
+                        squareRect.h = setting.statusHeight + TILE_BORDER_WIDTH;
+
+                        squareRect.y = 0;
+                        squareRect.x = 0;
+
+                        printf("Removing Menu!\n");
+                        menuDisplayed = 0;
+
+                        SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+
+                        drawStatusBar(disp.renderer, disp.statusTexture, backgroundColor, textColor);
+
+                        // clear out the menu
+                        SDL_RenderCopy(disp.renderer,
+                                       disp.currTexture,
+                                       NULL,
+                                       NULL);
+
+                        SDL_RenderPresent(disp.renderer);
+                        ColorBlankTile(disp.renderer, disp.currTexture);
+
                         continue;
                     case SDLK_q:
                         should_quit = 1;
@@ -177,6 +252,7 @@ int main(int argc, char* argv[]) {
 
                         usleep(5000);
                         SDL_RenderPresent(disp.renderer);
+                        // get the display to render. Doesn't load anything without this
                         ColorBlankTile(disp.renderer, disp.currTexture);
                         continue;
                         }
@@ -222,7 +298,7 @@ int main(int argc, char* argv[]) {
                 if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
                     char text[] = "Searching!";
 
-                    draw_text(disp.renderer, disp.statusTexture, text, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, disp.statusTexture, text, 0, 0, 100, setting.statusHeight, textColor, backgroundColor);
 
                     isSearching = 1;
                     doneSearching = 0;
@@ -251,7 +327,7 @@ int main(int argc, char* argv[]) {
                     // t2.join();
 
                     char doneText[] = "Done!";
-                    draw_text(disp.renderer, disp.statusTexture, doneText, 0, 0, 100, setting.menuHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, disp.statusTexture, doneText, 0, 0, 100, setting.statusHeight, textColor, backgroundColor);
                 }
 
                 if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d) {
@@ -270,9 +346,7 @@ int main(int argc, char* argv[]) {
                     }
 
                     setDisplaySettings(setting);
-                    // destroy_window(disp.renderer, disp.window);
 
-                    // disp = init_display();
                     resizeGridLayout();
 
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
@@ -287,15 +361,7 @@ int main(int argc, char* argv[]) {
                     reset(disp.renderer, disp.currTexture, states);
                 }
             case SDL_MOUSEBUTTONDOWN:
-                // generate a wall
-                int mouse_x, mouse_y;
-                SDL_GetMouseState(&mouse_x, &mouse_y);
-
-                // don't do anything if it is in the menu bar at the moment
-                // adjust here for menu selections
-                if (isInMenu(mouse_y) || isOutOfGrid(mouse_x, mouse_y)) {
-                    continue;
-                }
+                // generate a wall, or clear out the space
 
                 // color the tile if it is the left mouse button
                 if( event.button.button == SDL_BUTTON_LEFT ) {
@@ -308,7 +374,7 @@ int main(int argc, char* argv[]) {
                 }
         }
     }
-    printf("Ouch\n");
+
     destroy_window(disp.renderer, disp.window);
 
     return 0;

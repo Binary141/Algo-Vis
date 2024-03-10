@@ -1,6 +1,7 @@
 #include "display.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 #include <unistd.h> // usleep()
 #include <stdlib.h>
@@ -47,7 +48,7 @@ void resizeGridLayout() {
     int calculated_height = (setting.height - MENU_HEIGHT - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
 
-    setting.gridHeight = setting.height - setting.menuHeight;
+    setting.gridHeight = setting.height - setting.statusHeight;
 
     // position buttons on the far right of display
     int offset = setting.width * 0.05;
@@ -74,8 +75,8 @@ screen init_display() {
     int calculated_height = (setting.height - MENU_HEIGHT - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
 
-    setting.menuHeight = setting.height - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
-    setting.gridHeight = setting.height - setting.menuHeight;
+    setting.statusHeight = setting.height - (calculated_height * setting.numTiles) - TILE_BORDER_WIDTH;
+    setting.gridHeight = setting.height - setting.statusHeight;
 
     resizeGridLayout();
 
@@ -128,7 +129,7 @@ screen init_display() {
                                     SDL_PIXELFORMAT_RGBA8888,
                                     SDL_TEXTUREACCESS_TARGET,
                                     setting.width,
-                                    setting.menuHeight);
+                                    setting.statusHeight);
     if(!ret.statusTexture) {
         printf("Failed to create statusTexture!\n");
         printf("SDL2 Error: %s\n", SDL_GetError());
@@ -146,6 +147,17 @@ screen init_display() {
         exit(1);
     }
 
+    ret.menuTexture = SDL_CreateTexture(ret.renderer,
+                                    SDL_PIXELFORMAT_RGBA8888,
+                                    SDL_TEXTUREACCESS_TARGET,
+                                    setting.width,
+                                    setting.height);
+    if(!ret.menuTexture) {
+        printf("Failed to create menuTexture!\n");
+        printf("SDL2 Error: %s\n", SDL_GetError());
+        exit(1);
+    }
+
     ret.backTexture = SDL_CreateTexture(ret.renderer,
                                     SDL_PIXELFORMAT_RGBA8888,
                                     SDL_TEXTUREACCESS_TARGET,
@@ -153,6 +165,17 @@ screen init_display() {
                                     setting.height);
     if(!ret.backTexture) {
         printf("Failed to create backTexture!\n");
+        printf("SDL2 Error: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    ret.scratchTexture = SDL_CreateTexture(ret.renderer,
+                                    SDL_PIXELFORMAT_RGBA8888,
+                                    SDL_TEXTUREACCESS_TARGET,
+                                    setting.width,
+                                    setting.height);
+    if(!ret.scratchTexture) {
+        printf("Failed to create scratchTexture!\n");
         printf("SDL2 Error: %s\n", SDL_GetError());
         exit(1);
     }
@@ -191,7 +214,7 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
     squareRect.h = (setting.numTiles * setting.tileHeight) + TILE_BORDER_WIDTH;
 
     squareRect.x = 0;
-    squareRect.y = setting.menuHeight;
+    squareRect.y = setting.statusHeight;
 
     // draw vertical lines
     for (int i = 0; i < setting.numTiles + 1; i++) {
@@ -208,7 +231,7 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
     squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
     // draw the first line all the way across the screen
-    squareRect.y = (0 * setting.tileHeight) + setting.menuHeight;
+    squareRect.y = (0 * setting.tileHeight) + setting.statusHeight;
 
     // Draw it
     SDL_RenderFillRect(renderer, &squareRect);
@@ -221,7 +244,7 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
 
     // draw horizontal lines
     for (int i = 0; i < setting.numTiles + 1; i++) {
-        squareRect.y = (i * setting.tileHeight) + setting.menuHeight;
+        squareRect.y = (i * setting.tileHeight) + setting.statusHeight;
 
         // Draw it
         SDL_RenderFillRect(renderer, &squareRect);
@@ -243,6 +266,34 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
 
     drawStartButton(renderer, texture, textColor, backgroundColor);
     drawGoalButton(renderer, texture, textColor, backgroundColor);
+}
+
+void drawMenu(SDL_Renderer* r, SDL_Texture* t) {
+    // anything drawn to renderer will be drawn to the texture
+    SDL_SetRenderTarget(r, t);
+
+    // Clear screen
+    // SDL_RenderClear(r);
+
+    // Actually draw the desired color
+    SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
+
+    // Declare rect of square
+    SDL_Rect squareRect;
+    // Square dimensions
+    squareRect.w = setting.width / 2;
+    squareRect.h = setting.height / 1.2;
+
+    squareRect.y = (setting.height / 2) - (squareRect.h / 2);
+    squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+
+    // Draw it
+    SDL_RenderFillRect(r, &squareRect);
+
+    // Reset the rendering target to the default (the window)
+    SDL_SetRenderTarget(r, NULL);
+
+    SDL_RenderCopy(r, t, &squareRect, &squareRect);
 }
 
 void testTexture(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
@@ -336,11 +387,10 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     srcrect.x = x;
     srcrect.y = y;
     srcrect.w = width;
-    srcrect.h = setting.menuHeight;
+    srcrect.h = setting.statusHeight;
 
     SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
 
-    // SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 
     // Update screen
@@ -369,7 +419,7 @@ tile getClosestTile(int x, int y) {
     closest_x -= setting.tileWidth;
 
     // find out how many tiles it takes to subtract from the y position before it is negative
-    int closest_y = y - TILE_BORDER_WIDTH - setting.menuHeight;
+    int closest_y = y - TILE_BORDER_WIDTH - setting.statusHeight;
 
     // this shouldn't happen. But if it does we should quit. Undefined behaviour if we were to do something in the menu relating to tiles
     if (closest_y < 0) {
@@ -385,7 +435,7 @@ tile getClosestTile(int x, int y) {
     numTilesAway -= 1;
 
     closest.x = closest_x;
-    closest.y = setting.menuHeight + (numTilesAway * setting.tileHeight) + TILE_BORDER_WIDTH;
+    closest.y = setting.statusHeight + (numTilesAway * setting.tileHeight) + TILE_BORDER_WIDTH;
     closest.xIndex = (closest_x - TILE_BORDER_WIDTH - setting.gridStartX) / setting.tileWidth;
     closest.yIndex = numTilesAway;
 
@@ -417,9 +467,9 @@ void ColorBlankTile(SDL_Renderer* renderer, SDL_Texture* texture) {
     // don't try to update the status bar portion of the display
     SDL_Rect srcrect;
     srcrect.w = setting.width;
-    srcrect.h = setting.height - setting.menuHeight;
+    srcrect.h = setting.height - setting.statusHeight;
     srcrect.x = 0;
-    srcrect.y = setting.menuHeight;
+    srcrect.y = setting.statusHeight;
 
     SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
 
@@ -455,9 +505,9 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
         // don't try to update the status bar portion of the display
         SDL_Rect srcrect;
         srcrect.w = setting.width;
-        srcrect.h = setting.height - setting.menuHeight;
+        srcrect.h = setting.height - setting.statusHeight;
         srcrect.x = 0;
-        srcrect.y = setting.menuHeight;
+        srcrect.y = setting.statusHeight;
 
         SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
 
@@ -468,7 +518,7 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
 void colorTileByIndex(SDL_Renderer* renderer, SDL_Texture* texture, int index, int r, int g, int b, int shouldUpdate) {
     int y = index / setting.numTiles;
     int x = index % setting.numTiles;
-    colorTile(renderer, texture, ((x * setting.tileWidth) + TILE_BORDER_WIDTH + setting.gridStartX), (((y * setting.tileHeight) + setting.menuHeight + TILE_BORDER_WIDTH)), r, g, b, shouldUpdate);
+    colorTile(renderer, texture, ((x * setting.tileWidth) + TILE_BORDER_WIDTH + setting.gridStartX), (((y * setting.tileHeight) + setting.statusHeight + TILE_BORDER_WIDTH)), r, g, b, shouldUpdate);
 
     usleep(SLEEPTIME2);
 }
@@ -606,7 +656,7 @@ void drawStartButton(SDL_Renderer* renderer, SDL_Texture* texture, color txtColo
     char start[] = "START";
     int width = setting.startButtonX2 - setting.startButtonX;
 
-    draw_text(renderer, texture, start, setting.startButtonX, setting.startButtonY, width, setting.menuHeight, txtColor, bgColor);
+    draw_text(renderer, texture, start, setting.startButtonX, setting.startButtonY, width, setting.statusHeight, txtColor, bgColor);
 }
 
 void drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, int value) {
@@ -614,18 +664,18 @@ void drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgCo
     char str[6];
     sprintf(str, "%d", value);
 
-    draw_text(r, t, str, 125, 0, 40, setting.menuHeight, txtColor, bgColor);
+    draw_text(r, t, str, 125, 0, 40, setting.statusHeight, txtColor, bgColor);
 }
 
 void drawGoalButton(SDL_Renderer* renderer, SDL_Texture* texture, color txtColor, color bgColor) {
     char goal[] = "GOAL";
     int width = setting.goalButtonX2 - setting.goalButtonX;
 
-    draw_text(renderer, texture, goal, setting.goalButtonX, setting.goalButtonY, width, setting.menuHeight, txtColor, bgColor);
+    draw_text(renderer, texture, goal, setting.goalButtonX, setting.goalButtonY, width, setting.statusHeight, txtColor, bgColor);
 }
 
 int isInMenu(int y) {
-    if (y <= setting.menuHeight + TILE_BORDER_WIDTH) {
+    if (y <= setting.statusHeight + TILE_BORDER_WIDTH) {
         // if it is within y 0 to the height of the menu, return true
         return 1;
     }
@@ -689,7 +739,7 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
 }
 
 int isOutOfGrid(int x, int y) {
-    if (x <= (setting.gridStartX + TILE_BORDER_WIDTH) || x > ((setting.numTiles * setting.tileWidth) + setting.gridStartX) || y > ((setting.numTiles * setting.tileHeight) + setting.menuHeight)) {
+    if (x <= (setting.gridStartX + TILE_BORDER_WIDTH) || x > ((setting.numTiles * setting.tileWidth) + setting.gridStartX) || y > ((setting.numTiles * setting.tileHeight) + setting.statusHeight)) {
         return 1;
     }
 

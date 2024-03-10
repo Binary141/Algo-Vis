@@ -57,14 +57,17 @@ void clearTilesBulk(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int
 
         if (tmp == WALL) {
             colorTileByIndex(renderer, texture, i, 0, 0, 255, shouldRender);
+            continue;
         }
 
         if (tmp == GOAL) {
             colorTileByIndex(renderer, texture, i, 255, 0, 0, shouldRender);
+            continue;
         }
 
         if (tmp == START) {
             colorTileByIndex(renderer, texture, i, 0, 255, 0, shouldRender);
+            continue;
         }
     }
 
@@ -175,7 +178,7 @@ double getCost(int currX, int currY, int goalX, int goalY) {
 }
 
 // Function to be launched in another thread
-// Only used to listed for a key and stop the searches mid way through
+// Only used to listen for a key and stop the searches mid way through
 void waitForSearch() {
     SDL_Event event2;
 
@@ -186,7 +189,7 @@ void waitForSearch() {
             switch (event2.type) {
                 case SDL_KEYDOWN:
                     if (event2.key.keysym.sym == SDLK_h) {
-                        // If the 'h' button is pressed, stop the search
+                        // If the 'h' button is pressed, tell the search to stop
                         isSearching = 0;
                     }
             }

@@ -46,9 +46,11 @@ struct screen {
     SDL_Renderer* renderer;
     SDL_Texture* texture1;
     SDL_Texture* texture2;
+    SDL_Texture* menuTexture;
     SDL_Texture* statusTexture;
     SDL_Texture* currTexture;
     SDL_Texture* backTexture;
+    SDL_Texture* scratchTexture;
 };
 
 struct settings {
@@ -57,7 +59,7 @@ struct settings {
     int tileWidth;
     int tileHeight;
     int numTiles;
-    int menuHeight;
+    int statusHeight;
     int gridStartX;
     int gridEndY;
     int gridHeight;
@@ -97,6 +99,7 @@ int isInMenu(int);
 int isOutOfGrid(int, int);
 void manyWalls(SDL_Renderer*, SDL_Texture*, search*, int);
 void drawStatusBar(SDL_Renderer*, SDL_Texture*, color, color);
+void drawMenu(SDL_Renderer*, SDL_Texture*);
 
 extern settings setting;
 

@@ -2,13 +2,13 @@
 #include "display.h"
 #include <SDL2/SDL.h>
 #include <vector>
-#include <iostream>
 #include <unistd.h> // usleep()
 #include <queue>
-#include <math.h> // sqrt()
 #include <float.h>
 
-struct astarStruct {
+struct 
+astarStruct 
+{
     int Index;
     int x;
     int y;
@@ -20,7 +20,9 @@ struct astarStruct {
 };
 
 // caller needs to set doneSearching to 0 if they need
-void astar(SDL_Renderer* r, SDL_Texture* t, search* s) {
+void
+astar(SDL_Renderer* r, SDL_Texture* t, search* s)
+{
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
         doneSearching = 1;
@@ -93,7 +95,7 @@ void astar(SDL_Renderer* r, SDL_Texture* t, search* s) {
         if (s->states[current] != START) {
             visitedCount += 1;
 
-            colorTileByIndex(r, t, current, 255, 0, 255, 1);
+            colorTileByIndex(r, t, current, color{255,0,255}, 1);
             drawStatesCount(r, t, textColor, bg, visitedCount);
 
             s->states[current] = VISITED;

@@ -7,7 +7,9 @@
 
 int doneSearching = 0;
 
-std::vector<int> getNeighborIndexes(int current, const search* s, int lastRowIndex) {
+std::vector<int>
+getNeighborIndexes(int current, const search* s, int lastRowIndex)
+{
     std::vector<int> res;
 
     if (current < 0) {
@@ -43,7 +45,9 @@ std::vector<int> getNeighborIndexes(int current, const search* s, int lastRowInd
     return res;
 }
 
-void clearTilesBulk(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
+void
+clearTilesBulk(SDL_Renderer* renderer, SDL_Texture* texture, search* s)
+{
     // make sure if we visited a tile, or if it is marked blank, then just clear it out
     int tmp;
     int shouldRender = 0;
@@ -56,17 +60,17 @@ void clearTilesBulk(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int
         }
 
         if (tmp == WALL) {
-            colorTileByIndex(renderer, texture, i, 0, 0, 255, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{0,0,255}, shouldRender);
             continue;
         }
 
         if (tmp == GOAL) {
-            colorTileByIndex(renderer, texture, i, 255, 0, 0, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{255,0,0}, shouldRender);
             continue;
         }
 
         if (tmp == START) {
-            colorTileByIndex(renderer, texture, i, 0, 255, 0, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{0,255,0}, shouldRender);
             continue;
         }
     }
@@ -75,7 +79,9 @@ void clearTilesBulk(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int
     SDL_RenderPresent(renderer);
 }
 
-void clearTilesFromTexture(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
+void
+clearTilesFromTexture(SDL_Renderer* renderer, SDL_Texture* texture, search* s)
+{
     // make sure if we visited a tile, or if it is marked blank, then just clear it out
     int tmp;
     int shouldRender = 0;
@@ -89,22 +95,24 @@ void clearTilesFromTexture(SDL_Renderer* renderer, SDL_Texture* texture, search*
 
         if (tmp == WALL) { // || tmp == EMPTY_SPACE) {
             // s->states[i] = EMPTY_SPACE;
-            colorTileByIndex(renderer, texture, i, 0, 0, 255, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{0,0,255}, shouldRender);
         }
 
         if (tmp == GOAL) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, texture, i, 255, 0, 0, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{255,0,0}, shouldRender);
         }
 
         if (tmp == START) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, texture, i, 0, 255, 0, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{0,255,0}, shouldRender);
         }
     }
 }
 
-void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, int g, int b) {
+void
+clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s)
+{
     // make sure if we visited a tile, or if it is marked blank, then just clear it out
     int tmp;
     int shouldRender = 1;
@@ -118,24 +126,26 @@ void clearTiles(SDL_Renderer* renderer, SDL_Texture* texture, search* s, int r, 
 
         if (tmp == WALL) { // || tmp == EMPTY_SPACE) {
             // s->states[i] = EMPTY_SPACE;
-            colorTileByIndex(renderer, texture, i, 0, 0, 255, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{0,0,255}, shouldRender);
         }
 
         if (tmp == GOAL) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, texture, i, 255, 0, 0, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{255,0,0}, shouldRender);
         }
 
         if (tmp == START) { // || tmp == empty_space) {
             // s->states[i] = empty_space;
-            colorTileByIndex(renderer, texture, i, 0, 255, 0, shouldRender);
+            colorTileByIndex(renderer, texture, i, color{0,255,0}, shouldRender);
         }
     }
-    drawStartButton(renderer, texture, textColor, bg);
-    drawGoalButton(renderer, texture, textColor, bg);
+    drawStartButton(renderer, texture, textColor, bg, 1);
+    drawGoalButton(renderer, texture, textColor, bg, 1);
 }
 
-void clearStates(search* s) {
+void
+clearStates(search* s)
+{
     for (int i = 0; i < s->stateSize; i++) {
         // set the tile to be empty if it has been visited
         // note this will not update the display, just used so
@@ -147,7 +157,9 @@ void clearStates(search* s) {
 }
 
 // manhattan distance
-double manhattanHeuristic(int currX, int currY, int goalX, int goalY) {
+double
+manhattanHeuristic(int currX, int currY, int goalX, int goalY)
+{
     int changeX = abs((currX - goalX));
     int changeY = abs((currY - goalY));
 
@@ -157,14 +169,18 @@ double manhattanHeuristic(int currX, int currY, int goalX, int goalY) {
 
 // euclidean distance
 // straight line distance
-double euclideanHeuristic(int currX, int currY, int goalX, int goalY) {
+double
+euclideanHeuristic(int currX, int currY, int goalX, int goalY)
+{
     int changeX = ((currX - goalX) * (currX - goalX));
     int changeY = ((currY - goalY) * (currY - goalY));
 
     return sqrt(changeX + changeY);
 }
 
-double zeroHeuristic(int currX, int currY, int goalX, int goalY) {
+double
+zeroHeuristic(int currX, int currY, int goalX, int goalY)
+{
     (void) currX;
     (void) currY;
     (void) goalX;
@@ -173,13 +189,17 @@ double zeroHeuristic(int currX, int currY, int goalX, int goalY) {
     return 0.0;
 }
 
-double getCost(int currX, int currY, int goalX, int goalY) {
+double
+getCost(int currX, int currY, int goalX, int goalY)
+{
     return euclideanHeuristic(currX, currY, goalX, goalY);
 }
 
 // Function to be launched in another thread
 // Only used to listen for a key and stop the searches mid way through
-void waitForSearch() {
+void
+waitForSearch()
+{
     SDL_Event event2;
 
     // the searches will set the doneSearching to be 1

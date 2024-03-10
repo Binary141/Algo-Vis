@@ -6,7 +6,9 @@
 #include <queue>
 
 // caller needs to set doneSearching to 0 if they need
-void bfs(SDL_Renderer* r, SDL_Texture* t, SDL_Texture* statusT, search* s) {
+void
+bfs(SDL_Renderer* r, SDL_Texture* t, SDL_Texture* statusT, search* s)
+{
     // create a list of visited states. Used to not have repeats
     int* visited = (int*) malloc(s->stateSize * sizeof(int));
     if (!visited) {
@@ -72,7 +74,7 @@ void bfs(SDL_Renderer* r, SDL_Texture* t, SDL_Texture* statusT, search* s) {
         if (s->states[current] != START) {
             visitedCount += 1;
 
-            colorTileByIndex(r, t, current, 255, 125, 0, 1);
+            colorTileByIndex(r, t, current, color{255,125,0}, 1);
             drawStatesCount(r, statusT, textColor, bg, visitedCount);
 
             s->states[current] = VISITED;

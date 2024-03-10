@@ -24,19 +24,27 @@ settings setting = {
     0
 };
 
-struct Font {
+struct 
+Font 
+{
     TTF_Font* f;
 } font;
 
-settings getDisplaySettings() {
+settings 
+getDisplaySettings() 
+{
     return setting;
 }
 
-void setDisplaySettings(settings set) {
+void 
+setDisplaySettings(settings set) 
+{
     setting = set;
 }
 
-void resizeGridLayout() {
+void 
+resizeGridLayout() 
+{
     // change the display dimensions if there is any extra space on the
     // bottom or right of the window
     screen ret;
@@ -65,7 +73,9 @@ void resizeGridLayout() {
     return;
 }
 
-screen init_display() {
+screen 
+init_display() 
+{
     // change the display dimensions if there is any extra space on the
     // bottom or right of the window
     screen ret;
@@ -193,7 +203,9 @@ screen init_display() {
     return ret;
 }
 
-void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
+void 
+draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) 
+{
 
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(renderer, texture);
@@ -264,11 +276,13 @@ void draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) {
         SDL_RenderPresent(renderer);
     }
 
-    drawStartButton(renderer, texture, textColor, backgroundColor);
-    drawGoalButton(renderer, texture, textColor, backgroundColor);
+    drawStartButton(renderer, texture, textColor, backgroundColor, shouldRender);
+    drawGoalButton(renderer, texture, textColor, backgroundColor, shouldRender);
 }
 
-void drawMenu(SDL_Renderer* r, SDL_Texture* t) {
+void 
+drawMenu(SDL_Renderer* r, SDL_Texture* t) 
+{
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(r, t);
 
@@ -296,14 +310,18 @@ void drawMenu(SDL_Renderer* r, SDL_Texture* t) {
     SDL_RenderCopy(r, t, &squareRect, &squareRect);
 }
 
-void testTexture(SDL_Renderer* renderer, SDL_Texture* texture, int* states) {
+void
+testTexture(SDL_Renderer* renderer, SDL_Texture* texture, int* states)
+{
     int shouldRender = 1;
     draw_grid(renderer, texture, shouldRender);
 
     usleep(SLEEPTIME2);
 }
 
-void drawStatusBar(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor) {
+void
+drawStatusBar(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor)
+{
 
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(r, t);
@@ -332,11 +350,13 @@ void drawStatusBar(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColo
 
     SDL_RenderCopy(r, t, NULL, NULL);
 
-    drawStartButton(r, t, txtColor, bgColor);
-    drawGoalButton(r, t, txtColor, bgColor);
+    drawStartButton(r, t, txtColor, bgColor, 1);
+    drawGoalButton(r, t, txtColor, bgColor, 1);
 }
 
-void reset(SDL_Renderer* r, SDL_Texture* t, int* states) {
+void
+reset(SDL_Renderer* r, SDL_Texture* t, int* states)
+{
     int shouldRender = 1;
 
     draw_grid(r, t, shouldRender);
@@ -350,13 +370,15 @@ void reset(SDL_Renderer* r, SDL_Texture* t, int* states) {
     usleep(SLEEPTIME2);
 }
 
-void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, int y, int width, int height, color txtColor, color bgColor) {
+void
+draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, int height, color txtColor, color bgColor, int shouldRender)
+{
 
     // anything drawn to renderer will be drawn to the texture
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(r, t);
 
     // Clear the renderer
-    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+    SDL_SetRenderDrawColor(r, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
 
     SDL_Color textColorSDL = {txtColor.r, txtColor.g, txtColor.b};
 
@@ -364,7 +386,7 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
         TTF_RenderText_Solid(font.f, text, textColorSDL);
 
     // now you can convert it into a texture
-    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+    SDL_Texture* Message = SDL_CreateTextureFromSurface(r, surfaceMessage);
 
     SDL_Rect Message_rect; //create a rect
     Message_rect.x = x;  //controls the rect's x coordinate
@@ -373,15 +395,15 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     Message_rect.h = height; // controls the height of the rect
 
     // draw the background of the text box
-    SDL_SetRenderDrawColor(renderer, bgColor.r, bgColor.g, bgColor.b, 255);
+    SDL_SetRenderDrawColor(r, bgColor.r, bgColor.g, bgColor.b, 255);
 
     // Draw it
-    SDL_RenderFillRect(renderer, &Message_rect);
+    SDL_RenderFillRect(r, &Message_rect);
 
     // Actually draw the desired color
-    SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
+    SDL_SetRenderDrawColor(r, BORDER_R, BORDER_G, BORDER_B, 255);
 
-    SDL_SetRenderTarget(renderer, NULL);
+    SDL_SetRenderTarget(r, NULL);
 
     SDL_Rect srcrect;
     srcrect.x = x;
@@ -389,17 +411,21 @@ void draw_text(SDL_Renderer* renderer, SDL_Texture* texture, char* text, int x, 
     srcrect.w = width;
     srcrect.h = setting.statusHeight;
 
-    SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
+    SDL_RenderCopy(r, t, &srcrect, &srcrect);
 
-    SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+    SDL_RenderCopy(r, Message, NULL, &Message_rect);
 
-    // Update screen
-    SDL_RenderPresent(renderer);
+    if (shouldRender) {
+        // Update screen if needed
+        SDL_RenderPresent(r);
+    }
 }
 
-void destroy_window(SDL_Renderer* renderer, SDL_Window* window) {
+void
+destroy_window(SDL_Renderer* r, SDL_Window* window)
+{
     // Destroy renderer
-    SDL_DestroyRenderer(renderer);
+    SDL_DestroyRenderer(r);
 
     // Destroy window
     SDL_DestroyWindow(window);
@@ -408,7 +434,9 @@ void destroy_window(SDL_Renderer* renderer, SDL_Window* window) {
     SDL_Quit();
 }
 
-tile getClosestTile(int x, int y) {
+tile
+getClosestTile(int x, int y)
+{
     tile closest;
 
     int closest_x = TILE_BORDER_WIDTH + setting.gridStartX;
@@ -441,16 +469,19 @@ tile getClosestTile(int x, int y) {
 
     return closest;
 }
-void ColorBlankTile(SDL_Renderer* renderer, SDL_Texture* texture) {
+
+void
+ColorBlankTile(SDL_Renderer* r, SDL_Texture* texture)
+{
 
     // anything drawn to renderer will be drawn to the texture
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(r, texture);
 
     // Declare rect of square
     SDL_Rect squareRect;
 
     // Actually draw the desired color
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+    SDL_SetRenderDrawColor(r, 0, 0, 0, 0);
 
     squareRect.w = 1;
     squareRect.h = 1;
@@ -459,10 +490,10 @@ void ColorBlankTile(SDL_Renderer* renderer, SDL_Texture* texture) {
     squareRect.x = 1;
 
     // Draw it
-    SDL_RenderFillRect(renderer, &squareRect);
+    SDL_RenderFillRect(r, &squareRect);
 
     // Reset the rendering target to the default (the window)
-    SDL_SetRenderTarget(renderer, NULL);
+    SDL_SetRenderTarget(r, NULL);
 
     // don't try to update the status bar portion of the display
     SDL_Rect srcrect;
@@ -471,21 +502,23 @@ void ColorBlankTile(SDL_Renderer* renderer, SDL_Texture* texture) {
     srcrect.x = 0;
     srcrect.y = setting.statusHeight;
 
-    SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
+    SDL_RenderCopy(r, texture, &srcrect, &srcrect);
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(r);
 }
 
-void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r, int g, int b, int shouldRender) {
+void
+colorTile(SDL_Renderer* r, SDL_Texture* t, int x, int y, color Color, int shouldRender)
+{
 
     // anything drawn to renderer will be drawn to the texture
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(r, t);
 
     // Declare rect of square
     SDL_Rect squareRect;
 
     // Actually draw the desired color
-    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+    SDL_SetRenderDrawColor(r, Color.r, Color.g, Color.b, 255);
 
     // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
     squareRect.w = setting.tileWidth - TILE_BORDER_WIDTH;
@@ -495,10 +528,10 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
     squareRect.x = x;
 
     // Draw it
-    SDL_RenderFillRect(renderer, &squareRect);
+    SDL_RenderFillRect(r, &squareRect);
 
     // Reset the rendering target to the default (the window)
-    SDL_SetRenderTarget(renderer, NULL);
+    SDL_SetRenderTarget(r, NULL);
 
     // Update screen if needed
     if (shouldRender) {
@@ -509,21 +542,31 @@ void colorTile(SDL_Renderer* renderer, SDL_Texture* texture, int x, int y, int r
         srcrect.x = 0;
         srcrect.y = setting.statusHeight;
 
-        SDL_RenderCopy(renderer, texture, &srcrect, &srcrect);
+        SDL_RenderCopy(r, t, &srcrect, &srcrect);
 
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(r);
     }
 }
 
-void colorTileByIndex(SDL_Renderer* renderer, SDL_Texture* texture, int index, int r, int g, int b, int shouldUpdate) {
+void
+colorTileByIndex(SDL_Renderer* r, SDL_Texture* t, int index, color Color, int shouldUpdate)
+{
     int y = index / setting.numTiles;
     int x = index % setting.numTiles;
-    colorTile(renderer, texture, ((x * setting.tileWidth) + TILE_BORDER_WIDTH + setting.gridStartX), (((y * setting.tileHeight) + setting.statusHeight + TILE_BORDER_WIDTH)), r, g, b, shouldUpdate);
+    colorTile(r, 
+              t, 
+              ((x * setting.tileWidth) + TILE_BORDER_WIDTH + setting.gridStartX), 
+              (((y * setting.tileHeight) + setting.statusHeight + TILE_BORDER_WIDTH)), 
+              Color, 
+              shouldUpdate
+              );
 
     usleep(SLEEPTIME2);
 }
 
-void selectGoalState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
+void
+selectGoalState(SDL_Renderer* r, SDL_Texture* t, search* s)
+{
     SDL_Event event;
     tile closest;
     int new_goal;
@@ -556,12 +599,12 @@ void selectGoalState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
 
                     // marks the new goal in the array
                     s->states[new_goal] = GOAL;
-                    colorTile(renderer, texture, s->goalx, s->goaly, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b, 1);
+                    colorTile(r, t, s->goalx, s->goaly, GOAL_COLOR, 1);
                     return;
                 }
 
                 // reset the original goal state tile to be the background color
-                colorTile(renderer, texture, s->goalx, s->goaly, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 1);
+                colorTile(r, t, s->goalx, s->goaly, backgroundColor, 1);
 
                 s->goalx = closest.x;
                 s->goaly = closest.y;
@@ -576,7 +619,7 @@ void selectGoalState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
                 // TODO look into why display blanks without this. Fast enough it doesn't really matter?
                 usleep(SLEEPTIME2);
                 // Color the new goal state
-                colorTileByIndex(renderer, texture, s->goal, GOAL_COLOR.r, GOAL_COLOR.g, GOAL_COLOR.b, 1);
+                colorTileByIndex(r, t, s->goal, GOAL_COLOR, 1);
 
                 return;
             case SDL_KEYDOWN:
@@ -587,7 +630,9 @@ void selectGoalState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
     return;
 }
 
-void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
+void
+selectStartState(SDL_Renderer* r, SDL_Texture* t, search* s)
+{
     SDL_Event event;
     tile closest;
     int new_start;
@@ -621,12 +666,12 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
 
                     // marks the new start in the array
                     s->states[new_start] = START;
-                    colorTile(renderer, texture, s->startx, s->starty, START_COLOR.r, START_COLOR.g, START_COLOR.b, 1);
+                    colorTile(r, t, s->startx, s->starty, START_COLOR, 1);
                     return;
                 }
 
                 // reset the original start state tile to be the background color
-                colorTile(renderer, texture, s->startx, s->starty, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 1);
+                colorTile(r, t, s->startx, s->starty, backgroundColor, 1);
 
                 s->startx = closest.x;
                 s->starty = closest.y;
@@ -641,7 +686,7 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
                 // TODO look into why display blanks without this. Fast enough it doesn't really matter?
                 usleep(SLEEPTIME2);
                 // Color the new start state
-                colorTileByIndex(renderer, texture, s->start, START_COLOR.r, START_COLOR.g, START_COLOR.b, 1);
+                colorTileByIndex(r, t, s->start, START_COLOR, 1);
 
                 return;
             case SDL_KEYDOWN:
@@ -652,29 +697,67 @@ void selectStartState(SDL_Renderer* renderer, SDL_Texture* texture, search* s) {
     return;
 }
 
-void drawStartButton(SDL_Renderer* renderer, SDL_Texture* texture, color txtColor, color bgColor) {
+void
+drawStartButton(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, int shouldRender)
+{
     char start[] = "START";
     int width = setting.startButtonX2 - setting.startButtonX;
 
-    draw_text(renderer, texture, start, setting.startButtonX, setting.startButtonY, width, setting.statusHeight, txtColor, bgColor);
+    draw_text(r, 
+              t, 
+              start, 
+              setting.startButtonX, 
+              setting.startButtonY, 
+              width, 
+              setting.statusHeight, 
+              txtColor, 
+              bgColor, 
+              shouldRender
+              );
 }
 
-void drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, int value) {
+void
+drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, int value)
+{
     // I don't think we will have any counts larger than 6 digits
     char str[6];
     sprintf(str, "%d", value);
 
-    draw_text(r, t, str, 125, 0, 40, setting.statusHeight, txtColor, bgColor);
+    draw_text(r, 
+              t, 
+              str, 
+              125,  // x
+              0,  // y 
+              40, // width
+              setting.statusHeight, 
+              txtColor, 
+              bgColor, 
+              1
+              );
 }
 
-void drawGoalButton(SDL_Renderer* renderer, SDL_Texture* texture, color txtColor, color bgColor) {
+void
+drawGoalButton(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, int shouldRender)
+{
     char goal[] = "GOAL";
     int width = setting.goalButtonX2 - setting.goalButtonX;
 
-    draw_text(renderer, texture, goal, setting.goalButtonX, setting.goalButtonY, width, setting.statusHeight, txtColor, bgColor);
+    draw_text(r, 
+              t, 
+              goal, 
+              setting.goalButtonX, 
+              setting.goalButtonY, 
+              width, 
+              setting.statusHeight, 
+              txtColor, 
+              bgColor,
+              shouldRender
+              );
 }
 
-int isInMenu(int y) {
+int
+isInMenu(int y)
+{
     if (y <= setting.statusHeight + TILE_BORDER_WIDTH) {
         // if it is within y 0 to the height of the menu, return true
         return 1;
@@ -682,7 +765,9 @@ int isInMenu(int y) {
     return 0;
 }
 
-void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelete) {
+void
+manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelete)
+{
     int mouse_x, mouse_y;
     int index;
     SDL_Event event2;
@@ -712,14 +797,14 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
 
             if (shouldDelete) {
                 // make it an empty space
-                colorTile(r, t, closest.x, closest.y, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 1);
+                colorTile(r, t, closest.x, closest.y, backgroundColor, 1);
 
                 search1->states[index] = EMPTY_SPACE;
             } else {
                 // make it a wall
                 search1->states[index] = WALL;
 
-                colorTile(r, t, closest.x, closest.y, 0, 0, 255, 1);
+                colorTile(r, t, closest.x, closest.y, color{0,0,255}, 1);
             }
 
             if (search1->goal == index) {
@@ -738,7 +823,9 @@ void manyWalls(SDL_Renderer* r, SDL_Texture* t, search* search1, int shouldDelet
     }
 }
 
-int isOutOfGrid(int x, int y) {
+int
+isOutOfGrid(int x, int y)
+{
     if (x <= (setting.gridStartX + TILE_BORDER_WIDTH) || x > ((setting.numTiles * setting.tileWidth) + setting.gridStartX) || y > ((setting.numTiles * setting.tileHeight) + setting.statusHeight)) {
         return 1;
     }

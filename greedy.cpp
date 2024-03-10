@@ -6,7 +6,9 @@
 #include <queue>
 #include <float.h>
 
-struct greedyStruct {
+struct
+greedyStruct
+{
     int Index;
     int x;
     int y;
@@ -18,7 +20,9 @@ struct greedyStruct {
 };
 
 // caller needs to set doneSearching to 0 if they need
-void greedy(SDL_Renderer* r, SDL_Texture* t, search* s) {
+void
+greedy(SDL_Renderer* r, SDL_Texture* t, search* s)
+{
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
         doneSearching = 1;
@@ -92,7 +96,7 @@ void greedy(SDL_Renderer* r, SDL_Texture* t, search* s) {
         if (s->states[current] != START) {
             visitedCount += 1;
 
-            colorTileByIndex(r, t, current, 92, 49, 148, 1);
+            colorTileByIndex(r, t, current, color{92,49,148}, 1);
             drawStatesCount(r, t, textColor, bg, visitedCount);
 
             s->states[current] = VISITED;

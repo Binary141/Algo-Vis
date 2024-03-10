@@ -5,10 +5,13 @@
 #include <unistd.h> // usleep()
 #include <thread>
 
-extern int doneSearching;
+extern
+int doneSearching;
 int isSearching = 0;
 
-search getDefaultSearch() {
+search
+getDefaultSearch()
+{
     search search1;
     search1.start = EMPTY_SPACE;
     search1.startx = EMPTY_SPACE;
@@ -19,7 +22,9 @@ search getDefaultSearch() {
     return search1;
 }
 
-int main(int argc, char* argv[]) {
+int
+main(int argc, char* argv[]) 
+{
     screen disp = init_display();
 
     SDL_Event event;
@@ -258,14 +263,14 @@ int main(int argc, char* argv[]) {
                         }
                     case SDLK_t:
                         // clears all tiles and redraws onto selected buffer
-                        clearTilesFromTexture(disp.renderer, disp.backTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                        clearTilesFromTexture(disp.renderer, disp.backTexture, &search1);
                         continue;
                     case SDLK_r:
                         // much faster way of clearing the screen
-                        clearTilesBulk(disp.renderer, disp.currTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
+                        clearTilesBulk(disp.renderer, disp.currTexture, &search1);
 
-                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
-                        drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, backgroundColor, 1);
+                        drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor, 1);
 
                         continue;
                     case SDLK_c:
@@ -280,25 +285,35 @@ int main(int argc, char* argv[]) {
                     case SDLK_s:
                         // color the button so the user knows
 
-                        drawStartButton(disp.renderer, disp.statusTexture, textColor, color{100, 200, 100});
+                        drawStartButton(disp.renderer, disp.statusTexture, textColor, color{100, 200, 100}, 1);
                         selectStartState(disp.renderer, disp.currTexture, &search1);
 
-                        drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+                        drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor, 1);
                         continue;
                     case SDLK_g:
                         // color the button so the user knows
 
-                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, color{200, 100, 100});
+                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, color{200, 100, 100}, 1);
                         selectGoalState(disp.renderer, disp.currTexture, &search1);
 
-                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+                        drawGoalButton(disp.renderer, disp.statusTexture, textColor, backgroundColor, 1);
                         continue;
                 }
 
                 if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
                     char text[] = "Searching!";
 
-                    draw_text(disp.renderer, disp.statusTexture, text, 0, 0, 100, setting.statusHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, 
+                              disp.statusTexture, 
+                              text, 
+                              0, // x
+                              0, // y
+                              100, // width
+                              setting.statusHeight, 
+                              textColor, 
+                              backgroundColor,
+                              1
+                              );
 
                     isSearching = 1;
                     doneSearching = 0;
@@ -327,7 +342,17 @@ int main(int argc, char* argv[]) {
                     // t2.join();
 
                     char doneText[] = "Done!";
-                    draw_text(disp.renderer, disp.statusTexture, doneText, 0, 0, 100, setting.statusHeight, textColor, backgroundColor);
+                    draw_text(disp.renderer, 
+                              disp.statusTexture, 
+                              doneText,
+                              0, 
+                              0, 
+                              100, 
+                              setting.statusHeight, 
+                              textColor, 
+                              backgroundColor,
+                              1
+                              );
                 }
 
                 if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d) {

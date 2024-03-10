@@ -30,7 +30,7 @@ struct search {
 
 void bfs(SDL_Renderer*, SDL_Texture*, SDL_Texture*, search*);
 void dfs(SDL_Renderer*, SDL_Texture*, search*);
-void clearTiles(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
+void clearTiles(SDL_Renderer*, SDL_Texture*, search*);
 void clearStates(search*);
 void astar(SDL_Renderer*, SDL_Texture*, search*);
 void greedy(SDL_Renderer*, SDL_Texture*, search*);
@@ -42,7 +42,7 @@ double hammingHeuristic(int, int, int, int);
 double zeroHeuristic(int, int, int, int);
 double getCost(int, int, int, int);
 void waitForSearch();
-void clearTilesFromTexture(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
-void clearTilesBulk(SDL_Renderer*, SDL_Texture*, search*, int, int, int);
+void clearTilesFromTexture(SDL_Renderer*, SDL_Texture*, search*);
+void clearTilesBulk(SDL_Renderer*, SDL_Texture*, search*);
 
 #endif

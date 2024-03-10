@@ -5,7 +5,9 @@
 #include <unistd.h> // usleep()
 #include <stack>
 
-void dfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
+void
+dfs(SDL_Renderer* r, SDL_Texture* t, search* s)
+{
     // bail out if either start or goal isn't defined
     if (s->goal == EMPTY_SPACE || s->start == EMPTY_SPACE) {
         doneSearching = 1;
@@ -63,7 +65,7 @@ void dfs(SDL_Renderer* r, SDL_Texture* t, search* s) {
         if (s->states[current] != START) {
             visitedCount += 1;
 
-            colorTileByIndex(r, t, current, 125, 0, 125, 1);
+            colorTileByIndex(r, t, current, color{125,0,125}, 1);
             drawStatesCount(r, t, textColor, bg, visitedCount);
 
             s->states[current] = VISITED;

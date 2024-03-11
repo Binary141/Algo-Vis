@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <unistd.h> // usleep()
 #include <stdlib.h>
+#include "font.h"
 
 settings setting = {
     SCREEN_WIDTH,
@@ -23,12 +24,6 @@ settings setting = {
     0,
     0
 };
-
-struct 
-Font 
-{
-    TTF_Font* f;
-} font;
 
 settings 
 getDisplaySettings() 
@@ -193,12 +188,12 @@ init_display()
     // need to call this so we can load fonts
     TTF_Init();
 
-    font.f = TTF_OpenFont("./OpenSans-Regular.ttf", FONT_SIZE);
-    if (!font.f) {
-        printf("Error opening font!\n");
-        printf("%s\n", TTF_GetError());
-        exit(1);
-    }
+    // font.f = TTF_OpenFont("./OpenSans-Regular.ttf", FONT_SIZE);
+    // if (!font.f) {
+    //     printf("Error opening font!\n");
+    //     printf("%s\n", TTF_GetError());
+    //     exit(1);
+    // }
 
     return ret;
 }
@@ -380,13 +375,16 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
     // Clear the renderer
     SDL_SetRenderDrawColor(r, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
 
-    SDL_Color textColorSDL = {txtColor.r, txtColor.g, txtColor.b};
+    // Create a read-only memory stream
+    SDL_RWops* fontRWops = SDL_RWFromConstMem(OpenSans_Regular_ttf, sizeof(OpenSans_Regular_ttf));
 
-    SDL_Surface* surfaceMessage =
-        TTF_RenderText_Solid(font.f, text, textColorSDL);
+    // Load the font from the memory stream
+    TTF_Font* font = TTF_OpenFontRW(fontRWops, 1, 75);
+
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, SDL_Color{txtColor.r, txtColor.g, txtColor.b});
 
     // now you can convert it into a texture
-    SDL_Texture* Message = SDL_CreateTextureFromSurface(r, surfaceMessage);
+    SDL_Texture* Message = SDL_CreateTextureFromSurface(r, textSurface);
 
     SDL_Rect Message_rect; //create a rect
     Message_rect.x = x;  //controls the rect's x coordinate

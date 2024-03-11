@@ -372,8 +372,8 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(r, t);
 
-    // Clear the renderer
-    SDL_SetRenderDrawColor(r, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+    // draw the background of the text box
+    SDL_SetRenderDrawColor(r, bgColor.r, bgColor.g, bgColor.b, 255);
 
     // Create a read-only memory stream
     SDL_RWops* fontRWops = SDL_RWFromConstMem(OpenSans_Regular_ttf, sizeof(OpenSans_Regular_ttf));
@@ -386,14 +386,7 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
     // now you can convert it into a texture
     SDL_Texture* Message = SDL_CreateTextureFromSurface(r, textSurface);
 
-    SDL_Rect Message_rect; //create a rect
-    Message_rect.x = x;  //controls the rect's x coordinate
-    Message_rect.y = y; // controls the rect's y coordinate
-    Message_rect.w = width; // controls the width of the rect
-    Message_rect.h = height; // controls the height of the rect
-
-    // draw the background of the text box
-    SDL_SetRenderDrawColor(r, bgColor.r, bgColor.g, bgColor.b, 255);
+    SDL_Rect Message_rect{x, y, width, height}; //create a rect
 
     // Draw it
     SDL_RenderFillRect(r, &Message_rect);
@@ -403,11 +396,7 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
 
     SDL_SetRenderTarget(r, NULL);
 
-    SDL_Rect srcrect;
-    srcrect.x = x;
-    srcrect.y = y;
-    srcrect.w = width;
-    srcrect.h = setting.statusHeight;
+    SDL_Rect srcrect{x, y, width, setting.statusHeight};
 
     SDL_RenderCopy(r, t, &srcrect, &srcrect);
 
@@ -441,6 +430,7 @@ getClosestTile(int x, int y)
     while ( closest_x < x ) {
         closest_x += setting.tileWidth;
     }
+
     // subtract the setting.tileWidth since we over shot it
     closest_x -= setting.tileWidth;
 
@@ -452,6 +442,7 @@ getClosestTile(int x, int y)
         printf("closest_y was less than 0!\n");
         exit(1);
     }
+
     int numTilesAway = 0;
 
     while (closest_y > 0) {

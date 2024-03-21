@@ -188,13 +188,6 @@ init_display()
     // need to call this so we can load fonts
     TTF_Init();
 
-    // font.f = TTF_OpenFont("./OpenSans-Regular.ttf", FONT_SIZE);
-    // if (!font.f) {
-    //     printf("Error opening font!\n");
-    //     printf("%s\n", TTF_GetError());
-    //     exit(1);
-    // }
-
     return ret;
 }
 
@@ -269,6 +262,7 @@ draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender)
     // Update screen
     if (shouldRender) {
         SDL_RenderPresent(renderer);
+        usleep(SLEEPTIME2);
     }
 
     drawStartButton(renderer, texture, textColor, backgroundColor, shouldRender);
@@ -433,6 +427,7 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
     }
 
     SDL_RenderCopy(r, t, &srcrect, &srcrect);
+    usleep(SLEEPTIME2);
 
     SDL_RenderCopy(r, Message, NULL, &Message_rect);
 
@@ -444,6 +439,7 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
     if (shouldRender) {
         // Update screen if needed
         SDL_RenderPresent(r);
+        usleep(SLEEPTIME2);
     }
 }
 
@@ -533,6 +529,7 @@ ColorBlankTile(SDL_Renderer* r, SDL_Texture* texture)
     SDL_RenderCopy(r, texture, &srcrect, &srcrect);
 
     SDL_RenderPresent(r);
+    usleep(SLEEPTIME2);
 }
 
 void
@@ -573,6 +570,7 @@ colorTile(SDL_Renderer* r, SDL_Texture* t, int x, int y, color Color, int should
         SDL_RenderCopy(r, t, &srcrect, &srcrect);
 
         SDL_RenderPresent(r);
+        usleep(SLEEPTIME2);
     }
 }
 
@@ -784,6 +782,7 @@ drawGoalButton(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, i
               shouldRender,
               1
               );
+    usleep(SLEEPTIME2);
 }
 
 int

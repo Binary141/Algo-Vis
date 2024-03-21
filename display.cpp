@@ -281,11 +281,8 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t)
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(r, t);
 
-    // Clear screen
-    // SDL_RenderClear(r);
-
     // Actually draw the desired color
-    SDL_SetRenderDrawColor(r, 255, 0, 0, 255);
+    SDL_SetRenderDrawColor(r, 125, 125, 125, 255);
 
     // Declare rect of square
     SDL_Rect squareRect;
@@ -296,6 +293,9 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t)
     squareRect.y = (setting.height / 2) - (squareRect.h / 2);
     squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
+    int y = (setting.height / 2) - (squareRect.h / 2);
+    int x = (setting.width / 2) - (squareRect.w / 2);
+
     // Draw it
     SDL_RenderFillRect(r, &squareRect);
 
@@ -303,6 +303,32 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t)
     SDL_SetRenderTarget(r, NULL);
 
     SDL_RenderCopy(r, t, &squareRect, &squareRect);
+
+    char w[5];
+    snprintf(w, 5, "%d", setting.width);
+
+    char h[5];
+    snprintf(h, 5, "%d", setting.height);
+
+    char *hStr = (char*) malloc(strlen(h) + 1);
+    if (!hStr) {
+        printf("Couldn't Malloc for height string!\n");
+        return;
+    }
+
+    char *wStr = (char*) malloc(strlen(w) + 1);
+    if (!wStr) {
+        printf("Couldn't Malloc for width string!\n");
+        return;
+    }
+
+    strcpy(hStr, h);
+    strcpy(wStr, w);
+
+    char text[] = "Display Size:";
+    draw_text(r, t, text, x, y, 100, 50, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, wStr, x + 150, y, 100, 50, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, hStr, x + 300, y, 100, 50, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
 }
 
 void
@@ -366,7 +392,7 @@ reset(SDL_Renderer* r, SDL_Texture* t, int* states)
 }
 
 void
-draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, int height, color txtColor, color bgColor, int shouldRender)
+draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, int height, color txtColor, color bgColor, int shouldRender, int drawOverExistingTexture)
 {
 
     // anything drawn to renderer will be drawn to the texture
@@ -377,9 +403,17 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
 
     // Create a read-only memory stream
     SDL_RWops* fontRWops = SDL_RWFromConstMem(OpenSans_Regular_ttf, sizeof(OpenSans_Regular_ttf));
+    if (!fontRWops) {
+        printf("%s", SDL_GetError());
+        exit(1);
+    }
 
     // Load the font from the memory stream
     TTF_Font* font = TTF_OpenFontRW(fontRWops, 1, 75);
+    if (!font) {
+        printf("%s", SDL_GetError());
+        exit(1);
+    }
 
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, SDL_Color{txtColor.r, txtColor.g, txtColor.b});
 
@@ -387,20 +421,25 @@ draw_text(SDL_Renderer* r, SDL_Texture* t, char* text, int x, int y, int width, 
     SDL_Texture* Message = SDL_CreateTextureFromSurface(r, textSurface);
 
     SDL_Rect Message_rect{x, y, width, height}; //create a rect
-
+                                                //
     // Draw it
     SDL_RenderFillRect(r, &Message_rect);
 
-    // Actually draw the desired color
-    SDL_SetRenderDrawColor(r, BORDER_R, BORDER_G, BORDER_B, 255);
-
-    SDL_SetRenderTarget(r, NULL);
-
     SDL_Rect srcrect{x, y, width, setting.statusHeight};
+
+    if (drawOverExistingTexture) {
+        // reset the render target to the default
+        SDL_SetRenderTarget(r, NULL);
+    }
 
     SDL_RenderCopy(r, t, &srcrect, &srcrect);
 
     SDL_RenderCopy(r, Message, NULL, &Message_rect);
+
+    if (!drawOverExistingTexture) {
+        // reset the render target to the default
+        SDL_SetRenderTarget(r, NULL);
+    }
 
     if (shouldRender) {
         // Update screen if needed
@@ -701,7 +740,8 @@ drawStartButton(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, 
               setting.statusHeight, 
               txtColor, 
               bgColor, 
-              shouldRender
+              shouldRender,
+              1
               );
 }
 
@@ -721,6 +761,7 @@ drawStatesCount(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, 
               setting.statusHeight, 
               txtColor, 
               bgColor, 
+              1,
               1
               );
 }
@@ -740,7 +781,8 @@ drawGoalButton(SDL_Renderer* r, SDL_Texture* t, color txtColor, color bgColor, i
               setting.statusHeight, 
               txtColor, 
               bgColor,
-              shouldRender
+              shouldRender,
+              1
               );
 }
 

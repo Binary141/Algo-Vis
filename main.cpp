@@ -70,6 +70,8 @@ main(int argc, char* argv[])
     int hasRan = 0;
     int menuDisplayed = 0;
 
+    drawMenu(disp.renderer, disp.menuTexture);
+
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
             case SDL_QUIT:
@@ -79,6 +81,10 @@ main(int argc, char* argv[])
                 switch (event.key.keysym.sym) {
                     case SDLK_m:
                         {
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         printf("Saving!\n");
                           // Read the pixels from the current render target and save them onto the surface
                           SDL_RenderReadPixels(disp.renderer, NULL, SDL_GetWindowPixelFormat(disp.window), disp.surface->pixels, disp.surface->pitch);
@@ -100,6 +106,10 @@ main(int argc, char* argv[])
                         continue;
                         }
                     case SDLK_o:
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         // demo to swap the textures
 
                         disp.backTexture = disp.currTexture;
@@ -136,19 +146,12 @@ main(int argc, char* argv[])
 
                         // if the menu is not showing, show it
                         if (!menuDisplayed) {
-                            printf("Displaying Menu!\n");
                             menuDisplayed = 1;
-                            drawMenu(disp.renderer, disp.menuTexture);
-                            // usleep(5000);
-
-                            // SDL_SetRenderTarget(disp.renderer, disp.scratchTexture);
-                            // SDL_SetRenderTarget(disp.renderer, disp.currTexture);
 
                             SDL_RenderCopy(disp.renderer,
                                            disp.statusTexture,
                                            NULL,
                                            NULL);
-
 
                             SDL_RenderCopy(disp.renderer,
                                            disp.currTexture,
@@ -160,14 +163,9 @@ main(int argc, char* argv[])
                                            &squareRect,
                                            &squareRect);
 
-                            // SDL_SetRenderTarget(disp.renderer, NULL);
-
                             SDL_RenderPresent(disp.renderer);
 
-                            // ColorBlankTile(disp.renderer, disp.currTexture);
-                            // ColorBlankTile(disp.renderer, disp.menuTexture);
                             continue;
-                            printf("Here?\n");
                         }
 
                         squareRect.w = setting.width;
@@ -176,7 +174,6 @@ main(int argc, char* argv[])
                         squareRect.y = 0;
                         squareRect.x = 0;
 
-                        printf("Removing Menu!\n");
                         menuDisplayed = 0;
 
                         SDL_SetRenderTarget(disp.renderer, disp.currTexture);
@@ -189,6 +186,11 @@ main(int argc, char* argv[])
                                        NULL,
                                        NULL);
 
+                        SDL_RenderCopy(disp.renderer,
+                                       disp.statusTexture,
+                                       NULL,
+                                       NULL);
+
                         SDL_RenderPresent(disp.renderer);
                         ColorBlankTile(disp.renderer, disp.currTexture);
 
@@ -197,6 +199,10 @@ main(int argc, char* argv[])
                         should_quit = 1;
                         break;
                     case SDLK_z:
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         {
                             if (argc <= 1) {
                                 printf("No filename passed in\n");
@@ -262,10 +268,18 @@ main(int argc, char* argv[])
                         continue;
                         }
                     case SDLK_t:
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         // clears all tiles and redraws onto selected buffer
                         clearTilesFromTexture(disp.renderer, disp.backTexture, &search1);
                         continue;
                     case SDLK_r:
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         // much faster way of clearing the screen
                         clearTilesBulk(disp.renderer, disp.currTexture, &search1);
 
@@ -274,6 +288,10 @@ main(int argc, char* argv[])
 
                         continue;
                     case SDLK_c:
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         // clear the screen
                         // draws grid, resets states array to be all empty, and draw state buttons
                         drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
@@ -283,14 +301,23 @@ main(int argc, char* argv[])
 
                         continue;
                     case SDLK_s:
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         // color the button so the user knows
 
                         drawStartButton(disp.renderer, disp.statusTexture, textColor, color{100, 200, 100}, 1);
                         selectStartState(disp.renderer, disp.currTexture, &search1);
 
                         drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor, 1);
+
                         continue;
                     case SDLK_g:
+                        if (menuDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
                         // color the button so the user knows
 
                         drawGoalButton(disp.renderer, disp.statusTexture, textColor, color{200, 100, 100}, 1);
@@ -301,6 +328,10 @@ main(int argc, char* argv[])
                 }
 
                 if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
+                    if (menuDisplayed) {
+                        // don't do anything if the menu is being displayed
+                        continue;
+                    }
                     char text[] = "Searching!";
 
                     draw_text(disp.renderer, 
@@ -312,6 +343,7 @@ main(int argc, char* argv[])
                               setting.statusHeight, 
                               textColor, 
                               backgroundColor,
+                              1,
                               1
                               );
 
@@ -351,11 +383,16 @@ main(int argc, char* argv[])
                               setting.statusHeight, 
                               textColor, 
                               backgroundColor,
+                              1,
                               1
                               );
                 }
 
                 if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d) {
+                    if (menuDisplayed) {
+                        // don't do anything if the menu is being displayed
+                        continue;
+                    }
                     int key = event.key.keysym.sym;
 
                     // do nothing if we are going to have less than a 2x2 grid
@@ -386,6 +423,10 @@ main(int argc, char* argv[])
                     reset(disp.renderer, disp.currTexture, states);
                 }
             case SDL_MOUSEBUTTONDOWN:
+                if (menuDisplayed) {
+                    // don't do anything if the menu is being displayed
+                    continue;
+                }
                 // generate a wall, or clear out the space
 
                 // color the tile if it is the left mouse button

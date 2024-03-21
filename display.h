@@ -82,7 +82,7 @@ void setDisplaySettings(settings);
 void resizeGridLayout();
 screen init_display();
 void draw_grid(SDL_Renderer*, SDL_Texture*, int);
-void draw_text(SDL_Renderer*, SDL_Texture*, char*, int, int, int, int, color, color, int);
+void draw_text(SDL_Renderer*, SDL_Texture*, char*, int, int, int, int, color, color, int, int);
 void reset(SDL_Renderer*, SDL_Texture*, int*);
 void destroy_window(SDL_Renderer*, SDL_Window*);
 tile getClosestTile(int, int);

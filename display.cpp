@@ -22,7 +22,9 @@ settings setting = {
     0,
     0,
     0,
-    0
+    0,
+    3,
+    3
 };
 
 settings 
@@ -74,8 +76,6 @@ init_display()
     // change the display dimensions if there is any extra space on the
     // bottom or right of the window
     screen ret;
-    setting.width = SCREEN_WIDTH;
-    setting.height = SCREEN_HEIGHT;
 
     int calculated_height = (setting.height - MENU_HEIGHT - TILE_BORDER_WIDTH) / setting.numTiles;
     setting.tileHeight = calculated_height;
@@ -192,20 +192,20 @@ init_display()
 }
 
 void 
-draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender) 
+draw_grid(SDL_Renderer* r, SDL_Texture* t, int shouldRender) 
 {
 
     // anything drawn to renderer will be drawn to the texture
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(r, t);
 
     // Initialize renderer color white for the background
-    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+    SDL_SetRenderDrawColor(r, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
 
     // Clear screen
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(r);
 
     // Actually draw the desired color
-    SDL_SetRenderDrawColor(renderer, BORDER_R, BORDER_G, BORDER_B, 255);
+    SDL_SetRenderDrawColor(r, BORDER_R, BORDER_G, BORDER_B, 255);
 
     // Declare rect of square
     SDL_Rect squareRect;
@@ -221,7 +221,7 @@ draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender)
         squareRect.x = (i * setting.tileWidth) + setting.gridStartX;
 
         // Draw it
-        SDL_RenderFillRect(renderer, &squareRect);
+        SDL_RenderFillRect(r, &squareRect);
     }
 
     squareRect.w = setting.width;
@@ -234,7 +234,7 @@ draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender)
     squareRect.y = (0 * setting.tileHeight) + setting.statusHeight;
 
     // Draw it
-    SDL_RenderFillRect(renderer, &squareRect);
+    SDL_RenderFillRect(r, &squareRect);
 
     // draw all the rest in the grid
     squareRect.w = setting.numTiles * setting.tileWidth;
@@ -247,30 +247,47 @@ draw_grid(SDL_Renderer* renderer, SDL_Texture* texture, int shouldRender)
         squareRect.y = (i * setting.tileHeight) + setting.statusHeight;
 
         // Draw it
-        SDL_RenderFillRect(renderer, &squareRect);
+        SDL_RenderFillRect(r, &squareRect);
     }
 
     // Reset the rendering target to the default (the window)
-    SDL_SetRenderTarget(renderer, nullptr);
+    SDL_SetRenderTarget(r, nullptr);
 
     // Clear the renderer
-    SDL_SetRenderDrawColor(renderer, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
-    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(r, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B, 255);
+    SDL_RenderClear(r);
 
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderCopy(r, t, NULL, NULL);
 
     // Update screen
     if (shouldRender) {
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(r);
         usleep(SLEEPTIME2);
     }
 
-    drawStartButton(renderer, texture, textColor, backgroundColor, shouldRender);
-    drawGoalButton(renderer, texture, textColor, backgroundColor, shouldRender);
+    drawStartButton(r, t, textColor, backgroundColor, shouldRender);
+    drawGoalButton(r, t, textColor, backgroundColor, shouldRender);
+}
+
+void
+showMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height) 
+{
+    // Declare rect of square
+    SDL_Rect squareRect;
+    // Square dimensions
+    squareRect.w = setting.width / 2;
+    squareRect.h = setting.height / 1.2;
+
+    squareRect.y = (setting.height / 2) - (squareRect.h / 2);
+    squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+
+    SDL_RenderCopy(r, t, &squareRect, &squareRect);
+
+    SDL_RenderPresent(r);
 }
 
 void 
-drawMenu(SDL_Renderer* r, SDL_Texture* t) 
+drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height) 
 {
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(r, t);
@@ -299,10 +316,10 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t)
     SDL_RenderCopy(r, t, &squareRect, &squareRect);
 
     char w[5];
-    snprintf(w, 5, "%d", setting.width);
+    snprintf(w, 5, "%d", width);
 
     char h[5];
-    snprintf(h, 5, "%d", setting.height);
+    snprintf(h, 5, "%d", height);
 
     char *hStr = (char*) malloc(strlen(h) + 1);
     if (!hStr) {
@@ -319,10 +336,26 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t)
     strcpy(hStr, h);
     strcpy(wStr, w);
 
+    char help[] = "To cycle between display sizes, press 1 - 5";
+    char help2[] = "To leave the menu, press escape";
+    char help3[] = "To save, press enter or 'p'";
     char text[] = "Display Size:";
-    draw_text(r, t, text, x, y, 100, 50, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
-    draw_text(r, t, wStr, x + 150, y, 100, 50, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
-    draw_text(r, t, hStr, x + 300, y, 100, 50, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    char by[] = "x";
+    int tempHeight = 50;
+
+    draw_text(r, t, help, x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    y += 50;
+
+    draw_text(r, t, help2, x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    y += 50;
+
+    draw_text(r, t, help3, x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    y += 100;
+
+    draw_text(r, t, text, x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, wStr, x + 150, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, by, x + 275, y, 10, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, hStr, x + 300, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
 }
 
 void

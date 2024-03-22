@@ -2,6 +2,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "search.h"
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_render.h>
 #include <unistd.h> // usleep()
 #include <thread>
 
@@ -30,6 +32,7 @@ main(int argc, char* argv[])
     SDL_Event event;
 
     int should_quit = 0;
+    int should_change = 0;
     settings setting = getDisplaySettings();
 
     // create the list of all the tiles on the grid
@@ -70,7 +73,7 @@ main(int argc, char* argv[])
     int hasRan = 0;
     int menuDisplayed = 0;
 
-    drawMenu(disp.renderer, disp.menuTexture);
+    drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
 
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
@@ -133,66 +136,196 @@ main(int argc, char* argv[])
                         ColorBlankTile(disp.renderer, disp.currTexture);
 
                         continue;
+                    case SDLK_1:
+                        if (!menuDisplayed) {
+                            continue;
+                        }
+
+                        should_change = 1;
+
+                        if (0 == setting.currentResolution) {
+                            should_change = 0;
+                        }
+                        
+                        setting.selectedResolution = 0;
+                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[0], supportedHeights[0]);
+                        showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        continue;
+                    case SDLK_2:
+                        if (!menuDisplayed) {
+                            continue;
+                        }
+
+                        should_change = 1;
+
+                        if (1 == setting.currentResolution) {
+                            should_change = 0;
+                        }
+                        
+                        setting.selectedResolution = 1;
+                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[1], supportedHeights[1]);
+                        showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        continue;
+                    case SDLK_3:
+                        if (!menuDisplayed) {
+                            continue;
+                        }
+
+                        should_change = 1;
+
+                        if (2 == setting.currentResolution) {
+                            should_change = 0;
+                        }
+
+                        setting.selectedResolution = 2;
+                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[2], supportedHeights[2]);
+                            showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        continue;
+                    case SDLK_4:
+                        if (!menuDisplayed) {
+                            continue;
+                        }
+
+                        should_change = 1;
+
+                        if (3 == setting.currentResolution) {
+                            should_change = 0;
+                            printf("I think we should not change\n");
+                        }
+
+                        setting.selectedResolution = 3;
+                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[3], supportedHeights[3]);
+                            showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        continue;
+                    case SDLK_5:
+                        if (!menuDisplayed) {
+                            continue;
+                        }
+
+                        should_change = 1;
+
+                        if (4 == setting.currentResolution) {
+                            should_change = 0;
+                        }
+
+                        setting.selectedResolution = 4;
+                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[4], supportedHeights[4]);
+                        showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        continue;
+                    case SDLK_ESCAPE:
+                        if (!menuDisplayed) {
+                            continue;
+                        }
+                        should_change = 0;
+
+                        // reset the choice
+                        setting.selectedResolution = setting.currentResolution;
                     case SDLK_p:
+
+                        drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        // drawMenu(disp.renderer, disp.currTexture, setting.width, setting.height);
+                        usleep(5000);
 
                         // Declare rect of square
                         SDL_Rect squareRect;
                         // Square dimensions
-                        squareRect.w = setting.width / 2;
-                        squareRect.h = setting.height / 1.2;
+                        // squareRect.w = setting.width / 2;
+                        // squareRect.h = setting.height / 1.2;
 
-                        squareRect.y = (setting.height / 2) - (squareRect.h / 2);
-                        squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+                        // squareRect.y = (setting.height / 2) - (squareRect.h / 2);
+                        // squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
                         // if the menu is not showing, show it
                         if (!menuDisplayed) {
                             menuDisplayed = 1;
 
-                            SDL_RenderCopy(disp.renderer,
-                                           disp.statusTexture,
-                                           NULL,
-                                           NULL);
+                            // SDL_RenderCopy(disp.renderer,
+                            //                disp.statusTexture,
+                            //                NULL,
+                            //                NULL);
 
+                            // SDL_RenderCopy(disp.renderer,
+                            //                disp.currTexture,
+                            //                NULL,
+                            //                NULL);
+
+                            // SDL_RenderCopy(disp.renderer,
+                                           // disp.menuTexture,
+                                           // &squareRect,
+                                           // &squareRect);
+
+                            // SDL_RenderPresent(disp.renderer);
+                            showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+
+                            continue;
+                        }
+                        if (!should_change) {
+                            squareRect.w = setting.width;
+                            squareRect.h = setting.statusHeight + TILE_BORDER_WIDTH;
+
+                            squareRect.y = 0;
+                            squareRect.x = 0;
+
+                            menuDisplayed = 0;
+
+                            drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+
+                            SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+
+                            // clear out the menu
                             SDL_RenderCopy(disp.renderer,
                                            disp.currTexture,
                                            NULL,
                                            NULL);
 
-                            SDL_RenderCopy(disp.renderer,
-                                           disp.menuTexture,
-                                           &squareRect,
-                                           &squareRect);
+                            // SDL_RenderCopy(disp.renderer,
+                            //                disp.statusTexture,
+                            //                NULL,
+                            //                NULL);
 
                             SDL_RenderPresent(disp.renderer);
 
+                            // drawStatusBar(disp.renderer, disp.statusTexture, backgroundColor, textColor);
+
+                            ColorBlankTile(disp.renderer, disp.currTexture);
                             continue;
                         }
 
-                        squareRect.w = setting.width;
-                        squareRect.h = setting.statusHeight + TILE_BORDER_WIDTH;
+                        setting.width = supportedWidths[setting.selectedResolution];
+                        setting.height = supportedHeights[setting.selectedResolution];
 
-                        squareRect.y = 0;
-                        squareRect.x = 0;
+                        // setting.selectedResolution = (setting.selectedResolution + 1) % 5; // cycle through the list
+                        setting.currentResolution = setting.selectedResolution; // cycle through the list
+
+                        // drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
 
                         menuDisplayed = 0;
 
-                        SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+                        should_change = 0;
 
-                        drawStatusBar(disp.renderer, disp.statusTexture, backgroundColor, textColor);
+                        setDisplaySettings(setting);
 
-                        // clear out the menu
-                        SDL_RenderCopy(disp.renderer,
-                                       disp.currTexture,
-                                       NULL,
-                                       NULL);
+                        // destroy everything for good measure
+                        destroy_window(disp.renderer, disp.window);
+                        SDL_DestroyRenderer(disp.renderer);
+                        SDL_DestroyTexture(disp.currTexture);
+                        SDL_DestroyTexture(disp.backTexture);
+                        SDL_DestroyTexture(disp.menuTexture);
+                        SDL_DestroyTexture(disp.statusTexture);
 
-                        SDL_RenderCopy(disp.renderer,
-                                       disp.statusTexture,
-                                       NULL,
-                                       NULL);
+                        disp = init_display();
 
-                        SDL_RenderPresent(disp.renderer);
-                        ColorBlankTile(disp.renderer, disp.currTexture);
+                        states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
+
+                        search1.states = states;
+
+                        usleep(5000);
+
+                        disp.currTexture = disp.texture1;
+
+                        reset(disp.renderer, disp.currTexture, states);
+
+                        usleep(5000);
 
                         continue;
                     case SDLK_q:

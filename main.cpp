@@ -21,6 +21,8 @@ getDefaultSearch()
     search1.goal = EMPTY_SPACE;
     search1.goalx = EMPTY_SPACE;
     search1.goaly = EMPTY_SPACE;
+    search1.heuristic = SLDHEURISTIC;
+    search1.selectedHeuristic = SLDHEURISTIC;
     return search1;
 }
 
@@ -28,6 +30,10 @@ int
 main(int argc, char* argv[]) 
 {
     screen disp = init_display();
+
+    search search1 = getDefaultSearch();
+    search1.stateSize = (setting.numTiles * setting.numTiles);
+    search1.numTiles = setting.numTiles;
 
     SDL_Event event;
 
@@ -38,6 +44,8 @@ main(int argc, char* argv[])
     // create the list of all the tiles on the grid
     int* states;
     states = (int*) malloc((setting.numTiles * setting.numTiles) * sizeof(int));
+
+    drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height, search1.heuristic);
 
     // draws grid, resets states array to be all empty, and draw state buttons
     reset(disp.renderer, disp.texture1, states);
@@ -54,10 +62,6 @@ main(int argc, char* argv[])
     disp.currTexture = disp.texture1;
     disp.backTexture = disp.texture2;
 
-    search search1 = getDefaultSearch();
-    search1.stateSize = (setting.numTiles * setting.numTiles);
-    search1.numTiles = setting.numTiles;
-
     search1.states = states;
 
     tile closest;
@@ -72,8 +76,6 @@ main(int argc, char* argv[])
     SDL_Surface* textureSurface;
     int hasRan = 0;
     int menuDisplayed = 0;
-
-    drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
 
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
@@ -136,80 +138,65 @@ main(int argc, char* argv[])
                         ColorBlankTile(disp.renderer, disp.currTexture);
 
                         continue;
-                    case SDLK_1:
+                    case SDLK_MINUS:
                         if (!menuDisplayed) {
                             continue;
                         }
 
-                        should_change = 1;
+                        setting.selectedResolution = setting.selectedResolution - 1;
+                        if (setting.selectedResolution < 0)
+                            setting.selectedResolution = 4;
 
-                        if (0 == setting.currentResolution) {
-                            should_change = 0;
-                        }
-                        
-                        setting.selectedResolution = 0;
-                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[0], supportedHeights[0]);
+
+                        drawMenu(disp.renderer, 
+                                disp.menuTexture, 
+                                supportedWidths[setting.selectedResolution], 
+                                supportedHeights[setting.selectedResolution], 
+                                search1.heuristic);
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
-                    case SDLK_2:
+                    case SDLK_EQUALS:
                         if (!menuDisplayed) {
                             continue;
                         }
 
-                        should_change = 1;
+                        setting.selectedResolution = (setting.selectedResolution + 1) % 5;
 
-                        if (1 == setting.currentResolution) {
-                            should_change = 0;
-                        }
-                        
-                        setting.selectedResolution = 1;
-                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[1], supportedHeights[1]);
+                        drawMenu(disp.renderer, 
+                                disp.menuTexture, 
+                                supportedWidths[setting.selectedResolution], 
+                                supportedHeights[setting.selectedResolution], 
+                                search1.heuristic);
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
-                    case SDLK_3:
+                    case SDLK_RIGHTBRACKET:
                         if (!menuDisplayed) {
                             continue;
                         }
 
-                        should_change = 1;
+                        search1.selectedHeuristic = (search1.selectedHeuristic + 1) % 3;
 
-                        if (2 == setting.currentResolution) {
-                            should_change = 0;
-                        }
-
-                        setting.selectedResolution = 2;
-                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[2], supportedHeights[2]);
-                            showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        drawMenu(disp.renderer, 
+                                disp.menuTexture,
+                                supportedWidths[setting.selectedResolution],
+                                supportedHeights[setting.selectedResolution],
+                                search1.selectedHeuristic);
+                        showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
-                    case SDLK_4:
+                    case SDLK_LEFTBRACKET:
                         if (!menuDisplayed) {
                             continue;
                         }
 
-                        should_change = 1;
+                        search1.selectedHeuristic = (search1.selectedHeuristic - 1);
+                        if (search1.selectedHeuristic < 0)
+                            search1.selectedHeuristic = 2;
 
-                        if (3 == setting.currentResolution) {
-                            should_change = 0;
-                            printf("I think we should not change\n");
-                        }
-
-                        setting.selectedResolution = 3;
-                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[3], supportedHeights[3]);
-                            showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
-                        continue;
-                    case SDLK_5:
-                        if (!menuDisplayed) {
-                            continue;
-                        }
-
-                        should_change = 1;
-
-                        if (4 == setting.currentResolution) {
-                            should_change = 0;
-                        }
-
-                        setting.selectedResolution = 4;
-                        drawMenu(disp.renderer, disp.menuTexture, supportedWidths[4], supportedHeights[4]);
+                        drawMenu(disp.renderer, 
+                                disp.menuTexture,
+                                supportedWidths[setting.selectedResolution],
+                                supportedHeights[setting.selectedResolution],
+                                search1.selectedHeuristic);
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
                     case SDLK_ESCAPE:
@@ -222,7 +209,7 @@ main(int argc, char* argv[])
                         setting.selectedResolution = setting.currentResolution;
                     case SDLK_p:
 
-                        drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height, search1.heuristic);
                         // drawMenu(disp.renderer, disp.currTexture, setting.width, setting.height);
                         usleep(5000);
 
@@ -259,7 +246,12 @@ main(int argc, char* argv[])
 
                             continue;
                         }
-                        if (!should_change) {
+                        if (search1.selectedHeuristic != search1.heuristic) {
+                            search1.heuristic = search1.selectedHeuristic;
+                        }
+
+                        // don't update anything if nothing changed
+                        if (setting.selectedResolution == setting.currentResolution) {
                             squareRect.w = setting.width;
                             squareRect.h = setting.statusHeight + TILE_BORDER_WIDTH;
 

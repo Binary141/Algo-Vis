@@ -63,7 +63,7 @@ astar(SDL_Renderer* r, SDL_Texture* t, search* s)
     int goalX = s->goal % setting.numTiles;
     int goalY = s->goal / setting.numTiles;
 
-    as.heuristic = getCost(s->startx, s->starty, goalX, goalY);
+    as.heuristic = getCost(s->startx, s->starty, goalX, goalY, s->heuristic);
     pq.push(as);
 
     int visitedCount = 0;
@@ -112,7 +112,7 @@ astar(SDL_Renderer* r, SDL_Texture* t, search* s)
             int x = tmpState % setting.numTiles;
             int y = tmpState / setting.numTiles;
 
-            double heuristic = getCost(x, y, goalX, goalY);
+            double heuristic = getCost(x, y, goalX, goalY, s->heuristic);
 
             // the (|| visited[tmpStates[i]] == visited) is to not
             // go indefinitely if there is no path to the goal

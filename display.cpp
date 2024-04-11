@@ -23,8 +23,8 @@ settings setting = {
     0,
     0,
     0,
-    3,
-    3
+    2,
+    2
 };
 
 settings 
@@ -287,7 +287,7 @@ showMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height)
 }
 
 void 
-drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height) 
+drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic) 
 {
     // anything drawn to renderer will be drawn to the texture
     SDL_SetRenderTarget(r, t);
@@ -356,6 +356,16 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height)
     draw_text(r, t, wStr, x + 150, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
     draw_text(r, t, by, x + 275, y, 10, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
     draw_text(r, t, hStr, x + 300, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+
+    char text1[] = "Current Heuristic:";
+
+    y += 100;
+    draw_text(r, t, text1, x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    y += tempHeight;
+
+    char* supportedHeuristics[] = {"None", "SLD", "Manhattan"};
+
+    draw_text(r, t, supportedHeuristics[heuristic], x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
 }
 
 void

@@ -13,8 +13,12 @@
 #define SCREEN_WIDTH 1920 // 2560
 #define SCREEN_HEIGHT 1080 // 1080
 
-const int supportedHeights[5] = {320, 480, 720, 1080, 1440};
-const int supportedWidths[5] = {480, 640, 1280, 1920, 2560};
+const int supportedHeights[5] = {720, 768, 1080, 1504, 1440};
+const int supportedWidths[5] = {1280, 1366, 1920, 2256, 2560};
+
+const int NONEHEURISTIC = 0;
+const int SLDHEURISTIC = 1;
+const int MANHATTANHEURISTIC = 2;
 
 // (255,255,255) is white
 const int BACKGROUND_R = 255;
@@ -105,7 +109,7 @@ int isOutOfGrid(int, int);
 void manyWalls(SDL_Renderer*, SDL_Texture*, search*, int);
 void drawStatusBar(SDL_Renderer*, SDL_Texture*, color, color);
 void showMenu(SDL_Renderer*, SDL_Texture*, int, int);
-void drawMenu(SDL_Renderer*, SDL_Texture*, int, int);
+void drawMenu(SDL_Renderer*, SDL_Texture*, int, int, int);
 
 extern settings setting;
 

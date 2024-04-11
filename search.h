@@ -26,6 +26,8 @@ struct search {
     int *states;
     int stateSize;
     int numTiles;
+    int heuristic;
+    int selectedHeuristic;
 };
 
 void bfs(SDL_Renderer*, SDL_Texture*, SDL_Texture*, search*);
@@ -40,7 +42,7 @@ double manhattanHeuristic(int, int, int, int);
 double euclideanHeuristic(int, int, int, int);
 double hammingHeuristic(int, int, int, int);
 double zeroHeuristic(int, int, int, int);
-double getCost(int, int, int, int);
+double getCost(int, int, int, int, int);
 void waitForSearch();
 void clearTilesFromTexture(SDL_Renderer*, SDL_Texture*, search*);
 void clearTilesBulk(SDL_Renderer*, SDL_Texture*, search*);

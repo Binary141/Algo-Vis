@@ -2,7 +2,6 @@
 #include "display.h"
 #include <SDL2/SDL.h>
 #include <vector>
-#include <iostream>
 #include <unistd.h> // usleep()
 
 int doneSearching = 0;
@@ -190,9 +189,19 @@ zeroHeuristic(int currX, int currY, int goalX, int goalY)
 }
 
 double
-getCost(int currX, int currY, int goalX, int goalY)
+getCost(int currX, int currY, int goalX, int goalY, int heuristic)
 {
-    return euclideanHeuristic(currX, currY, goalX, goalY);
+    printf("heuristic: %d\n", heuristic);
+    if (heuristic == NONEHEURISTIC)
+        return zeroHeuristic(currX, currY, goalX, goalY);
+
+    if (heuristic == SLDHEURISTIC)
+        return euclideanHeuristic(currX, currY, goalX, goalY);
+
+    if (heuristic == MANHATTANHEURISTIC)
+        return manhattanHeuristic(currX, currY, goalX, goalY);
+
+    return zeroHeuristic(currX, currY, goalX, goalY);
 }
 
 // Function to be launched in another thread

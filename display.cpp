@@ -305,7 +305,7 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic)
     squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
     int y = (setting.height / 2) - (squareRect.h / 2);
-    int x = (setting.width / 2) - (squareRect.w / 2);
+    int x = (setting.width / 2) - (squareRect.w / 4);
 
     // Draw it
     SDL_RenderFillRect(r, &squareRect);
@@ -336,7 +336,7 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic)
     strcpy(hStr, h);
     strcpy(wStr, w);
 
-    char help[] = "To cycle between display sizes, press 1 - 5";
+    char help[] = "To cycle between display sizes, press '-' or '='";
     char help2[] = "To leave the menu, press escape";
     char help3[] = "To save, press enter or 'p'";
     char text[] = "Display Size:";
@@ -360,7 +360,7 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic)
     char text1[] = "Current Heuristic:";
 
     y += 100;
-    draw_text(r, t, text1, x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, text1, x, y, 200, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
     y += tempHeight;
 
     char* supportedHeuristics[] = {"None", "SLD", "Manhattan"};

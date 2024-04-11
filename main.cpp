@@ -38,7 +38,6 @@ main(int argc, char* argv[])
     SDL_Event event;
 
     int should_quit = 0;
-    int should_change = 0;
     settings setting = getDisplaySettings();
 
     // create the list of all the tiles on the grid
@@ -152,7 +151,7 @@ main(int argc, char* argv[])
                                 disp.menuTexture, 
                                 supportedWidths[setting.selectedResolution], 
                                 supportedHeights[setting.selectedResolution], 
-                                search1.heuristic);
+                                search1.selectedHeuristic);
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
                     case SDLK_EQUALS:
@@ -166,7 +165,7 @@ main(int argc, char* argv[])
                                 disp.menuTexture, 
                                 supportedWidths[setting.selectedResolution], 
                                 supportedHeights[setting.selectedResolution], 
-                                search1.heuristic);
+                                search1.selectedHeuristic);
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
                     case SDLK_RIGHTBRACKET:
@@ -203,10 +202,11 @@ main(int argc, char* argv[])
                         if (!menuDisplayed) {
                             continue;
                         }
-                        should_change = 0;
 
                         // reset the choice
                         setting.selectedResolution = setting.currentResolution;
+                        search1.selectedHeuristic = search1.heuristic;
+                    case SDLK_RETURN:
                     case SDLK_p:
 
                         drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height, search1.heuristic);
@@ -215,33 +215,11 @@ main(int argc, char* argv[])
 
                         // Declare rect of square
                         SDL_Rect squareRect;
-                        // Square dimensions
-                        // squareRect.w = setting.width / 2;
-                        // squareRect.h = setting.height / 1.2;
-
-                        // squareRect.y = (setting.height / 2) - (squareRect.h / 2);
-                        // squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
                         // if the menu is not showing, show it
                         if (!menuDisplayed) {
                             menuDisplayed = 1;
 
-                            // SDL_RenderCopy(disp.renderer,
-                            //                disp.statusTexture,
-                            //                NULL,
-                            //                NULL);
-
-                            // SDL_RenderCopy(disp.renderer,
-                            //                disp.currTexture,
-                            //                NULL,
-                            //                NULL);
-
-                            // SDL_RenderCopy(disp.renderer,
-                                           // disp.menuTexture,
-                                           // &squareRect,
-                                           // &squareRect);
-
-                            // SDL_RenderPresent(disp.renderer);
                             showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
 
                             continue;
@@ -270,11 +248,6 @@ main(int argc, char* argv[])
                                            NULL,
                                            NULL);
 
-                            // SDL_RenderCopy(disp.renderer,
-                            //                disp.statusTexture,
-                            //                NULL,
-                            //                NULL);
-
                             SDL_RenderPresent(disp.renderer);
 
                             // drawStatusBar(disp.renderer, disp.statusTexture, backgroundColor, textColor);
@@ -286,14 +259,9 @@ main(int argc, char* argv[])
                         setting.width = supportedWidths[setting.selectedResolution];
                         setting.height = supportedHeights[setting.selectedResolution];
 
-                        // setting.selectedResolution = (setting.selectedResolution + 1) % 5; // cycle through the list
                         setting.currentResolution = setting.selectedResolution; // cycle through the list
 
-                        // drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
-
                         menuDisplayed = 0;
-
-                        should_change = 0;
 
                         setDisplaySettings(setting);
 

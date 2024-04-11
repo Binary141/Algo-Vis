@@ -191,7 +191,6 @@ zeroHeuristic(int currX, int currY, int goalX, int goalY)
 double
 getCost(int currX, int currY, int goalX, int goalY, int heuristic)
 {
-    printf("heuristic: %d\n", heuristic);
     if (heuristic == NONEHEURISTIC)
         return zeroHeuristic(currX, currY, goalX, goalY);
 

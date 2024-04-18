@@ -305,7 +305,7 @@ drawHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
     squareRect.y = (setting.height / 2) - (squareRect.h / 2);
     squareRect.x = (setting.width / 2) - (squareRect.w / 2);
 
-    int y = (setting.height / 2) - (squareRect.h / 3);
+    int y = (setting.height / 2) - (squareRect.h / 2);
     int x = (setting.width / 2) - (squareRect.w / 4);
 
     // Draw it
@@ -319,7 +319,7 @@ drawHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wwrite-strings"
 
-    const int helpLen = 12;
+    const int helpLen = 13;
     char* helpTexts[helpLen] = {
         "a - Add Tiles",
         "d - Delete Tiles",
@@ -332,6 +332,7 @@ drawHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
         "c - Clear Entire Screen",
         "r - Clear Visited States",
 
+        "h - Halt a Search",
 
         "left click - Add a wall",
         "right click - Delete a wall",
@@ -341,11 +342,11 @@ drawHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
     };
     #pragma GCC diagnostic pop
 
-    int tempHeight = 50;
+    int tempHeight = 40;
 
     for (int i = 0; i < helpLen; i++) {
         draw_text(r, t, helpTexts[i], x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
-        y += 50;
+        y += 40;
 
     }
 }

@@ -66,12 +66,6 @@ main(int argc, char* argv[])
     tile closest;
     int indicator = 0;
 
-    SDL_Rect texr;
-    texr.x = 0;
-    texr.y = 0;
-    texr.w = 100;
-    texr.h = 200;
-
     SDL_Surface* textureSurface;
     int hasRan = 0;
     int menuDisplayed = 0;
@@ -117,10 +111,69 @@ main(int argc, char* argv[])
                                        NULL);
 
                         SDL_RenderPresent(disp.renderer);
+
                         ColorBlankTile(disp.renderer, disp.currTexture);
 
                         continue;
+                    case SDLK_END:
+                        {
+                        if (menuDisplayed || helpDisplayed) {
+                            // don't do anything if the menu is being displayed
+                            continue;
+                        }
+
+                        printf("Saving %d-result.bmp\n", setting.numTiles);
+
+                        // Read the pixels from the current render target and save them onto the surface
+                        SDL_RenderReadPixels(disp.renderer, NULL, SDL_GetWindowPixelFormat(disp.window), disp.surface->pixels, disp.surface->pitch);
+
+                        char str[3];
+                        char name[12] = "-result.bmp";
+
+                        snprintf( str, 3, "%d", setting.numTiles );
+
+                        char *result = (char*) malloc(strlen(str) + strlen(name) + 1);
+                        if (!result) {
+                            printf("Couldn't Malloc!\n");
+                            continue;
+                        }
+
+                        strcpy(result, str);
+                        strcat(result, name);
+
+                        SDL_SaveBMP(disp.surface, result);
+                        continue;
+                        }
+                    // case SDLK_o:
+                    //     // demo to swap the textures
+                    //     if (menuDisplayed || helpDisplayed) {
+                    //         // don't do anything if the menu is being displayed
+                    //         continue;
+                    //     }
+
+                    //     disp.backTexture = disp.currTexture;
+
+                    //     // alternate the current
+                    //     if (!indicator) {
+                    //         disp.currTexture = disp.texture2;
+                    //         indicator = 1;
+                    //     } else {
+                    //         disp.currTexture = disp.texture1;
+                    //         indicator = 0;
+                    //     }
+
+                    //     // clear out the menu
+                    //     SDL_RenderCopy(disp.renderer,
+                    //                    disp.currTexture,
+                    //                    NULL,
+                    //                    NULL);
+
+                    //     SDL_RenderPresent(disp.renderer);
+                    //     ColorBlankTile(disp.renderer, disp.currTexture);
+
+                    //     continue;
                     case SDLK_MINUS:
+                        // cycle display sizes
                         if (!menuDisplayed) {
                             continue;
                         }
@@ -138,6 +191,7 @@ main(int argc, char* argv[])
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
                     case SDLK_EQUALS:
+                        // cycle display sizes
                         if (!menuDisplayed) {
                             continue;
                         }
@@ -152,6 +206,7 @@ main(int argc, char* argv[])
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
                     case SDLK_RIGHTBRACKET:
+                        // cycle heuristics
                         if (!menuDisplayed) {
                             continue;
                         }
@@ -166,6 +221,7 @@ main(int argc, char* argv[])
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
                     case SDLK_LEFTBRACKET:
+                        // cycle heuristics
                         if (!menuDisplayed) {
                             continue;
                         }
@@ -182,6 +238,7 @@ main(int argc, char* argv[])
                         showMenu(disp.renderer, disp.menuTexture, setting.width, setting.height);
                         continue;
                     case SDLK_ESCAPE:
+                        // get out of the menu
                         if (!menuDisplayed) {
                             continue;
                         }
@@ -193,9 +250,11 @@ main(int argc, char* argv[])
                         // use return to save if something has changed, while stop displaying the menu
                     case SDLK_m:
                         // use m to save if something has changed, while stop displaying the menu
+                        if (helpDisplayed) {
+                            continue;
+                        }
 
                         drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height, search1.heuristic);
-                        // drawMenu(disp.renderer, disp.currTexture, setting.width, setting.height);
                         usleep(5000);
 
                         // Declare rect of square
@@ -234,8 +293,6 @@ main(int argc, char* argv[])
                                            NULL);
 
                             SDL_RenderPresent(disp.renderer);
-
-                            // drawStatusBar(disp.renderer, disp.statusTexture, backgroundColor, textColor);
 
                             ColorBlankTile(disp.renderer, disp.currTexture);
                             continue;
@@ -276,77 +333,78 @@ main(int argc, char* argv[])
                     case SDLK_q:
                         should_quit = 1;
                         break;
-                    case SDLK_z:
-                        if (menuDisplayed) {
-                            // don't do anything if the menu is being displayed
-                            continue;
-                        }
-                        {
-                            if (argc <= 1) {
-                                printf("No filename passed in\n");
-                                continue;
-                            }
-                            int size = 2;
-                            int iterator = 0;
+                    // case SDLK_z:
+                    //     // demo to load in a saved bmp
+                    //     if (menuDisplayed || helpDisplayed) {
+                    //         // don't do anything if the menu is being displayed
+                    //         continue;
+                    //     }
+                    //     {
+                    //         if (argc <= 1) {
+                    //             printf("No filename passed in\n");
+                    //             continue;
+                    //         }
+                    //         int size = 2;
+                    //         int iterator = 0;
 
-                            char* name = argv[1];
+                    //         char* name = argv[1];
 
-                            char* tiles = (char*) malloc(6 * sizeof(char));
-                            for (int i = 0; i < 6; i++) {
-                                tiles[i] = '\0';
-                            }
+                    //         char* tiles = (char*) malloc(6 * sizeof(char));
+                    //         for (int i = 0; i < 6; i++) {
+                    //             tiles[i] = '\0';
+                    //         }
 
-                            while (name[iterator] != '\0' && isdigit(name[iterator])) {
-                                tiles[iterator] = name[iterator];
-                                iterator++;
-                            }
+                    //         while (name[iterator] != '\0' && isdigit(name[iterator])) {
+                    //             tiles[iterator] = name[iterator];
+                    //             iterator++;
+                    //         }
 
-                            int number = atoi(tiles);
+                    //         int number = atoi(tiles);
 
-                        SDL_Surface* abc = SDL_LoadBMP(name);
+                    //     SDL_Surface* abc = SDL_LoadBMP(name);
 
-                        if ( !abc ) {
-                            // load failed
-                            printf("Couldn't open image!\n");
-                            printf("%s\n", SDL_GetError());
-                            continue;
-                        }
+                    //     if ( !abc ) {
+                    //         // load failed
+                    //         printf("Couldn't open image!\n");
+                    //         printf("%s\n", SDL_GetError());
+                    //         continue;
+                    //     }
 
-                        setting.numTiles = number;
-                        setDisplaySettings(setting);
+                    //     setting.numTiles = number;
+                    //     setDisplaySettings(setting);
 
-                        resizeGridLayout();
+                    //     resizeGridLayout();
 
-                        states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
+                    //     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
 
-                        search1 = getDefaultSearch();
-                        search1.states = states;
-                        search1.stateSize = (setting.numTiles * setting.numTiles);
-                        search1.numTiles = setting.numTiles;
-                        disp.currTexture = disp.texture1;
+                    //     search1 = getDefaultSearch();
+                    //     search1.states = states;
+                    //     search1.stateSize = (setting.numTiles * setting.numTiles);
+                    //     search1.numTiles = setting.numTiles;
+                    //     disp.currTexture = disp.texture1;
 
-                        usleep(5000);
-                        reset(disp.renderer, disp.currTexture, states);
+                    //     usleep(5000);
+                    //     reset(disp.renderer, disp.currTexture, states);
 
-                        // now you can convert it into a texture
-                        SDL_Texture* tmp = SDL_CreateTextureFromSurface(disp.renderer, abc);
+                    //     // now you can convert it into a texture
+                    //     SDL_Texture* tmp = SDL_CreateTextureFromSurface(disp.renderer, abc);
 
-                        SDL_SetRenderTarget(disp.renderer, disp.currTexture);
+                    //     SDL_SetRenderTarget(disp.renderer, disp.currTexture);
 
-                        // Render the full original texture onto the new one
-                        SDL_RenderCopy(disp.renderer, tmp, NULL, NULL);
+                    //     // Render the full original texture onto the new one
+                    //     SDL_RenderCopy(disp.renderer, tmp, NULL, NULL);
 
-                        // Reset the rendering target to the default (the window)
-                        SDL_SetRenderTarget(disp.renderer, NULL);
+                    //     // Reset the rendering target to the default (the window)
+                    //     SDL_SetRenderTarget(disp.renderer, NULL);
 
-                        usleep(5000);
-                        SDL_RenderPresent(disp.renderer);
-                        // get the display to render. Doesn't load anything without this
-                        ColorBlankTile(disp.renderer, disp.currTexture);
-                        continue;
-                        }
+                    //     usleep(5000);
+                    //     SDL_RenderPresent(disp.renderer);
+                    //     // get the display to render. Doesn't load anything without this
+                    //     ColorBlankTile(disp.renderer, disp.currTexture);
+                    //     continue;
+                    //     }
                     case SDLK_t:
-                        if (menuDisplayed) {
+                        if (menuDisplayed || helpDisplayed) {
                             // don't do anything if the menu is being displayed
                             continue;
                         }
@@ -354,7 +412,8 @@ main(int argc, char* argv[])
                         clearTilesFromTexture(disp.renderer, disp.backTexture, &search1);
                         continue;
                     case SDLK_r:
-                        if (menuDisplayed) {
+                        // reset the tiles, but keep start, goal, and walls
+                        if (menuDisplayed || helpDisplayed) {
                             // don't do anything if the menu is being displayed
                             continue;
                         }
@@ -366,7 +425,8 @@ main(int argc, char* argv[])
 
                         continue;
                     case SDLK_c:
-                        if (menuDisplayed) {
+                        // clear the entire grid, start, goal, walls, and all
+                        if (menuDisplayed || helpDisplayed) {
                             // don't do anything if the menu is being displayed
                             continue;
                         }
@@ -379,7 +439,8 @@ main(int argc, char* argv[])
 
                         continue;
                     case SDLK_s:
-                        if (menuDisplayed) {
+                        // draw the start state
+                        if (menuDisplayed || helpDisplayed) {
                             // don't do anything if the menu is being displayed
                             continue;
                         }
@@ -392,7 +453,8 @@ main(int argc, char* argv[])
 
                         continue;
                     case SDLK_g:
-                        if (menuDisplayed) {
+                        // draw the goal state
+                        if (menuDisplayed || helpDisplayed) {
                             // don't do anything if the menu is being displayed
                             continue;
                         }
@@ -406,7 +468,8 @@ main(int argc, char* argv[])
                 }
 
                 if (event.key.keysym.sym == SDLK_b || event.key.keysym.sym == SDLK_u || event.key.keysym.sym == SDLK_j || event.key.keysym.sym == SDLK_k) {
-                    if (menuDisplayed) {
+                    // start one of the searches, depending on what the key pressed is
+                    if (menuDisplayed || helpDisplayed) {
                         // don't do anything if the menu is being displayed
                         continue;
                     }
@@ -431,7 +494,6 @@ main(int argc, char* argv[])
                     // this thread will set isSearching to 0 (false) if a key is pressed
                     // this stops the search from continuing
                     std::thread t1(waitForSearch);
-                    // std::thread t2(clearTilesFromTexture, disp.renderer, disp.backTexture, &search1, BACKGROUND_R, BACKGROUND_G, BACKGROUND_B);
 
                     // do the search
                     if (event.key.keysym.sym == SDLK_b) {
@@ -449,7 +511,6 @@ main(int argc, char* argv[])
 
                     // make sure that the thread finished
                     t1.join();
-                    // t2.join();
 
                     char doneText[] = "Done!";
                     draw_text(disp.renderer, 
@@ -467,7 +528,8 @@ main(int argc, char* argv[])
                 }
 
                 if (event.key.keysym.sym == SDLK_a || event.key.keysym.sym == SDLK_d) {
-                    if (menuDisplayed) {
+                    // add or remove tiles from the display
+                    if (menuDisplayed || helpDisplayed) {
                         // don't do anything if the menu is being displayed
                         continue;
                     }
@@ -501,7 +563,8 @@ main(int argc, char* argv[])
                     reset(disp.renderer, disp.currTexture, states);
                 }
             case SDL_MOUSEBUTTONDOWN:
-                if (menuDisplayed) {
+                // try to draw on the tiles if the mouse is clicked
+                if (menuDisplayed || helpDisplayed) {
                     // don't do anything if the menu is being displayed
                     continue;
                 }

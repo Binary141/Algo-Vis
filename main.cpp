@@ -553,10 +553,17 @@ main(int argc, char* argv[])
 
                     states = (int*) realloc(states, (setting.numTiles * setting.numTiles) * sizeof(int));
 
+                    int tempHeuristic = search1.heuristic;
+
                     search1 = getDefaultSearch();
                     search1.states = states;
                     search1.stateSize = (setting.numTiles * setting.numTiles);
                     search1.numTiles = setting.numTiles;
+
+                    // put the heuristic back in place since it could be overwritten after getting the default
+                    search1.heuristic = tempHeuristic;
+                    search1.selectedHeuristic = tempHeuristic;
+
                     disp.currTexture = disp.texture1;
 
                     usleep(5000);

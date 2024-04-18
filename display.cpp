@@ -318,7 +318,7 @@ drawHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
 
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wwrite-strings"
-    const int helpLen = 8;
+    const int helpLen = 10;
     char* helpTexts[helpLen] = {
         "a - Add Tiles",
         "d - Delete Tiles",
@@ -327,6 +327,9 @@ drawHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
         "u - Depth First Search",
         "j - Astar Search",
         "k - Greedy Search",
+
+        "c - Clear Entire Screen",
+        "r - Clear Visited States",
 
         "/ - Help Menu",
         "m - Setting Menu"
@@ -411,7 +414,7 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic)
 
     char help[] = "To cycle between display sizes, press '-' or '='";
     char help2[] = "To leave the menu, press escape";
-    char help3[] = "To save, press enter or 'p'";
+    char help3[] = "To save, press enter or 'm'";
     char text[] = "Display Size:";
     char by[] = "x";
     int tempHeight = 50;

@@ -17,3 +17,5 @@ First download the SDL packages that are listed in the `install_packages.sh`. Th
 ## Usage
 Once ran, press `m` for the menu, and explore the different ways to interact with the program.
 
+
+![Algo-Vis usage](https://github.com/Binary141/Algo-Vis/blob/main/images/Algo-vis-example.gif)

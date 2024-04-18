@@ -36,3 +36,5 @@ algo-vis
 
 *.png
 *.bmp
+
+build/

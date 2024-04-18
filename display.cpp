@@ -286,6 +286,79 @@ showMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height)
     SDL_RenderPresent(r);
 }
 
+void
+drawHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
+{
+    // anything drawn to renderer will be drawn to the texture
+    SDL_SetRenderTarget(r, t);
+
+    // Actually draw the desired color
+    SDL_SetRenderDrawColor(r, 125, 125, 125, 255);
+
+    // Declare rect of square
+    SDL_Rect squareRect;
+
+    // Square dimensions
+    squareRect.w = setting.width / 2;
+    squareRect.h = setting.height / 1.2;
+
+    squareRect.y = (setting.height / 2) - (squareRect.h / 2);
+    squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+
+    int y = (setting.height / 2) - (squareRect.h / 4);
+    int x = (setting.width / 2) - (squareRect.w / 4);
+
+    // Draw it
+    SDL_RenderFillRect(r, &squareRect);
+
+    // Reset the rendering target to the default (the window)
+    SDL_SetRenderTarget(r, NULL);
+
+    SDL_RenderCopy(r, t, &squareRect, &squareRect);
+
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wwrite-strings"
+    const int helpLen = 8;
+    char* helpTexts[helpLen] = {
+        "a - Add Tiles",
+        "d - Delete Tiles",
+
+        "b - Breadth First Search",
+        "u - Depth First Search",
+        "j - Astar Search",
+        "k - Greedy Search",
+
+        "/ - Help Menu",
+        "m - Setting Menu"
+    };
+    #pragma GCC diagnostic pop
+
+    int tempHeight = 50;
+
+    for (int i = 0; i < helpLen; i++) {
+        draw_text(r, t, helpTexts[i], x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+        y += 50;
+
+    }
+}
+
+void
+showHelp(SDL_Renderer* r, SDL_Texture* t, int width, int height)
+{
+    // Declare rect of square
+    SDL_Rect squareRect;
+    // Square dimensions
+    squareRect.w = setting.width / 2;
+    squareRect.h = setting.height / 1.2;
+
+    squareRect.y = (setting.height / 2) - (squareRect.h / 2);
+    squareRect.x = (setting.width / 2) - (squareRect.w / 2);
+
+    SDL_RenderCopy(r, t, &squareRect, &squareRect);
+
+    SDL_RenderPresent(r);
+}
+
 void 
 drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic) 
 {
@@ -363,7 +436,10 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic)
     draw_text(r, t, text1, x, y, 200, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
     y += tempHeight;
 
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wwrite-strings"
     char* supportedHeuristics[] = {"None", "SLD", "Manhattan"};
+    #pragma GCC diagnostic pop
 
     draw_text(r, t, supportedHeuristics[heuristic], x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
 }

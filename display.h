@@ -110,6 +110,8 @@ void manyWalls(SDL_Renderer*, SDL_Texture*, search*, int);
 void drawStatusBar(SDL_Renderer*, SDL_Texture*, color, color);
 void showMenu(SDL_Renderer*, SDL_Texture*, int, int);
 void drawMenu(SDL_Renderer*, SDL_Texture*, int, int, int);
+void drawHelp(SDL_Renderer*, SDL_Texture*, int, int);
+void showHelp(SDL_Renderer*, SDL_Texture*, int, int);
 
 extern settings setting;
 

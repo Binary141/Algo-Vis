@@ -75,6 +75,7 @@ main(int argc, char* argv[])
     SDL_Surface* textureSurface;
     int hasRan = 0;
     int menuDisplayed = 0;
+    int helpDisplayed = 0;
 
     while (isSearching || (SDL_WaitEvent(&event) && !should_quit)) {
         switch (event.type) {
@@ -83,49 +84,31 @@ main(int argc, char* argv[])
                 break;
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym) {
-                    case SDLK_m:
-                        {
+                    case SDLK_SLASH:
+                        // use slash to display the help menu
+
+                        // if the menu is not showing, show it
                         if (menuDisplayed) {
-                            // don't do anything if the menu is being displayed
                             continue;
                         }
-                        printf("Saving!\n");
-                          // Read the pixels from the current render target and save them onto the surface
-                          SDL_RenderReadPixels(disp.renderer, NULL, SDL_GetWindowPixelFormat(disp.window), disp.surface->pixels, disp.surface->pitch);
 
-                          char str[3];
-                          char name[12] = "-result.bmp";
-                          snprintf( str, 3, "%d", setting.numTiles );
+                        drawHelp(disp.renderer, disp.menuTexture, setting.width, setting.height);
+                        usleep(5000);
 
-                          char *result = (char*) malloc(strlen(str) + strlen(name) + 1);
-                          if (!result) {
-                              printf("Couldn't Malloc!\n");
-                              continue;
-                          }
+                        // if the menu is not showing, show it
+                        if (!helpDisplayed) {
+                            helpDisplayed = 1;
 
-                          strcpy(result, str);
-                          strcat(result, name);
+                            showHelp(disp.renderer, disp.menuTexture, setting.width, setting.height);
 
-                          SDL_SaveBMP(disp.surface, result);
-                        continue;
-                        }
-                    case SDLK_o:
-                        if (menuDisplayed) {
-                            // don't do anything if the menu is being displayed
                             continue;
                         }
-                        // demo to swap the textures
 
-                        disp.backTexture = disp.currTexture;
+                        helpDisplayed = 0;
 
-                        // alternate the current
-                        if (!indicator) {
-                            disp.currTexture = disp.texture2;
-                            indicator = 1;
-                        } else {
-                            disp.currTexture = disp.texture1;
-                            indicator = 0;
-                        }
+                        drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+
+                        SDL_SetRenderTarget(disp.renderer, disp.currTexture);
 
                         // clear out the menu
                         SDL_RenderCopy(disp.renderer,
@@ -207,7 +190,9 @@ main(int argc, char* argv[])
                         setting.selectedResolution = setting.currentResolution;
                         search1.selectedHeuristic = search1.heuristic;
                     case SDLK_RETURN:
-                    case SDLK_p:
+                        // use return to save if something has changed, while stop displaying the menu
+                    case SDLK_m:
+                        // use m to save if something has changed, while stop displaying the menu
 
                         drawMenu(disp.renderer, disp.menuTexture, setting.width, setting.height, search1.heuristic);
                         // drawMenu(disp.renderer, disp.currTexture, setting.width, setting.height);

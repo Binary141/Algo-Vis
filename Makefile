@@ -1,40 +1,39 @@
 target: run
 
 build: main.o search.o display.o astar.o greedy.o dfs.o bfs.o
-	g++ -o algo-vis main.o display.o astar.o greedy.o bfs.o dfs.o search.o -lSDL2 -lSDL2_ttf -lSDL2_image
+	g++ -o algo-vis build/main.o build/display.o build/astar.o build/greedy.o build/bfs.o build/dfs.o build/search.o -lSDL2 -lSDL2_ttf -lSDL2_image
 
 debug: search.o display.o dfs.o bfs.o greedy.o astar.o debug-main.o
-	g++ -o algo-vis main.o bfs.o dfs.o astar.o greedy.o display.o search.o -lSDL2 -lSDL2_ttf
+	g++ -o algo-vis build/main.o build/bfs.o build/dfs.o build/astar.o build/greedy.o build/display.o build/search.o -lSDL2 -lSDL2_ttf
 	gdb ./algo-vis
 
-search.o: search.cpp search.h
-	g++ -c search.cpp
+search.o: src/search.cpp src/search.h
+	g++ -o build/search.o -c src/search.cpp
 
-display.o: display.cpp display.h
-	g++ -c display.cpp
+display.o: src/display.cpp src/display.h
+	g++ -o build/display.o -c src/display.cpp
 
-greedy.o: greedy.cpp search.h
-	g++ -c greedy.cpp
+greedy.o: src/greedy.cpp src/search.h
+	g++ -o build/greedy.o -c src/greedy.cpp
 
-astar.o: astar.cpp search.h
-	g++ -c astar.cpp
+astar.o: src/astar.cpp src/search.h
+	g++ -o build/astar.o -c src/astar.cpp
 
-bfs.o: bfs.cpp search.h
-	g++ -c bfs.cpp
+bfs.o: src/bfs.cpp src/search.h
+	g++ -o build/bfs.o -c src/bfs.cpp
 
-dfs.o: dfs.cpp search.h
-	g++ -c dfs.cpp
+dfs.o: src/dfs.cpp src/search.h
+	g++ -o build/dfs.o -c src/dfs.cpp
 
-main.o: main.cpp
-	g++ -c main.cpp
+main.o: src/main.cpp
+	g++ -o build/main.o -c src/main.cpp
 
-debug-main.o: main.cpp
-	g++ -c -g main.cpp
+debug-main.o: src/main.cpp
+	g++ -c -g src/main.cpp
 
 run: build
 	./algo-vis
 
 clean:
 	rm -f algo-vis
-	rm -f *.o
-	rm -f out
+	rm -f build/*.o

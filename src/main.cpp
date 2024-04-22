@@ -282,8 +282,6 @@ main(int argc, char* argv[])
 
                             menuDisplayed = 0;
 
-                            drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
-
                             SDL_SetRenderTarget(disp.renderer, disp.currTexture);
 
                             // clear out the menu
@@ -293,6 +291,8 @@ main(int argc, char* argv[])
                                            NULL);
 
                             SDL_RenderPresent(disp.renderer);
+
+                            drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
 
                             ColorBlankTile(disp.renderer, disp.currTexture);
                             continue;

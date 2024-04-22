@@ -420,24 +420,30 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic)
 
     char help[] = "To cycle between display sizes, press '-' or '='";
     char help2[] = "To leave the menu, press escape";
-    char help3[] = "To save, press enter or 'm'";
+    char help3[] = "To cycle between heuristics, press '[' or ']'";
+    char help4[] = "To save, press enter or 'm'";
     char text[] = "Display Size:";
     char by[] = "x";
     int tempHeight = 50;
 
-    draw_text(r, t, help, x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, help, x, y, 450, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
     y += 50;
 
     draw_text(r, t, help2, x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
     y += 50;
 
-    draw_text(r, t, help3, x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, help3, x, y, 450, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    y += 50;
+
+    draw_text(r, t, help4, x, y, 400, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
     y += 100;
 
-    draw_text(r, t, text, x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
-    draw_text(r, t, wStr, x + 150, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
-    draw_text(r, t, by, x + 275, y, 10, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
-    draw_text(r, t, hStr, x + 300, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, text, x, y, 150, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    y += 50;
+
+    draw_text(r, t, wStr, x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, by, x + 110, y, 20, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    draw_text(r, t, hStr, x + 140, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
 
     char text1[] = "Current Heuristic:";
 
@@ -450,7 +456,9 @@ drawMenu(SDL_Renderer* r, SDL_Texture* t, int width, int height, int heuristic)
     char* supportedHeuristics[] = {"None", "SLD", "Manhattan"};
     #pragma GCC diagnostic pop
 
-    draw_text(r, t, supportedHeuristics[heuristic], x, y, 100, tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
+    int heuristicWidths[] = {100, 100, 150};
+
+    draw_text(r, t, supportedHeuristics[heuristic], x, y, heuristicWidths[heuristic], tempHeight, color{0, 0, 0}, color{125, 125, 125}, 0, 0);
 }
 
 void

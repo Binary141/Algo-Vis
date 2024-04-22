@@ -420,8 +420,12 @@ main(int argc, char* argv[])
                         // much faster way of clearing the screen
                         clearTilesBulk(disp.renderer, disp.currTexture, &search1);
 
+                        drawStatusBar(disp.renderer, disp.statusTexture, textColor, backgroundColor);
+
                         drawGoalButton(disp.renderer, disp.statusTexture, textColor, backgroundColor, 1);
                         drawStartButton(disp.renderer, disp.statusTexture, textColor, backgroundColor, 1);
+
+                        ColorBlankTile(disp.renderer, disp.currTexture);
 
                         continue;
                     case SDLK_c:
